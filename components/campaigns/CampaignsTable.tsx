@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/table"; // Import from the new UI library
 import { Progress } from "@/components/ui/progress"; // Import Progress from the new UI library
 import { Badge } from "@/components/ui/badge"; // Import Badge from the new UI library
-import { cn } from "@/lib/utils";
+import { copyText as t } from "./copy";
+import { Button } from "../ui/button";
 
 // Define the structure for campaign data based on the screenshot
 interface CampaignData {
@@ -118,19 +119,24 @@ const getStatusVariant = (status: CampaignData['status']): "default" | "secondar
 };
 
 const CampaignsTable: React.FC<{ campaigns: CampaignData[] }> = ({ campaigns }) => {
+  if (!campaigns.length) {
+    return <div className="text-center py-4">{t.table.noData}</div>;
+  }
+
   return (
     <div className="rounded-md border shadow-sm bg-white"> {/* Added border and removed shadow-lg */} 
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Campaign</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Progress</TableHead>
-            <TableHead>Opens</TableHead>
-            <TableHead>Clicks</TableHead>
-            <TableHead>Replies</TableHead>
-            <TableHead>Last Activity</TableHead>
-            <TableHead className="text-right">Actions</TableHead> {/* Align actions right */}
+            <TableHead>{t.table.name}</TableHead>
+            <TableHead>{t.table.status}</TableHead>
+            <TableHead>{t.table.recipients}</TableHead>
+            <TableHead>{t.table.sent}</TableHead>
+            <TableHead>{t.table.replies}</TableHead>
+            <TableHead>{t.table.openRate}</TableHead>
+            <TableHead>{t.table.replyRate}</TableHead>
+            <TableHead>{t.table.lastUpdated}</TableHead>
+            <TableHead className="text-right">{t.table.actions}</TableHead> {/* Align actions right */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -162,9 +168,13 @@ const CampaignsTable: React.FC<{ campaigns: CampaignData[] }> = ({ campaigns }) 
                   {campaign.replies.toLocaleString()} <span className="text-xs text-muted-foreground">({campaign.repliesPercent.toFixed(1)}%)</span>
                 </TableCell>
                 <TableCell>{campaign.lastActivity}</TableCell>
-                <TableCell className="text-right">
-                  {/* Placeholder for actions dropdown - Use DropdownMenu from UI library later */}
-                  <button className="text-muted-foreground hover:text-foreground">...</button>
+                <TableCell className="text-right space-x-2">
+                  <Button variant="outline" size="sm">
+                    {t.table.edit}
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    {t.table.view}
+                  </Button>
                 </TableCell>
               </TableRow>
             );

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { copyText as t } from "./copy";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,11 +18,10 @@ interface TemplateSelectorProps {
 }
 
 // TODO: Fetch templates dynamically
-const templates = [
-  { id: 1, name: "Intro Offer", subject: "Quick Question about [Company Name]", body: "Hi {{firstName}},\n\nI saw you recently..." },
-  { id: 2, name: "Follow Up 1", subject: "Re: Quick Question", body: "Hi {{firstName}},\n\nJust wanted to follow up..." },
-  { id: 3, name: "Breakup Email", subject: "Closing the loop", body: "Hi {{firstName}},\n\nSince I haven't heard back..." },
-];
+const templates = t.templates.items.map((item, index) => ({
+  id: index + 1,
+  ...item
+}));
 
 export function TemplateSelector({ onSelectTemplate }: TemplateSelectorProps) {
   return (
@@ -29,11 +29,11 @@ export function TemplateSelector({ onSelectTemplate }: TemplateSelectorProps) {
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="gap-1">
           <FileText className="h-4 w-4" />
-          Import Template
+          {t.templates.buttonLabel}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Select a Template</DropdownMenuLabel>
+        <DropdownMenuLabel>{t.templates.dropdownLabel}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {templates.map((template) => (
           <DropdownMenuItem
@@ -44,7 +44,7 @@ export function TemplateSelector({ onSelectTemplate }: TemplateSelectorProps) {
           </DropdownMenuItem>
         ))}
         {templates.length === 0 && (
-          <DropdownMenuItem disabled>No templates available</DropdownMenuItem>
+          <DropdownMenuItem disabled>{t.templates.noTemplatesAvailable}</DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

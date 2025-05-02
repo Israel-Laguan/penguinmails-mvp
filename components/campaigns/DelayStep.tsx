@@ -2,14 +2,9 @@
 
 import React from "react";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { copyText as t } from "./copy";
 
 type EmailStepType = {
   emailSubject?: string;
@@ -29,10 +24,10 @@ interface DelayStepProps {
 }
 
 const conditionOptions = [
-  { value: "always", label: "Always send after delay" },
-  { value: "if_not_opened", label: "Send only if previous email NOT opened" },
-  { value: "if_not_clicked", label: "Send only if previous email NOT clicked" },
-  { value: "if_not_replied", label: "Send only if previous email NOT replied" },
+  { value: "always", label: t.delay.conditions.always },
+  { value: "if_not_opened", label: t.delay.conditions.notOpened },
+  { value: "if_not_clicked", label: t.delay.conditions.notClicked },
+  { value: "if_not_replied", label: t.delay.conditions.notReplied },
 ];
 
 export function DelayStep({
@@ -46,7 +41,7 @@ export function DelayStep({
     <div className="space-y-4 mt-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor={`delay-days-${index}`}>Wait for</Label>
+          <Label htmlFor={`delay-days-${index}`}>{t.delay.waitFor}</Label>
           <div className="flex items-center gap-2">
             <Input
               id={`delay-days-${index}`}
@@ -56,7 +51,7 @@ export function DelayStep({
               onChange={(e) => onDaysChange(parseInt(e.target.value, 10) || 0)}
               className="w-20"
             />
-            <span>days</span>
+            <span>{t.delay.days}</span>
             <Input
               id={`delay-hours-${index}`}
               type="number"
@@ -66,14 +61,14 @@ export function DelayStep({
               onChange={(e) => onHoursChange(parseInt(e.target.value, 10) || 0)}
               className="w-20"
             />
-            <span>hours</span>
+            <span>{t.delay.hours}</span>
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor={`condition-${index}`}>Condition</Label>
+          <Label htmlFor={`condition-${index}`}>{t.delay.condition}</Label>
           <Select onValueChange={onConditionChange} defaultValue={step.condition}>
             <SelectTrigger id={`condition-${index}`}>
-              <SelectValue placeholder="Select condition" />
+              <SelectValue placeholder={t.delay.selectCondition} />
             </SelectTrigger>
             <SelectContent>
               {conditionOptions.map(option => (

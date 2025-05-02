@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { UseFormReturn } from "react-hook-form";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -10,9 +11,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { copyText as t } from "./copy";
 interface CampaignDetailsFormProps {
-  form: any; // Consider using UseFormReturn from react-hook-form
+  form: UseFormReturn<{
+    name: string;
+    fromName: string;
+    fromEmail: string;
+  }>;
 }
 
 // TODO: Fetch available sending accounts dynamically
@@ -30,9 +35,9 @@ export function CampaignDetailsForm({ form }: CampaignDetailsFormProps) {
         name="name"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Campaign Name</FormLabel>
+            <FormLabel>{t.campaignDetails.labels.campaignName}</FormLabel>
             <FormControl>
-              <Input placeholder="e.g. Q2 CEO Outreach" {...field} />
+              <Input placeholder={t.campaignDetails.placeholders.campaignName} {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -45,10 +50,13 @@ export function CampaignDetailsForm({ form }: CampaignDetailsFormProps) {
           name="fromName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>From Name</FormLabel>
+              <FormLabel>{t.campaignDetails.labels.fromName}</FormLabel>
               <FormControl>
-                <Input placeholder="e.g. John Smith" {...field} />
+                <Input placeholder={t.campaignDetails.placeholders.fromName} {...field} />
               </FormControl>
+              <FormDescription>
+                {t.campaignDetails.descriptions.fromName}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -58,11 +66,11 @@ export function CampaignDetailsForm({ form }: CampaignDetailsFormProps) {
           name="fromEmail"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>From Email</FormLabel>
+              <FormLabel>{t.campaignDetails.labels.fromEmail}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a sending account" />
+                    <SelectValue placeholder={t.campaignDetails.placeholders.selectAccount} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -73,6 +81,9 @@ export function CampaignDetailsForm({ form }: CampaignDetailsFormProps) {
                   ))}
                 </SelectContent>
               </Select>
+              <FormDescription>
+                {t.campaignDetails.descriptions.fromEmail}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

@@ -3,6 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Mail, Clock, Trash2, ArrowUp, ArrowDown } from "lucide-react";
+import { copyText as t } from "./copy";
 
 interface StepHeaderProps {
   stepType: "email" | "delay";
@@ -28,12 +29,8 @@ export function StepHeader({
   canRemove
 }: StepHeaderProps) {
   const getConditionText = (condition: string | undefined) => {
-    switch (condition) {
-      case "if_not_opened": return "if not opened";
-      case "if_not_clicked": return "if not clicked";
-      case "if_not_replied": return "if not replied";
-      default: return "";
-    }
+    if (!condition || condition === "always") return "";
+    return t.conditions[condition as keyof typeof t.conditions] || "";
   };
 
   return (
@@ -47,7 +44,7 @@ export function StepHeader({
           )}
         </div>
         <span className="font-medium text-gray-900 dark:text-gray-100">
-          Step {stepIndex + 1}: {stepType === "email" ? "Email" : "Delay"}
+          {t.stepLabel(stepIndex, t.stepTypes[stepType])}
         </span>
         {stepType === "delay" && stepCondition && stepCondition !== "always" && (
           <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">({getConditionText(stepCondition)})</span>
@@ -62,7 +59,7 @@ export function StepHeader({
           className="h-8 w-8 disabled:opacity-30"
         >
           <ArrowUp className="h-4 w-4" />
-          <span className="sr-only">Move step up</span>
+          <span className="sr-only">{t.buttons.moveStepUp}</span>
         </Button>
         <Button
           variant="ghost"
@@ -72,7 +69,7 @@ export function StepHeader({
           className="h-8 w-8 disabled:opacity-30"
         >
           <ArrowDown className="h-4 w-4" />
-          <span className="sr-only">Move step down</span>
+          <span className="sr-only">{t.buttons.moveStepDown}</span>
         </Button>
         <Button
           variant="ghost"
@@ -82,7 +79,7 @@ export function StepHeader({
           className="h-8 w-8 text-destructive hover:text-destructive disabled:opacity-30"
         >
           <Trash2 className="h-4 w-4" />
-          <span className="sr-only">Remove step</span>
+          <span className="sr-only">{t.buttons.removeStep}</span>
         </Button>
       </div>
     </div>

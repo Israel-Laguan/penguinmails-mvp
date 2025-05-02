@@ -2,7 +2,7 @@
 // import { config as authOptions } from "@/lib/auth";
 import { getCampaignsDataAction } from "@/lib/actions";
 // import { signOut } from "next-auth/react";
-import CampaignsContent from "./CampaignsContent";
+import CampaignsContent from "./content";
 
 export default async function CampaignsPage() {
   // const session = await getServerSession(authOptions);

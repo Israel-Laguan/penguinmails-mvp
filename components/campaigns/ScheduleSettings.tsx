@@ -3,7 +3,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -13,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "../ui/button";
+import { copyText as t } from "./copy";
 
 // TODO: Potentially fetch timezone list dynamically
 const timezones = [
@@ -45,13 +45,13 @@ const timezones = [
 ];
 
 const daysOfWeek = [
-  { id: "mon", label: "Mon" },
-  { id: "tue", label: "Tue" },
-  { id: "wed", label: "Wed" },
-  { id: "thu", label: "Thu" },
-  { id: "fri", label: "Fri" },
-  { id: "sat", label: "Sat" },
-  { id: "sun", label: "Sun" },
+  { id: "mon", label: t.schedule.days.mon },
+  { id: "tue", label: t.schedule.days.tue },
+  { id: "wed", label: t.schedule.days.wed },
+  { id: "thu", label: t.schedule.days.thu },
+  { id: "fri", label: t.schedule.days.fri },
+  { id: "sat", label: t.schedule.days.sat },
+  { id: "sun", label: t.schedule.days.sun },
 ];
 
 export function ScheduleSettings() {
@@ -72,11 +72,11 @@ export function ScheduleSettings() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Sending Schedule</CardTitle>
+        <CardTitle>{t.schedule.title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label>Sending Days</Label>
+          <Label>{t.schedule.sendingDays}</Label>
           <div className="flex flex-wrap gap-2">
             {daysOfWeek.map((day) => (
               <Button
@@ -94,7 +94,7 @@ export function ScheduleSettings() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="start-time">Start Time</Label>
+            <Label htmlFor="start-time">{t.schedule.startTime}</Label>
             <Input
               id="start-time"
               type="time"
@@ -103,7 +103,7 @@ export function ScheduleSettings() {
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="end-time">End Time</Label>
+            <Label htmlFor="end-time">{t.schedule.endTime}</Label>
             <Input
               id="end-time"
               type="time"
@@ -114,10 +114,10 @@ export function ScheduleSettings() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="timezone">Timezone</Label>
+          <Label htmlFor="timezone">{t.schedule.timezone}</Label>
           <Select value={timezone} onValueChange={setTimezone}>
             <SelectTrigger id="timezone">
-              <SelectValue placeholder="Select timezone" />
+              <SelectValue placeholder={t.schedule.selectTimezone} />
             </SelectTrigger>
             <SelectContent className="max-h-60">
               {timezones.map((tz) => (

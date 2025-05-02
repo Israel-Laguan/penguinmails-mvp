@@ -90,7 +90,7 @@ export function DashboardSidebar() {
       <div className="flex h-16 items-center border-b border-gray-200 dark:border-gray-800 px-6">
         <Link href="/dashboard" className="flex items-center gap-2 font-semibold text-lg text-gray-900 dark:text-gray-100">
           <Layers className="h-6 w-6 text-primary" />
-          <span>OutreachApp</span> {/* Updated App Name */}
+          <span>PenguinMails</span> {/* Updated App Name */}
         </Link>
       </div>
 

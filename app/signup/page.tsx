@@ -19,6 +19,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal, UserPlus, Building, KeyRound } from "lucide-react"; // Icons
 import { LandingLayout } from "@/components/layout/landing";
 import { signupContent } from "./content";
+import { PlanType } from "../api/generated/prisma";
 
 // Separate component for handling search params
 function SearchParamsProvider({ children }: { 
@@ -56,6 +57,9 @@ function SignUpForm({ selectedPlan }: { selectedPlan: string | null }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [businessId, setBusinessId] = useState("");
   const [referralCode, setReferralCode] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [businessName, setBusinessName] = useState("");
 
   // Redirect to pricing if trying to sign up for 'new' without a plan selected
   useEffect(() => {
@@ -77,44 +81,38 @@ function SignUpForm({ selectedPlan }: { selectedPlan: string | null }) {
       setIsLoading(false);
       return;
     }
-    if (signupType === "new" && !selectedPlan) {
-      setError(signupContent.alerts.error.noPlan);
-      setIsLoading(false);
-      return;
-    }
-    if (signupType === "existing" && (!businessId || !referralCode)) {
-      setError(signupContent.alerts.error.missingBusinessInfo);
-      setIsLoading(false);
-      return;
-    }
 
-    // --- Placeholder for actual signup logic ---
-    console.log("Signup attempt:", {
-      type: signupType,
-      email,
-      // Don't log password in real apps
-      plan: signupType === "new" ? selectedPlan : undefined,
-      businessId: signupType === "existing" ? businessId : undefined,
-      referralCode: signupType === "existing" ? referralCode : undefined,
-    });
-
+    alert("Stripe integration is not implemented yet. Please proceed with the signup.");
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      // On success, you would typically redirect the user
-      // e.g., to a verification page or the dashboard
-      console.log("Signup successful (simulated)");
-      // router.push('/dashboard'); // Example redirect
-      alert(
-        "Sign up successful! (Simulated) Check console for details. You would be redirected now."
-      );
-    } catch (err) {
-      console.error("Signup failed (simulated):", err);
-      setError(signupContent.alerts.error.generic); // Show a generic error
+      const response = await fetch('/api/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          name: `${firstName} ${lastName}`.trim(),
+          companyName: signupType === 'new' ? businessName : undefined,
+          PlanType: signupType === 'new' ? selectedPlan : undefined,
+          businessId: signupType === 'existing' ? businessId : undefined,
+          referralCode: signupType === 'existing' ? referralCode : undefined,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Signup failed');
+      }
+
+      // Redirect to login on success
+      window.location.href = '/login';
+    } catch (err: any) {
+      console.error("Signup failed:", err);
+      setError(err.message || signupContent.alerts.error.generic);
     } finally {
       setIsLoading(false);
     }
-    // --- End placeholder ---
   };
 
   return (
@@ -175,6 +173,45 @@ function SignUpForm({ selectedPlan }: { selectedPlan: string | null }) {
         {/* Conditional Form Fields */}
         <form onSubmit={handleSignup} className="space-y-4">
           {/* Common Fields */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">{signupContent.form.labels.firstName}</Label>
+              <Input
+                id="firstName"
+                placeholder={signupContent.form.placeholders.firstName}
+                required
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="lastName">{signupContent.form.labels.lastName}</Label>
+              <Input
+                id="lastName"
+                placeholder={signupContent.form.placeholders.lastName}
+                required
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+          </div>
+
+          {signupType === 'new' && (
+            <div className="space-y-2">
+              <Label htmlFor="businessName">{signupContent.form.labels.businessName}</Label>
+              <Input
+                id="businessName"
+                placeholder={signupContent.form.placeholders.businessName}
+                required
+                value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                disabled={isLoading}
+              />
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="email">{signupContent.form.labels.email}</Label>
             <Input

@@ -7,14 +7,29 @@ const SALT_ROUNDS = 10;
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { email, password, firstName, lastName, companyName } = body;
+    const { 
+      email, 
+      password, 
+      name, 
+      companyName,
+      businessId, 
+      referralCode,
+      planType = 'FREE'
+    } = body;
 
     // Basic validation
-    if (!email || !password || !companyName) {
-      return NextResponse.json({ error: "Email, password, and company name are required" }, { status: 400 });
+    if (!email || !password) {
+      return NextResponse.json(
+        { error: "Email and password are required" }, 
+        { status: 400 }
+      );
     }
+
     if (password.length < 8) {
-      return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Password must be at least 8 characters" }, 
+        { status: 400 }
+      );
     }
 
     // Check if user already exists
@@ -23,29 +38,60 @@ export async function POST(request: Request) {
     });
 
     if (existingUser) {
-      return NextResponse.json({ error: "User with this email already exists" }, { status: 409 });
+      return NextResponse.json(
+        { error: "User with this email already exists" }, 
+        { status: 409 }
+      );
     }
 
     // Hash the password
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
-    // Create company and user in a transaction
-    // @ts-ignore
+    // Handle both new company creation and joining existing company
     const newUser = await prisma.$transaction(async (tx) => {
-      const company = await tx.company.create({
-        data: {
-          name: companyName,
-          // planType: 'FREE', // Default is set in schema
-        },
-      });
+      let companyId: number;
+
+      if (businessId) {
+        // Joining existing company
+        const existingCompany = await tx.company.findUnique({
+          where: { id: parseInt(businessId) },
+        });
+
+        if (!existingCompany) {
+          throw new Error("Company not found");
+        }
+
+        // Here you would validate the referral code
+        // This is a placeholder - implement your own referral code validation
+        if (!referralCode) {
+          console.error("Referral code is optional to gain benefits");
+          // throw new Error("Referral code is required to join an existing company");
+        }
+
+        companyId = existingCompany.id;
+      } else {
+        // Creating new company
+        if (!companyName) {
+          throw new Error("Company name is required for new company");
+        }
+
+        const company = await tx.company.create({
+          data: {
+            name: companyName,
+            planType: planType,
+          },
+        });
+
+        companyId = company.id;
+      }
 
       const user = await tx.user.create({
         data: {
           email,
           passwordHash,
-          // name,
-          companyId: company.id,
-          // role: 'MEMBER', // Default is set in schema
+          name,
+          companyId,
+          role: businessId ? 'MEMBER' : 'ADMIN', // First user of new company is admin
         },
       });
 
@@ -54,14 +100,14 @@ export async function POST(request: Request) {
 
     // Don't return password hash
     const { passwordHash: _, ...userWithoutPassword } = newUser;
-
     return NextResponse.json(userWithoutPassword, { status: 201 });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Signup Error:", error);
-    // Check for specific Prisma errors if needed, e.g., unique constraint violation
-    // if (error instanceof Prisma.PrismaClientKnownRequestError) { ... }
-    return NextResponse.json({ error: "An internal server error occurred" }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message || "An internal server error occurred" }, 
+      { status: 500 }
+    );
   } finally {
     await prisma.$disconnect();
   }

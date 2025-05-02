@@ -15,11 +15,17 @@ export const signupContent = {
       confirmPassword: "Confirm Password",
       businessId: "Business ID",
       referralCode: "Referral Code",
+      firstName: "First Name",
+      lastName: "Last Name",
+      businessName: "Business Name",
     },
     placeholders: {
       email: "you@example.com",
       businessId: "Enter the ID provided by your team",
       referralCode: "Enter the code provided by your team",
+      firstName: "John",
+      lastName: "Doe",
+      businessName: "Your Company Name",
     },
   },
   alerts: {

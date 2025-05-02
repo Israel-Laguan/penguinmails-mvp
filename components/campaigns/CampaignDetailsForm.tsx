@@ -12,11 +12,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { copyText as t } from "./copy";
+
 interface CampaignDetailsFormProps {
   form: UseFormReturn<{
     name: string;
     fromName: string;
     fromEmail: string;
+    sequence: {
+      type: "email" | "delay";
+      emailSubject?: string;
+      emailBody?: string;
+      delayDays?: number;
+      delayHours?: number;
+      condition?: "always" | "if_not_opened" | "if_not_clicked" | "if_not_replied";
+    }[];
   }>;
 }
 

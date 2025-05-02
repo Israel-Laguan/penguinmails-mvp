@@ -67,6 +67,8 @@ export const copyText = {
     uploadCsvButton: "Upload CSV",
     manualInputLabel: "Manually Add Recipients",
     textareaPlaceholder: "Enter email addresses, one per line...\nExample:\njohn.doe@example.com\njane.smith@example.com",
+    settingsTitle: "Campaign Recipients",
+    settingsDescription: "This campaign was sent to 2,500 recipients.",
     helpText: "Enter one email address per line. You can also include variables like: email,firstName,lastName\njohn.doe@example.com,John,Doe"
   },
   schedule: {
@@ -101,7 +103,14 @@ export const copyText = {
   buttons: {
     moveStepUp: "Move step up",
     moveStepDown: "Move step down",
-    removeStep: "Remove step"
+    removeStep: "Remove step",
+    cancel: "Cancel",
+    create: "Create Campaign",
+    creating: "Creating...",
+    edit: "Edit",
+    duplicate: "Duplicate",
+    pauseCampaign: "Pause Campaign",
+    viewRecipients: "View Recipients",
   },
   templates: {
     buttonLabel: "Import Template",
@@ -124,5 +133,72 @@ export const copyText = {
         body: "Hi {{firstName}},\n\nSince I haven't heard back..."
       }
     ]
-  }
+  },
+  pageTitle: "Create Campaign",
+  tabs: {
+    sequence: "Sequence",
+    schedule: "Schedule",
+    recipients: "Recipients",
+    overview: "Overview",
+    settings: "Settings",
+  },
+  cardTitles: {
+    campaignDetails: "Campaign Details",
+  },
+  validation: {
+    campaignName: "Campaign name is required",
+    fromName: "From name is required",
+    email: "Invalid email address",
+    minSteps: "Campaign must have at least one step",
+  },
+  stats: {
+    openRate: "Open Rate",
+    clickRate: "Click Rate",
+    replyRate: "Reply Rate",
+    bounceRate: "Bounce Rate",
+    fromAverage: "from average",
+    belowAverage: "below average",
+  },
+  charts: {
+    dailyPerformance: "Daily Performance",
+    sequencePerformance: "Sequence Performance",
+    labels: {
+      opens: "Opens",
+      clicks: "Clicks",
+      replies: "Replies",
+    },
+  },
+  sequence: {
+    title: "Email Sequence",
+    waitMessage: "Wait 3 days if no reply",
+    subject: "Subject:",
+  },
+  settings: {
+    title: "Campaign Settings",
+    sections: {
+      general: {
+        title: "General Settings",
+        campaignName: "Campaign Name",
+        status: "Status",
+        created: "Created",
+        sendingAccount: "Sending Account",
+      },
+      schedule: {
+        title: "Sending Schedule",
+        sendingWindow: "Sending Window",
+        days: "Days",
+        emailsPerDay: "Emails Per Day",
+      },
+    },
+  },
+  campaignDetail: {
+    id: "Campaign ID:",
+    status: {
+      running: "Running",
+    }
+  },
+  format: {
+    upTo: "Up to",
+    percentage: (value: number) => `${value.toFixed(1)}%`,
+  },
 } as const;

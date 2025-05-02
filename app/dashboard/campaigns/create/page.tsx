@@ -13,8 +13,7 @@ import { CampaignDetailsForm } from "@/components/campaigns/CampaignDetailsForm"
 import { SequenceStep } from "@/components/campaigns/SequenceStep";
 import { ScheduleSettings } from "@/components/campaigns/ScheduleSettings";
 import { RecipientsSettings } from "@/components/campaigns/RecipientsSettings";
-// Assuming PersonalizationTags was copied/created correctly
-// import { PersonalizationTags } from "@/components/email/PersonalizationTags";
+import { copyText as t } from "@/components/campaigns/copy";
 
 // Define Zod schema for validation
 const sequenceStepSchema = z.object({
@@ -23,15 +22,16 @@ const sequenceStepSchema = z.object({
   emailBody: z.string().optional(),
   delayDays: z.number().optional(),
   delayHours: z.number().optional(),
-  condition: z.enum(["always", "if_not_opened", "if_not_clicked", "if_not_replied"]).optional(),
+  condition: z
+    .enum(["always", "if_not_opened", "if_not_clicked", "if_not_replied"])
+    .optional(),
 });
 
 const campaignFormSchema = z.object({
-  name: z.string().min(1, "Campaign name is required"),
-  fromName: z.string().min(1, "From name is required"),
-  fromEmail: z.string().email("Invalid email address"),
-  // TODO: Add schema for schedule and recipients if managed by react-hook-form
-  sequence: z.array(sequenceStepSchema).min(1, "Campaign must have at least one step"),
+  name: z.string().min(1, t.validation.campaignName),
+  fromName: z.string().min(1, t.validation.fromName),
+  fromEmail: z.string().email(t.validation.email),
+  sequence: z.array(sequenceStepSchema).min(1, t.validation.minSteps),
 });
 
 type CampaignFormValues = z.infer<typeof campaignFormSchema>;
@@ -39,9 +39,11 @@ type CampaignFormValues = z.infer<typeof campaignFormSchema>;
 export default function CampaignCreatePage() {
   // State for managing sequence steps (similar to original)
   const [steps, setSteps] = useState<z.infer<typeof sequenceStepSchema>[]>([
-    { type: "email", emailSubject: "", emailBody: "" }
+    { type: "email", emailSubject: "", emailBody: "" },
   ]);
-  const [currentEditingStep, setCurrentEditingStep] = useState<number | null>(null);
+  const [currentEditingStep, setCurrentEditingStep] = useState<number | null>(
+    null
+  );
   const emailBodyRef = useRef<HTMLTextAreaElement>(null!);
 
   // Initialize react-hook-form
@@ -79,13 +81,22 @@ export default function CampaignCreatePage() {
   // Step manipulation functions (similar to original)
   const addEmailStep = (index: number) => {
     const newSteps = [...steps];
-    newSteps.splice(index + 1, 0, { type: "email", emailSubject: "", emailBody: "" });
+    newSteps.splice(index + 1, 0, {
+      type: "email",
+      emailSubject: "",
+      emailBody: "",
+    });
     setSteps(newSteps);
   };
 
   const addDelayStep = (index: number) => {
     const newSteps = [...steps];
-    newSteps.splice(index + 1, 0, { type: "delay", delayDays: 3, delayHours: 0, condition: "if_not_replied" });
+    newSteps.splice(index + 1, 0, {
+      type: "delay",
+      delayDays: 3,
+      delayHours: 0,
+      condition: "if_not_replied",
+    });
     setSteps(newSteps);
   };
 
@@ -135,7 +146,8 @@ export default function CampaignCreatePage() {
     const start = textarea.selectionStart ?? 0;
     const end = textarea.selectionEnd ?? 0;
     const currentBody = steps[index].emailBody ?? "";
-    const newBody = currentBody.substring(0, start) + tag + currentBody.substring(end);
+    const newBody =
+      currentBody.substring(0, start) + tag + currentBody.substring(end);
 
     const newSteps = [...steps];
     newSteps[index].emailBody = newBody;
@@ -151,7 +163,10 @@ export default function CampaignCreatePage() {
     }, 0);
   };
 
-  const updateStep = (index: number, updatedStepData: Partial<z.infer<typeof sequenceStepSchema>>) => {
+  const updateStep = (
+    index: number,
+    updatedStepData: Partial<z.infer<typeof sequenceStepSchema>>
+  ) => {
     const newSteps = [...steps];
     newSteps[index] = { ...newSteps[index], ...updatedStepData };
     setSteps(newSteps);
@@ -160,17 +175,16 @@ export default function CampaignCreatePage() {
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Create Campaign</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{t.pageTitle}</h1>
       </div>
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Campaign Details</CardTitle>
+              <CardTitle>{t.cardTitles.campaignDetails}</CardTitle>
             </CardHeader>
             <CardContent>
-              {/* Pass form instance to CampaignDetailsForm */}
               <CampaignDetailsForm form={form} />
             </CardContent>
           </Card>
@@ -179,15 +193,15 @@ export default function CampaignCreatePage() {
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="sequence">
                 <FileText className="mr-2 h-4 w-4" />
-                Sequence
+                {t.tabs.sequence}
               </TabsTrigger>
               <TabsTrigger value="schedule">
                 <Clock className="mr-2 h-4 w-4" />
-                Schedule
+                {t.tabs.schedule}
               </TabsTrigger>
               <TabsTrigger value="recipients">
                 <Users className="mr-2 h-4 w-4" />
-                Recipients
+                {t.tabs.recipients}
               </TabsTrigger>
             </TabsList>
 
@@ -214,10 +228,14 @@ export default function CampaignCreatePage() {
                 ))}
               </div>
               {form.formState.errors.sequence?.message && (
-                 <p className="text-sm font-medium text-destructive mt-2">{form.formState.errors.sequence.message}</p>
+                <p className="text-sm font-medium text-destructive mt-2">
+                  {form.formState.errors.sequence.message}
+                </p>
               )}
-               {form.formState.errors.sequence?.root?.message && (
-                 <p className="text-sm font-medium text-destructive mt-2">{form.formState.errors.sequence.root.message}</p>
+              {form.formState.errors.sequence?.root?.message && (
+                <p className="text-sm font-medium text-destructive mt-2">
+                  {form.formState.errors.sequence.root.message}
+                </p>
               )}
             </TabsContent>
 
@@ -233,11 +251,17 @@ export default function CampaignCreatePage() {
           </Tabs>
 
           <div className="flex justify-end space-x-2 pt-4">
-            <Button variant="outline" type="button" onClick={() => console.log("Cancel clicked")}> {/* Add cancel behavior */}
-              Cancel
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => console.log("Cancel clicked")}
+            >
+              {t.buttons.cancel}
             </Button>
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Creating..." : "Create Campaign"}
+              {form.formState.isSubmitting
+                ? t.buttons.creating
+                : t.buttons.create}
             </Button>
           </div>
         </form>
@@ -245,4 +269,3 @@ export default function CampaignCreatePage() {
     </div>
   );
 }
-

@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../app/api/generated/prisma"
@@ -14,40 +8,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// NextAuth User Model (integrated with application fields)
 model User {
-  id            String    @id @default(cuid()) // Changed to cuid() for NextAuth compatibility
-  name          String?   // Provided by NextAuth providers
-  username      String?   @unique // New field for username
-  email         String    @unique
+  id            String          @id @default(cuid())
+  name          String?
+  username      String?         @unique
+  email         String          @unique
   emailVerified DateTime?
-  image         String?   // Replaces avatarUrl, provided by NextAuth providers
-  passwordHash  String?   // Kept for potential email/password login
-
-  // NextAuth Relations
+  image         String?
+  passwordHash  String?
+  companyId     Int?
+  role          UserRole        @default(MEMBER)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   accounts      Account[]
-  sessions      Session[]
-
-  // Existing Application Fields & Relations
-  companyId     Int?      // Assuming a user might not always belong to a company initially? If required, change to Int
-  company       Company?  @relation(fields: [companyId], references: [id], onDelete: SetNull) // Adjusted relation type
-  role          UserRole  @default(MEMBER)
-  preferences   UserPreference?
-  templates     Template[]
   campaigns     Campaign[]
+  sessions      Session[]
+  templates     Template[]
+  company       Company?        @relation(fields: [companyId], references: [id])
+  preferences   UserPreference?
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  // Add index for faster querying by email
   @@index([email])
-  @@index([companyId]) // Index for company relation
+  @@index([companyId])
 }
 
-// NextAuth Required Models
 model Account {
-  id                Int       @id @default(autoincrement()) // Default for Prisma adapters >= 4.11.0
-  userId            String // References User.id (cuid())
+  id                Int      @id @default(autoincrement())
+  userId            String
   type              String
   provider          String
   providerAccountId String
@@ -56,30 +42,26 @@ model Account {
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String?   @db.Text // Use @db.Text for potential large JWTs
+  id_token          String?
   session_state     String?
-
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
-  @@index([userId]) // Index for user relation
+  @@index([userId])
 }
 
 model Session {
-  id           Int       @id @default(autoincrement()) // Default for Prisma adapters >= 4.11.0
-  sessionToken String    @unique
-  userId       String // References User.id (cuid())
+  id           Int      @id @default(autoincrement())
+  sessionToken String   @unique
+  userId       String
   expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId]) // Index for user relation
+  @@index([userId])
 }
 
 model VerificationToken {
@@ -90,147 +72,139 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// Existing Application Models (IDs changed to Int @id @default(autoincrement()))
 model Company {
-  id             Int        @id @default(autoincrement()) // Changed to Int autoincrement
-  name           String
-  stripeCustomerId String? @unique
-  planType       PlanType @default(FREE)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  users          User[]
-  clients        Client[]
-  templates      Template[]
-  campaigns      Campaign[]
+  id               Int        @id @default(autoincrement())
+  name             String
+  stripeCustomerId String?    @unique
+  planType         PlanType   @default(FREE)
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  campaigns        Campaign[]
+  clients          Client[]
+  templates        Template[]
+  users            User[]
 
-  // Add index for stripeCustomerId if often queried
   @@index([stripeCustomerId])
 }
 
 model Client {
-  id             Int                @id @default(autoincrement()) // Changed to Int autoincrement
-  email          String
-  firstName      String?
-  lastName       String?
-  notes          String?
-  companyId      Int // References Company.id (Int)
-  company        Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  campaigns      CampaignClient[]
-  emailEvents    EmailEvent[]
+  id          Int              @id @default(autoincrement())
+  email       String
+  firstName   String?
+  lastName    String?
+  notes       String?
+  companyId   Int
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  campaigns   CampaignClient[]
+  company     Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  emailEvents EmailEvent[]
 
-  @@unique([companyId, email]) // Email unique within a company
-  @@index([companyId]) // Index for company relation
+  @@unique([companyId, email])
+  @@index([companyId])
 }
 
 model Template {
-  id             Int            @id @default(autoincrement()) // Changed to Int autoincrement
-  name           String
-  subject        String
-  bodyHtml       String // PostgreSQL handles large strings well without @db.Text
-  companyId      Int // References Company.id (Int)
-  company        Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdById    String? // References User.id (cuid()) - Optional link
-  createdBy      User?          @relation(fields: [createdById], references: [id], onDelete: SetNull)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  campaignSteps  CampaignStep[]
+  id            Int            @id @default(autoincrement())
+  name          String
+  subject       String
+  bodyHtml      String
+  companyId     Int
+  createdById   String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  campaignSteps CampaignStep[]
+  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy     User?          @relation(fields: [createdById], references: [id])
 
-  @@index([companyId]) // Index for company relation
-  @@index([createdById]) // Index for createdBy relation
+  @@index([companyId])
+  @@index([createdById])
 }
 
 model Campaign {
-  id             Int                @id @default(autoincrement()) // Changed to Int autoincrement
-  name           String
-  status         CampaignStatus     @default(DRAFT)
-  companyId      Int // References Company.id (Int)
-  company        Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdById    String? // References User.id (cuid()) - Optional link
-  createdBy      User?            @relation(fields: [createdById], references: [id], onDelete: SetNull)
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  steps          CampaignStep[]   @relation(name: "CampaignSteps")
-  clients        CampaignClient[]
-  emailEvents    EmailEvent[]
+  id          Int              @id @default(autoincrement())
+  name        String
+  status      CampaignStatus   @default(DRAFT)
+  companyId   Int
+  createdById String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  company     Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy   User?            @relation(fields: [createdById], references: [id])
+  clients     CampaignClient[]
+  steps       CampaignStep[]   @relation("CampaignSteps")
+  emailEvents EmailEvent[]
 
-  @@index([companyId]) // Index for company relation
-  @@index([createdById]) // Index for createdBy relation
+  @@index([companyId])
+  @@index([createdById])
 }
 
 model CampaignStep {
-  id             Int            @id @default(autoincrement()) // Changed to Int autoincrement
-  sequenceOrder  Int
-  delayDays      Int
-  templateId     Int // References Template.id (Int)
-  template       Template       @relation(fields: [templateId], references: [id], onDelete: Restrict)
-  campaignId     Int // References Campaign.id (Int)
-  campaign       Campaign       @relation(name: "CampaignSteps", fields: [campaignId], references: [id], onDelete: Cascade)
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  emailEvents    EmailEvent[]
+  id            Int          @id @default(autoincrement())
+  sequenceOrder Int
+  delayDays     Int
+  templateId    Int
+  campaignId    Int
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  sendDays      String?
+  sendTimeStart String?
+  sendTimeEnd   String?
+  campaign      Campaign     @relation("CampaignSteps", fields: [campaignId], references: [id], onDelete: Cascade)
+  template      Template     @relation(fields: [templateId], references: [id])
+  emailEvents   EmailEvent[]
 
-  // Enhanced Scheduling Options
-  sendDays       String?
-  sendTimeStart  String?
-  sendTimeEnd    String?
-
-  @@unique([campaignId, sequenceOrder]) // Unique within a campaign
-  @@index([templateId]) // Index for template relation
-  @@index([campaignId]) // Index for campaign relation
+  @@unique([campaignId, sequenceOrder])
+  @@index([templateId])
+  @@index([campaignId])
 }
 
-// Join table for Many-to-Many between Campaign and Client
 model CampaignClient {
-  campaignId       Int // References Campaign.id (Int)
-  clientId         Int // References Client.id (Int)
-  campaign         Campaign         @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  client           Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  campaignId       Int
+  clientId         Int
   statusInCampaign ClientCampaignStatus @default(PENDING)
   currentStepOrder Int?
   nextSendTime     DateTime?
-  addedAt          DateTime         @default(now())
+  addedAt          DateTime             @default(now())
+  campaign         Campaign             @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  client           Client               @relation(fields: [clientId], references: [id], onDelete: Cascade)
   emailEvents      EmailEvent[]
 
-  @@id([campaignId, clientId]) // Composite primary key using Int IDs
-  @@index([clientId]) // Index for client relation (useful for finding campaigns for a client)
-  @@index([campaignId]) // Index for campaign relation (useful for finding clients in a campaign)
+  @@id([campaignId, clientId])
+  @@index([clientId])
+  @@index([campaignId])
 }
 
-// Model for tracking email events (opens, clicks, etc.)
 model EmailEvent {
-  id               Int                @id @default(autoincrement()) // Changed to Int autoincrement
+  id               Int             @id @default(autoincrement())
   type             EmailEventType
-  timestamp        DateTime           @default(now())
-  campaignId       Int // References Campaign.id (Int)
-  campaign         Campaign         @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  clientId         Int // References Client.id (Int)
-  client           Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  campaignStepId   Int? // References CampaignStep.id (Int) - Optional
-  campaignStep     CampaignStep?    @relation(fields: [campaignStepId], references: [id], onDelete: SetNull)
-  campaignClientId Int? // Part of the composite key for CampaignClient
-  campaignClient   CampaignClient?  @relation(fields: [campaignId, campaignClientId], references: [campaignId, clientId], onDelete: Cascade) // Corrected relation fields
+  timestamp        DateTime        @default(now())
+  campaignId       Int
+  clientId         Int
+  campaignStepId   Int?
+  campaignClientId Int?
   metadata         String?
+  campaignClient   CampaignClient? @relation(fields: [campaignId, campaignClientId], references: [campaignId, clientId], onDelete: Cascade)
+  campaign         Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  campaignStep     CampaignStep?   @relation(fields: [campaignStepId], references: [id])
+  client           Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
-  @@index([campaignId, clientId, type]) // Add index for faster querying
-  @@index([campaignStepId]) // Index for campaign step relation
-  @@index([campaignId, campaignClientId]) // Index for campaignClient relation
-  @@index([clientId]) // Index for client relation
+  @@index([campaignId, clientId, type])
+  @@index([campaignStepId])
+  @@index([campaignId, campaignClientId])
+  @@index([clientId])
 }
 
 model UserPreference {
-  id             Int             @id @default(autoincrement()) // Changed to Int autoincrement
-  userId         String          @unique // References User.id (cuid())
-  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  theme          ThemePreference @default(LIGHT)
-  layoutDensity  LayoutDensity   @default(NORMAL)
-  timezone       String          @default("UTC")
+  id            Int             @id @default(autoincrement())
+  userId        String          @unique
+  theme         ThemePreference @default(LIGHT)
+  layoutDensity LayoutDensity   @default(NORMAL)
+  timezone      String          @default("UTC")
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId]) // Index for user relation
+  @@index([userId])
 }
-
-// --- ENUMS ---
 
 enum UserRole {
   ADMIN

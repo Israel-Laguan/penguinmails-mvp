@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { PrismaClient, EmailEventType } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
 import { config as authOptions } from "@/lib/auth";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 // GET /api/analytics - Get analytics data for the current user's company
 export async function GET() {
@@ -24,39 +23,39 @@ export async function GET() {
     
     // Get event counts for each campaign
     const campaignStats = await Promise.all(
-      campaigns.map(async (campaign) => {
+      campaigns.map(async (campaign: { id: any; name: any; }) => {
         const sentCount = await prisma.emailEvent.count({
           where: {
             campaignId: campaign.id,
-            type: EmailEventType.SENT,
+            type: PrismaClient.EmailEventType.SENT,
           },
         });
         
         const openedCount = await prisma.emailEvent.count({
           where: {
             campaignId: campaign.id,
-            type: EmailEventType.OPENED,
+            type: PrismaClient.EmailEventType.OPENED,
           },
         });
         
         const clickedCount = await prisma.emailEvent.count({
           where: {
             campaignId: campaign.id,
-            type: EmailEventType.CLICKED,
+            type: PrismaClient.EmailEventType.CLICKED,
           },
         });
         
         const bouncedCount = await prisma.emailEvent.count({
           where: {
             campaignId: campaign.id,
-            type: EmailEventType.BOUNCED,
+            type: PrismaClient.EmailEventType.BOUNCED,
           },
         });
         
         const unsubscribedCount = await prisma.emailEvent.count({
           where: {
             campaignId: campaign.id,
-            type: EmailEventType.UNSUBSCRIBED,
+            type: PrismaClient.EmailEventType.UNSUBSCRIBED,
           },
         });
         

@@ -1,9 +1,7 @@
-
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
 const SALT_ROUNDS = 10;
 
 export async function POST(request: Request) {
@@ -32,6 +30,7 @@ export async function POST(request: Request) {
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
 
     // Create company and user in a transaction
+    // @ts-ignore
     const newUser = await prisma.$transaction(async (tx) => {
       const company = await tx.company.create({
         data: {
@@ -44,8 +43,7 @@ export async function POST(request: Request) {
         data: {
           email,
           passwordHash,
-          firstName,
-          lastName,
+          // name,
           companyId: company.id,
           // role: 'MEMBER', // Default is set in schema
         },

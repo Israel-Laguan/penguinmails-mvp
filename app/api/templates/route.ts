@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { config as authOptions } from "@/lib/auth";
-
-const prisma = new PrismaClient();
 
 // GET /api/templates - Get all templates for the current user's company
 export async function GET() {

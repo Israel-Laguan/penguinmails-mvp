@@ -55,26 +55,25 @@ const mainNavItems: NavItem[] = [
     href: "/dashboard/analytics",
     icon: BarChart3, // Reusing icon, consider a different one
   },
-  // Removed Inbox, Accounts, Warm-up for now to match existing app structure
-  // {
-  //   title: "Inbox",
-  //   href: "/dashboard/inbox",
-  //   icon: Inbox,
-  //   badge: {
-  //     text: "8",
-  //     variant: "default",
-  //   },
-  // },
-  // {
-  //   title: "Accounts",
-  //   href: "/dashboard/accounts",
-  //   icon: UserCircle,
-  // },
-  // {
-  //   title: "Warm-up",
-  //   href: "/dashboard/warmup",
-  //   icon: Zap,
-  // },
+  {
+    title: "Inbox",
+    href: "/dashboard/inbox",
+    icon: Inbox,
+    badge: {
+      text: "8",
+      variant: "default",
+    },
+  },
+  {
+    title: "Accounts",
+    href: "/dashboard/accounts",
+    icon: UserCircle,
+  },
+  {
+    title: "Warm-up",
+    href: "/dashboard/warmup",
+    icon: Zap,
+  },
   {
     title: "Settings",
     href: "/dashboard/settings",

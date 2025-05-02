@@ -37,7 +37,7 @@ export default function Navbar() {
 
     return (
       <>
-        {isAuthenticated ? (
+        {!isAuthenticated ? (
           <>
             <LinkWrapper>
                <Button variant={isMobileMenu ? "ghost" : "ghost"} size="sm" asChild className={isMobileMenu ? "w-full justify-start" : ""}>

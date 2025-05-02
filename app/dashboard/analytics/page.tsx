@@ -1,82 +1,20 @@
-
-import { PrismaClient, EmailEventType } from "@prisma/client";
-import { getServerSession } from "next-auth/next";
-import { config as authOptions } from "@/lib/auth";
-import { signOut } from "next-auth/react";
-
-const prisma = new PrismaClient();
-
-async function getAnalyticsData(companyId: string) {
-  // Fetch campaigns for the company
-  const campaigns = await prisma.campaign.findMany({
-    where: { companyId },
-    select: { id: true, name: true },
-    orderBy: { createdAt: "desc" },
-  });
-
-  // Fetch aggregated event counts for each campaign
-  const campaignStats = await Promise.all(
-    campaigns.map(async (campaign) => {
-      const sentCount = await prisma.emailEvent.count({
-        where: {
-          campaignId: campaign.id,
-          type: EmailEventType.SENT,
-        },
-      });
-      const openedCount = await prisma.emailEvent.count({
-        where: {
-          campaignId: campaign.id,
-          type: EmailEventType.OPENED,
-        },
-      });
-      const clickedCount = await prisma.emailEvent.count({
-        where: {
-          campaignId: campaign.id,
-          type: EmailEventType.CLICKED,
-        },
-      });
-      const bouncedCount = await prisma.emailEvent.count({
-        where: {
-          campaignId: campaign.id,
-          type: EmailEventType.BOUNCED,
-        },
-      });
-      const unsubscribedCount = await prisma.emailEvent.count({
-        where: {
-          campaignId: campaign.id,
-          type: EmailEventType.UNSUBSCRIBED,
-        },
-      });
-
-      return {
-        id: campaign.id,
-        name: campaign.name,
-        sent: sentCount,
-        opened: openedCount,
-        clicked: clickedCount,
-        bounced: bouncedCount,
-        unsubscribed: unsubscribedCount,
-      };
-    })
-  );
-
-  return campaignStats;
-}
+// import { getServerSession } from "next-auth/next";
+// import { config as authOptions } from "@/lib/auth";
+// import { signOut } from "next-auth/react";
 
 export default async function AnalyticsPage() {
-  const session = await getServerSession(authOptions);
+  // const session = await getServerSession(authOptions);
 
-  if (!session || !session.user) {
-    // Handle unauthorized access, though ProtectedRoute should cover this
-    return <div>Unauthorized</div>;
-  }
+  // if (!session || !session.user) {
+  //   return <div>Unauthorized</div>;
+  // }
 
-  const companyId = session.user.companyId;
-    if (!companyId) {
-      // You might want to import signOut from next-auth/react if not already imported
-      await signOut({ callbackUrl: '/auth/signin' });
-      return null;
-    }
+  // const companyId = session.user.companyId;
+  // if (!companyId) {
+  //   await signOut({ callbackUrl: '/auth/signin' });
+  //   return null;
+  // }
+
   interface CampaignStats {
     id: string;
     name: string;
@@ -87,13 +25,36 @@ export default async function AnalyticsPage() {
     unsubscribed: number;
   }
 
-  let campaignStats: CampaignStats[] = [];
-  try {
-    campaignStats = await getAnalyticsData(companyId);
-  } catch (error) {
-    console.error("Failed to fetch analytics data:", error);
-    // Handle error display if needed
-  }
+  // Mock data for testing
+  const campaignStats: CampaignStats[] = [
+    {
+      id: '1',
+      name: 'Welcome Campaign',
+      sent: 1000,
+      opened: 750,
+      clicked: 300,
+      bounced: 50,
+      unsubscribed: 10
+    },
+    {
+      id: '2',
+      name: 'Newsletter #1',
+      sent: 2500,
+      opened: 1800,
+      clicked: 900,
+      bounced: 75,
+      unsubscribed: 25
+    },
+    {
+      id: '3',
+      name: 'Product Launch',
+      sent: 5000,
+      opened: 3500,
+      clicked: 1200,
+      bounced: 150,
+      unsubscribed: 45
+    }
+  ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

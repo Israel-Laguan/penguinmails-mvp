@@ -2,7 +2,7 @@ import React from "react";
 import { getServerSession } from "next-auth";
 import { config as authOptions } from "@/lib/auth";
 import SessionProvider from "./SessionProvider";
-import ProtectedRoute from "@/components/ProtectedRoute";
+// import ProtectedRoute from "@/components/ProtectedRoute";
 import { DashboardLayout } from "@/components/layout/DashboardLayout"; // Renamed to avoid conflict
 
 export default async function DashboardRootLayout({
@@ -14,9 +14,9 @@ export default async function DashboardRootLayout({
 
   return (
     <SessionProvider session={session}>
-      <ProtectedRoute>
+      {/* <ProtectedRoute> */}
         <DashboardLayout>{children}</DashboardLayout>
-      </ProtectedRoute>
+      {/* </ProtectedRoute> */}
     </SessionProvider>
   );
 }

@@ -1,4 +1,4 @@
-# PenguinMails - Email Outreach Application
+# Penguin Mail - Email Outreach Application
 
 This is an MVP (Minimum Viable Product) of an email outreach web application built with Next.js and SQLite. The application allows users to manage clients, create email sequence campaigns, manage templates, and track basic results.
 

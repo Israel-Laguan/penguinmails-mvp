@@ -26,6 +26,8 @@ model User {
   templates     Template[]
   company       Company?        @relation(fields: [companyId], references: [id])
   preferences   UserPreference?
+  EmailAccount  EmailAccount[]
+  Domain        Domain[]
 
   @@index([email])
   @@index([companyId])
@@ -73,16 +75,18 @@ model VerificationToken {
 }
 
 model Company {
-  id               Int        @id @default(autoincrement())
+  id               Int            @id @default(autoincrement())
   name             String
-  stripeCustomerId String?    @unique
-  planType         PlanType   @default(FREE)
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
+  stripeCustomerId String?        @unique
+  planType         PlanType       @default(FREE)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
   campaigns        Campaign[]
   clients          Client[]
   templates        Template[]
   users            User[]
+  emailAccounts    EmailAccount[]
+  domains          Domain[]
 
   @@index([stripeCustomerId])
 }
@@ -206,6 +210,53 @@ model UserPreference {
   @@index([userId])
 }
 
+model EmailAccount {
+  id           Int                @id @default(autoincrement())
+  email        String
+  provider     String
+  status       EmailAccountStatus @default(PENDING)
+  reputation   Int                @default(0)
+  warmupStatus WarmupStatus       @default(NOT_STARTED)
+  dayLimit     Int                @default(100)
+  sent24h      Int                @default(0)
+  lastSync     DateTime?
+  spf          Boolean            @default(false)
+  dkim         Boolean            @default(false)
+  dmarc        Boolean            @default(false)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  companyId    Int
+  createdById  String
+  company      Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy    User               @relation(fields: [createdById], references: [id])
+
+  @@unique([companyId, email])
+  @@index([companyId])
+  @@index([createdById])
+}
+
+model Domain {
+  id          Int          @id @default(autoincrement())
+  domain      String
+  provider    String
+  status      DomainStatus @default(PENDING)
+  daysActive  Int          @default(0)
+  reputation  Int          @default(0)
+  spf         Boolean      @default(false)
+  dkim        Boolean      @default(false)
+  dmarc       Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  companyId   Int
+  createdById String
+  company     Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy   User         @relation(fields: [createdById], references: [id])
+
+  @@unique([companyId, domain])
+  @@index([companyId])
+  @@index([createdById])
+}
+
 enum UserRole {
   ADMIN
   MEMBER
@@ -255,4 +306,27 @@ enum EmailEventType {
   BOUNCED
   SPAM_COMPLAINT
   UNSUBSCRIBED
+}
+
+enum EmailAccountStatus {
+  PENDING
+  ACTIVE
+  ISSUE
+  SUSPENDED
+  DELETED
+}
+
+enum WarmupStatus {
+  NOT_STARTED
+  WARMING
+  WARMED
+  PAUSED
+}
+
+enum DomainStatus {
+  PENDING
+  VERIFIED
+  SETUP_REQUIRED
+  FAILED
+  DELETED
 }

@@ -49,7 +49,7 @@ export default function Navbar() {
             </LinkWrapper>
             <LinkWrapper>
                <Button variant={isMobileMenu ? "ghost" : "ghost"} size="sm" asChild className={isMobileMenu ? "w-full justify-start" : ""}>
-                 <Link href="/settings">
+                 <Link href="/dashboard/settings">
                    <Settings className="mr-2 h-4 w-4" />
                    Settings
                  </Link>

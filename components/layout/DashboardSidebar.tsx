@@ -50,11 +50,11 @@ const mainNavItems: NavItem[] = [
     href: "/dashboard/clients",
     icon: UserCircle, // Assuming Users icon exists or use appropriate one
   },
-  {
-    title: "Analytics", // Added based on previous app structure
-    href: "/dashboard/analytics",
-    icon: BarChart3, // Reusing icon, consider a different one
-  },
+  // {
+  //   title: "Analytics", // Added based on previous app structure
+  //   href: "/dashboard/analytics",
+  //   icon: BarChart3, // Reusing icon, consider a different one
+  // },
   {
     title: "Inbox",
     href: "/dashboard/inbox",

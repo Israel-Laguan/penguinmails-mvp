@@ -12,12 +12,12 @@ export const mockCampaigns: CampaignResponse[] = [
       statusInCampaign: "ACTIVE"
     })),
     emailEvents: [
-      ...Array.from({ length: 1285 }, () => ({ type: "SENT" as EmailEventType, timestamp: new Date() })),
-      ...Array.from({ length: 840 }, () => ({ type: "OPENED" as EmailEventType, timestamp: new Date() })),
-      ...Array.from({ length: 210 }, () => ({ type: "CLICKED" as EmailEventType, timestamp: new Date() })),
-      ...Array.from({ length: 84 }, () => ({ type: "REPLIED" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 1285 }, () => ({ type: "SENT" as EmailEventType, timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) })),
+      ...Array.from({ length: 840 }, () => ({ type: "OPENED" as EmailEventType, timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) })),
+      ...Array.from({ length: 210 }, () => ({ type: "CLICKED" as EmailEventType, timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) })),
+      ...Array.from({ length: 84 }, () => ({ type: "REPLIED" as EmailEventType, timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000) })),
     ],
-    updatedAt: new Date()
+    updatedAt: new Date(Date.now() - (2 * 60 * 60 * 1000))
   },
   {
     id: 2,
@@ -34,7 +34,7 @@ export const mockCampaigns: CampaignResponse[] = [
       ...Array.from({ length: 432 }, () => ({ type: "CLICKED" as EmailEventType, timestamp: new Date() })),
       ...Array.from({ length: 216 }, () => ({ type: "REPLIED" as EmailEventType, timestamp: new Date() })),
     ],
-    updatedAt: new Date()
+    updatedAt: new Date(Date.now() - (24 * 60 * 60 * 1000))
   },
   {
     id: 3,
@@ -46,7 +46,7 @@ export const mockCampaigns: CampaignResponse[] = [
       statusInCampaign: "ACTIVE"
     })),
     emailEvents: [],
-    updatedAt: new Date()
+    updatedAt: new Date(Date.now() - (3 * 24 * 60 * 60 * 1000))
   },
   {
     id: 4,
@@ -63,7 +63,7 @@ export const mockCampaigns: CampaignResponse[] = [
       ...Array.from({ length: 85 }, () => ({ type: "CLICKED" as EmailEventType, timestamp: new Date() })),
       ...Array.from({ length: 42 }, () => ({ type: "REPLIED" as EmailEventType, timestamp: new Date() })),
     ],
-    updatedAt: new Date()
+    updatedAt: new Date(Date.now() - (5 * 60 * 1000))
   },
   {
     id: 5,
@@ -80,7 +80,7 @@ export const mockCampaigns: CampaignResponse[] = [
       ...Array.from({ length: 600 }, () => ({ type: "CLICKED" as EmailEventType, timestamp: new Date() })),
       ...Array.from({ length: 320 }, () => ({ type: "REPLIED" as EmailEventType, timestamp: new Date() })),
     ],
-    updatedAt: new Date()
+    updatedAt: new Date(Date.now() - (7 * 24 * 60 * 60 * 1000))
   },
 ];
 

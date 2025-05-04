@@ -25,20 +25,27 @@ export const copyText = {
       opens: "Opens",
       clicks: "Clicks",
       replies: "Replies",
-      lastActivity: "Last Activity"
+      bounces: "Bounces",
+      spam: "Spam",
+      unsubscribed: "Unsubscribed",
+      updatedAt: "Last Activity"
     },
     empty: {
       title: "No campaigns found",
-      description: "Get started by creating a new campaign."
+      description: "Create a new campaign to get started"
     },
     searchPlaceholder: "Search campaigns...",
-    totalResults: (count: number) => `${count} campaign(s) total.`,
+    totalResults: (count: number) => `${count} campaigns found`,
     pagination: {
       previous: "Previous",
       next: "Next"
     },
     exportCsv: "Export CSV",
-    viewColumns: "View"
+    viewColumns: "View Columns",
+    stats: {
+      rate: (value: number) => `(${value.toFixed(1)}%)`,
+      progress: (sent: number, total: number) => `${sent}/${total}`
+    }
   },
   campaignDetails: {
     labels: {

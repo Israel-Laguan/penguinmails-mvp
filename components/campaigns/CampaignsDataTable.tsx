@@ -77,6 +77,7 @@ async function handleDeleteCampaign(id: number) {
   const result = { error: null }; // Mock result for demonstration
 
   if (result?.error) {
+    console.error("Error deleting campaign:", id, "\n", result.error);
     toast.error("Error deleting campaign", {
       description: result.error,
     });
@@ -94,6 +95,7 @@ async function handlePauseCampaign(id: number) {
   const result = { error: null }; // Mock result for demonstration
 
   if (result?.error) {
+    console.error("Error pausing campaign:", id, "\n", result.error);
     toast.error("Error pausing campaign", {
       description: result.error,
     });
@@ -110,6 +112,7 @@ async function handleResumeCampaign(id: number) {
   const result = { error: null }; // Mock result for demonstration
 
   if (result?.error) {
+    console.error("Error resuming campaign:", id, "\n", result.error);
     toast.error("Error resuming campaign", {
       description: result.error,
     });
@@ -126,6 +129,7 @@ async function handleDuplicateCampaign(id: number) {
   const result = { error: null }; // Mock result for demonstration
 
   if (result?.error) {
+    console.error("Error duplicating campaign:", id, "\n", result.error);
     toast.error("Error duplicating campaign", {
       description: result.error,
     });
@@ -169,7 +173,7 @@ const columns: ColumnDef<CampaignResponse>[] = [
               : status === "PAUSED"
               ? "destructive"
               : status === "DRAFT"
-              ? "default"
+              ? "outline"
               : "secondary"
           }
         >
@@ -180,18 +184,16 @@ const columns: ColumnDef<CampaignResponse>[] = [
   },
   {
     id: "recipients",
-    header: "Progress",
+    header: t.table.columns.progress,
     cell: ({ row }) => {
-      const sent = row.original.emailEvents.filter(
-        (e) => e.type === "SENT"
-      ).length;
+      const sent = row.original.emailEvents.filter((e) => e.type === "SENT").length;
       const total = row.original.clients.length;
       const progress = total > 0 ? (sent / total) * 100 : 0;
       return (
         <div className="flex items-center gap-2">
           <Progress value={progress} className="w-[60px]" />
           <span className="text-xs text-muted-foreground">
-            {sent}/{total}
+            {t.table.stats.progress(sent, total)}
           </span>
         </div>
       );
@@ -199,7 +201,7 @@ const columns: ColumnDef<CampaignResponse>[] = [
   },
   {
     id: "opens",
-    header: "Opens",
+    header: t.table.columns.opens,
     cell: ({ row }) => {
       const sent = row.original.emailEvents.filter(
         (e) => e.type === "SENT"
@@ -212,7 +214,7 @@ const columns: ColumnDef<CampaignResponse>[] = [
         <div className="text-right">
           {opens.toLocaleString()}
           <span className="text-xs text-muted-foreground ml-1">
-            ({rate.toFixed(1)}%)
+            {t.table.stats.rate(rate)}
           </span>
         </div>
       );
@@ -220,7 +222,7 @@ const columns: ColumnDef<CampaignResponse>[] = [
   },
   {
     id: "clicks",
-    header: "Clicks",
+    header: t.table.columns.clicks,
     cell: ({ row }) => {
       const sent = row.original.emailEvents.filter(
         (e) => e.type === "SENT"
@@ -233,7 +235,7 @@ const columns: ColumnDef<CampaignResponse>[] = [
         <div className="text-right">
           {clicks.toLocaleString()}
           <span className="text-xs text-muted-foreground ml-1">
-            ({rate.toFixed(1)}%)
+            {t.table.stats.rate(rate)}
           </span>
         </div>
       );
@@ -241,7 +243,7 @@ const columns: ColumnDef<CampaignResponse>[] = [
   },
   {
     id: "replies",
-    header: "Replies",
+    header: t.table.columns.replies,
     cell: ({ row }) => {
       const sent = row.original.emailEvents.filter(
         (e) => e.type === "SENT"
@@ -254,7 +256,70 @@ const columns: ColumnDef<CampaignResponse>[] = [
         <div className="text-right">
           {replies.toLocaleString()}
           <span className="text-xs text-muted-foreground ml-1">
-            ({rate.toFixed(1)}%)
+            {t.table.stats.rate(rate)}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    id: "bounces",
+    header: t.table.columns.bounces,
+    cell: ({ row }) => {
+      const sent = row.original.emailEvents.filter(
+        (e) => e.type === "SENT"
+      ).length;
+      const bounces = row.original.emailEvents.filter(
+        (e) => e.type === "BOUNCED"
+      ).length;
+      const rate = sent > 0 ? (bounces / sent) * 100 : 0;
+      return (
+        <div className="text-right">
+          {bounces.toLocaleString()}
+          <span className="text-xs text-muted-foreground ml-1">
+            {t.table.stats.rate(rate)}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    id: "spam",
+    header: t.table.columns.spam,
+    cell: ({ row }) => {
+      const sent = row.original.emailEvents.filter(
+        (e) => e.type === "SENT"
+      ).length;
+      const spam = row.original.emailEvents.filter(
+        (e) => e.type === "SPAM_COMPLAINT"
+      ).length;
+      const rate = sent > 0 ? (spam / sent) * 100 : 0;
+      return (
+        <div className="text-right">
+          {spam.toLocaleString()}
+          <span className="text-xs text-muted-foreground ml-1">
+            {t.table.stats.rate(rate)}
+          </span>
+        </div>
+      );
+    },
+  },
+  {
+    id: "unsubscribed",
+    header: t.table.columns.unsubscribed,
+    cell: ({ row }) => {
+      const sent = row.original.emailEvents.filter(
+        (e) => e.type === "SENT"
+      ).length;
+      const unsubs = row.original.emailEvents.filter(
+        (e) => e.type === "UNSUBSCRIBED"
+      ).length;
+      const rate = sent > 0 ? (unsubs / sent) * 100 : 0;
+      return (
+        <div className="text-right">
+          {unsubs.toLocaleString()}
+          <span className="text-xs text-muted-foreground ml-1">
+            {t.table.stats.rate(rate)}
           </span>
         </div>
       );
@@ -262,7 +327,7 @@ const columns: ColumnDef<CampaignResponse>[] = [
   },
   {
     accessorKey: "updatedAt",
-    header: "Last Activity",
+    header: t.table.columns.updatedAt,
     cell: ({ row }) => {
       const lastEvent = row.original.emailEvents.sort(
         (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
@@ -329,7 +394,7 @@ const columns: ColumnDef<CampaignResponse>[] = [
               >
                 <Button
                   variant="ghost"
-                  className={`w-full text-left font-normal ${
+                  className={`w-full justify-start font-normal ${
                     row.original.status === "ACTIVE"
                       ? "bg-yellow-100 hover:bg-yellow-100 text-yellow-600 hover:text-yellow-600"
                       : "bg-green-100 hover:bg-green-100 text-green-600 hover:text-green-600"
@@ -356,7 +421,7 @@ const columns: ColumnDef<CampaignResponse>[] = [
               <DropdownMenuItem className="bg-red-100 hover:bg-red-100 text-red-600 hover:text-red-600">
                 <Button
                   variant="ghost"
-                  className="bg-red-100 hover:bg-red-100 text-red-600 hover:text-red-600 w-full"
+                  className="w-full justify-start font-normal bg-red-100 hover:bg-red-100 text-red-600 hover:text-red-600"
                   onClick={() => handleDeleteCampaign(row.original.id)}
                 >
                   <XCircle className="mr-2 h-4 w-4 text-red-600" />{" "}
@@ -378,7 +443,11 @@ export function CampaignsDataTable({ data }: { data: CampaignResponse[] }) {
     []
   );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({
+      bounces: false,
+      spam: false,
+      unsubscribed: false,
+    });
 
   const table = useReactTable({
     data,
@@ -431,7 +500,7 @@ export function CampaignsDataTable({ data }: { data: CampaignResponse[] }) {
                           column.toggleVisibility(e.target.checked)
                         }
                       />
-                      {column.id}
+                      {(t.table.columns as Record<string, string>)[column.id] || column.id}
                     </label>
                   </DropdownMenuItem>
                 );

@@ -1,9 +1,9 @@
 'use client';
 
-import { CampaignStats } from "./types";
-import { Header } from "./Header";
-import { CampaignPerformance } from "./CampaignPerformance";
-import { AnalyticsOverview } from "./AnalyticsOverview";
+import { CampaignStats } from "@/components/analytics/types";
+import { Header } from "@/components/analytics/Header";
+import { CampaignPerformance } from "@/components/analytics/CampaignPerformance";
+import { AnalyticsOverview } from "@/components/analytics/AnalyticsOverview";
 
 interface AnalyticsContentProps {
   campaignStats: CampaignStats[];

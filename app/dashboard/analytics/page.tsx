@@ -1,5 +1,5 @@
 import { EmailEventType } from '@/app/api/generated/prisma';
-import AnalyticsContent from '@/components/analytics/content';
+import AnalyticsContent from '@/app/dashboard/analytics/content';
 import { CampaignStats } from '@/components/analytics/types';
 
 // import { getServerSession } from "next-auth/next";

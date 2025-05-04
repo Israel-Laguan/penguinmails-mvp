@@ -1,86 +1,163 @@
-export const mockDailyData = [
-  { name: "Apr 20", opens: 15, clicks: 8, replies: 3 },
-  { name: "Apr 21", opens: 28, clicks: 12, replies: 5 },
-  { name: "Apr 22", opens: 35, clicks: 19, replies: 8 },
-  { name: "Apr 23", opens: 42, clicks: 22, replies: 10 },
-  { name: "Apr 24", opens: 38, clicks: 20, replies: 7 },
-  { name: "Apr 25", opens: 45, clicks: 25, replies: 12 },
-  { name: "Apr 26", opens: 50, clicks: 28, replies: 15 },
+import { EmailEventType } from "@/app/api/generated/prisma";
+import { CampaignResponse } from "@/types/campaign";
+
+export const mockCampaigns: CampaignResponse[] = [
+  {
+    id: 1,
+    name: "Software CEOs Outreach",
+    status: "ACTIVE",
+    clients: Array.from({ length: 2500 }, (_, i) => ({
+      campaignId: 1,
+      clientId: i + 1,
+      statusInCampaign: "ACTIVE"
+    })),
+    emailEvents: [
+      ...Array.from({ length: 1285 }, () => ({ type: "SENT" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 840 }, () => ({ type: "OPENED" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 210 }, () => ({ type: "CLICKED" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 84 }, () => ({ type: "REPLIED" as EmailEventType, timestamp: new Date() })),
+    ],
+    updatedAt: new Date()
+  },
+  {
+    id: 2,
+    name: "Marketing Directors Follow-up",
+    status: "PAUSED",
+    clients: Array.from({ length: 1800 }, (_, i) => ({
+      campaignId: 2,
+      clientId: i + 1,
+      statusInCampaign: "ACTIVE"
+    })),
+    emailEvents: [
+      ...Array.from({ length: 1800 }, () => ({ type: "SENT" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 1170 }, () => ({ type: "OPENED" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 432 }, () => ({ type: "CLICKED" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 216 }, () => ({ type: "REPLIED" as EmailEventType, timestamp: new Date() })),
+    ],
+    updatedAt: new Date()
+  },
+  {
+    id: 3,
+    name: "Startup Founders Introduction",
+    status: "DRAFT",
+    clients: Array.from({ length: 1200 }, (_, i) => ({
+      campaignId: 3,
+      clientId: i + 1,
+      statusInCampaign: "ACTIVE"
+    })),
+    emailEvents: [],
+    updatedAt: new Date()
+  },
+  {
+    id: 4,
+    name: "SaaS Decision Makers",
+    status: "ACTIVE",
+    clients: Array.from({ length: 1500 }, (_, i) => ({
+      campaignId: 4,
+      clientId: i + 1,
+      statusInCampaign: "ACTIVE"
+    })),
+    emailEvents: [
+      ...Array.from({ length: 450 }, () => ({ type: "SENT" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 280 }, () => ({ type: "OPENED" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 85 }, () => ({ type: "CLICKED" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 42 }, () => ({ type: "REPLIED" as EmailEventType, timestamp: new Date() })),
+    ],
+    updatedAt: new Date()
+  },
+  {
+    id: 5,
+    name: "Enterprise IT Directors",
+    status: "COMPLETED",
+    clients: Array.from({ length: 2000 }, (_, i) => ({
+      campaignId: 5,
+      clientId: i + 1,
+      statusInCampaign: "ACTIVE"
+    })),
+    emailEvents: [
+      ...Array.from({ length: 2000 }, () => ({ type: "SENT" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 1400 }, () => ({ type: "OPENED" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 600 }, () => ({ type: "CLICKED" as EmailEventType, timestamp: new Date() })),
+      ...Array.from({ length: 320 }, () => ({ type: "REPLIED" as EmailEventType, timestamp: new Date() })),
+    ],
+    updatedAt: new Date()
+  },
 ];
 
-export const mockSequenceData = [
-  { name: "Email 1", opens: 840, clicks: 210, replies: 84 },
-  { name: "Email 2", opens: 580, clicks: 145, replies: 62 },
-  { name: "Email 3", opens: 320, clicks: 80, replies: 35 },
-];
-
-export const mockCampaign = {
-  name: "Software CEOs Outreach",
-  status: "Running",
-  sent: 1285,
-  total: 2500,
-  opens: 840,
-  clicks: 210,
-  replies: 84,
-  bounces: 12,
-  openRate: 65.4,
-  clickRate: 25.0,
-  replyRate: 10.0,
+export const mockCampaignDetail = {
+  ...mockCampaigns[0],
   sequence: [
     {
       id: 1,
       name: "Initial Outreach",
-      subject: "Quick question about {Company}'s software strategy",
-      sent: 1285,
-      opens: 840,
-      clicks: 210,
-      replies: 84,
+      subject: "Quick question about your software",
+      sent: 2500,
+      opens: 1625,
+      clicks: 406,
+      replies: 203,
     },
     {
       id: 2,
-      name: "Follow Up #1",
-      subject: "Following up on my message, {First Name}",
-      sent: 880,
-      opens: 580,
-      clicks: 145,
-      replies: 62,
+      name: "Follow-up 1",
+      subject: "Re: Quick question about your software",
+      sent: 2297,
+      opens: 1608,
+      clicks: 482,
+      replies: 241,
     },
     {
       id: 3,
-      name: "Last Attempt",
-      subject: "Closing the loop, {First Name}",
-      sent: 480,
-      opens: 320,
-      clicks: 80,
-      replies: 35,
-    }
-  ]
+      name: "Break-up Email",
+      subject: "Closing the loop",
+      sent: 2056,
+      opens: 1439,
+      clicks: 288,
+      replies: 144,
+    },
+  ],
+  openRate: 65.4,
+  clickRate: 16.3,
+  replyRate: 6.5,
 };
 
 export const mockStatsComparison = {
-  openRate: { value: 12, type: 'increase' },
-  clickRate: { value: 3, type: 'increase' },
-  replyRate: { value: 1.5, type: 'increase' },
-  bounceRate: { value: 0.3, type: 'decrease' },
+  openRate: { value: 12.5, trend: "up" },
+  clickRate: { value: 8.2, trend: "up" },
+  replyRate: { value: 15.0, trend: "up" },
+  bounceRate: { value: 35.0, trend: "down" },
 };
+
+export const mockDailyData = [
+  { name: "Mon", opens: 650, clicks: 230, replies: 123 },
+  { name: "Tue", opens: 730, clicks: 280, replies: 154 },
+  { name: "Wed", opens: 810, clicks: 310, replies: 169 },
+  { name: "Thu", opens: 590, clicks: 210, replies: 98 },
+  { name: "Fri", opens: 730, clicks: 290, replies: 147 },
+];
+
+export const mockSequenceData = [
+  { name: "Email 1", opens: 1625, clicks: 406, replies: 203 },
+  { name: "Email 2", opens: 1608, clicks: 482, replies: 241 },
+  { name: "Email 3", opens: 1439, clicks: 288, replies: 144 },
+];
 
 export const mockChartConfig = {
   colors: {
-    opens: '#0284c7',
-    clicks: '#0ea5e9',
-    replies: '#7dd3fc',
+    opens: "#0284c7",
+    clicks: "#0ea5e9",
+    replies: "#7dd3fc",
   },
   dataKeys: {
-    opens: 'opens',
-    clicks: 'clicks',
-    replies: 'replies',
-  }
+    opens: "opens",
+    clicks: "clicks",
+    replies: "replies",
+  },
 };
 
 export const mockSettings = {
-  created: "April 20, 2023",
-  sendingAccount: "john@example.com",
+  created: "Oct 15, 2023",
+  sendingAccount: "john@acme.com",
   sendingWindow: "9:00 AM - 5:00 PM",
-  workingDays: "Monday - Friday",
-  emailsPerDay: "Up to 200",
+  workingDays: "Mon - Fri",
+  emailsPerDay: "Up to 500 emails",
 };

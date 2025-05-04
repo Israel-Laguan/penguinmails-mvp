@@ -1,7 +1,7 @@
 'use client';
 
 import { copyText as t } from "@/components/campaigns/copy";
-import { mockDailyData, mockSequenceData, mockCampaign, mockStatsComparison, mockChartConfig, mockSettings } from "@/components/campaigns/mock-data";
+import { mockCampaignDetail, mockDailyData, mockSequenceData, mockStatsComparison, mockChartConfig, mockSettings } from "@/components/campaigns/mock-data";
 import React from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,7 @@ export default function CampaignDetail() {
   const { id } = useParams();
   
   const campaign = {
-    ...mockCampaign,
+    ...mockCampaignDetail,
     id: Number(id),
   };
 

@@ -1,23 +1,55 @@
-// import { getServerSession } from "next-auth/next";
-// import { config as authOptions } from "@/lib/auth";
-import { getCampaignsDataAction } from "@/lib/actions";
-// import { signOut } from "next-auth/react";
 import CampaignsContent from "./content";
+import { mockCampaigns } from "@/components/campaigns/mock-data";
+// import { prisma } from "@/lib/prisma";
+// import { notFound } from "next/navigation";
+// import { EmailEventType } from "@/app/api/generated/prisma";
 
-export default async function CampaignsPage() {
-  // const session = await getServerSession(authOptions);
+const mockData = {
+  summary: {
+    totalCampaigns: mockCampaigns.length,
+    activeCampaigns: mockCampaigns.filter(c => c.status === 'ACTIVE').length,
+    emailsSent: mockCampaigns.reduce((acc, c) => 
+      acc + c.emailEvents.filter(e => e.type === 'SENT').length, 0),
+    totalReplies: mockCampaigns.reduce((acc, c) => 
+      acc + c.emailEvents.filter(e => e.type === 'REPLIED').length, 0),
+  },
+  campaigns: mockCampaigns
+};
 
-  // if (!session || !session.user) {
-  //   return <div>Unauthorized</div>;
-  // }
+// async function getCampaignsData() {
+//   const campaigns = await prisma.campaign.findMany({
+//     include: {
+//       clients: true,
+//       emailEvents: {
+//         select: {
+//           type: true,
+//           timestamp: true
+//         }
+//       }
+//     }
+//   });
 
-  // const companyId = session.user.companyId;
-  // if (!companyId) {
-  //   await signOut({ callbackUrl: '/auth/signin' });
-  //   return null;
-  // }
+//   if (!campaigns) {
+//     notFound();
+//   }
 
-  const campaignsData = await getCampaignsDataAction('companyId');
-  
-  return <CampaignsContent campaignsData={campaignsData} />;
+//   // Calculate summary statistics
+//   const summary = {
+//     totalCampaigns: campaigns.length,
+//     activeCampaigns: campaigns.filter(c => c.status === 'ACTIVE').length,
+//     emailsSent: campaigns.reduce((acc, c) => 
+//       acc + c.emailEvents.filter(e => e.type === EmailEventType.SENT).length, 0),
+//     totalReplies: campaigns.reduce((acc, c) => 
+//       acc + c.emailEvents.filter(e => e.type === EmailEventType.REPLIED).length, 0),
+//   };
+
+//   return {
+//     summary,
+//     campaigns
+//   };
+// }
+
+export default function CampaignsPage() {
+  // const data = await getCampaignsData();
+  return <CampaignsContent campaignsData={mockData} />;
 }

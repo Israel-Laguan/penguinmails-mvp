@@ -8,19 +8,37 @@ export const copyText = {
     totalReplies: "Total Replies"
   },
   table: {
-    name: "Name",
-    status: "Status",
-    recipients: "Recipients",
-    sent: "Sent",
-    replies: "Replies",
-    openRate: "Open Rate",
-    replyRate: "Reply Rate",
-    lastUpdated: "Last Updated",
-    actions: "Actions",
-    edit: "Edit",
-    delete: "Delete",
-    view: "View",
-    noData: "No campaigns found"
+    actions: {
+      title: "Actions",
+      tooltipLabel: "Open actions menu",
+      view: "View",
+      edit: "Edit",
+      duplicate: "Duplicate",
+      delete: "Delete",
+      pause: "Pause",
+      resume: "Resume"
+    },
+    columns: {
+      name: "Name",
+      status: "Status",
+      progress: "Progress",
+      opens: "Opens",
+      clicks: "Clicks",
+      replies: "Replies",
+      lastActivity: "Last Activity"
+    },
+    empty: {
+      title: "No campaigns found",
+      description: "Get started by creating a new campaign."
+    },
+    searchPlaceholder: "Search campaigns...",
+    totalResults: (count: number) => `${count} campaign(s) total.`,
+    pagination: {
+      previous: "Previous",
+      next: "Next"
+    },
+    exportCsv: "Export CSV",
+    viewColumns: "View"
   },
   campaignDetails: {
     labels: {
@@ -201,4 +219,12 @@ export const copyText = {
     upTo: "Up to",
     percentage: (value: number) => `${value.toFixed(1)}%`,
   },
+  status: {
+    // Translation map from DB to UI
+    ACTIVE: "running",
+    DRAFT: "draft",
+    PAUSED: "paused",
+    COMPLETED: "completed",
+    ARCHIVED: "archived"
+  }
 } as const;

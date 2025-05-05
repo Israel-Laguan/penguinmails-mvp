@@ -1,0 +1,47 @@
+name: Lint Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: ['main', 'dev', '**']
+
+jobs:
+  lint:
+    name: Run ESLint and Prettier
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4  # Actualizado a v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: v23.6.0
+          cache: 'npm'  # Habilita caching automático para npm
+
+      - uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: |
+            ~/.npm
+            node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: |
+          echo "Installing dependencies..."
+          npm ci  # Usa npm clean-install para CI
+
+      - name: Run ESLint
+        run: npm run lint
+        env:
+          CI: true
+
+      - name: Run Prettier
+        run: npm run format:check
+
+      - name: Run Jest
+        run: npm run test

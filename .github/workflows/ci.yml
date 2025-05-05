@@ -31,8 +31,8 @@ jobs:
       - name: Install dependencies
         if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
-          echo "Installing dependencies..."
-          npm ci
+          echo "Installing dependencies with legacy-peer-deps..."
+          npm ci --legacy-peer-deps
 
       - name: Run ESLint
         run: npm run lint

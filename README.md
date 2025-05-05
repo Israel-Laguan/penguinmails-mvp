@@ -152,3 +152,6 @@ The Dashboard > Analytics page provides visualizations and metrics for campaign 
 - Add user dropdown and logout functionality to the Dashboard Header.
 - Refine mobile responsiveness, potentially adding a mobile sidebar toggle.
 - Integrate with third-party services like Stripe for payments.
+
+<!-- CONTRIBUTORS START -->
+<!-- CONTRIBUTORS END -->

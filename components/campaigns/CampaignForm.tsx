@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { z } from "zod";
 import { useForm, UseFormReturn } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,71 +12,9 @@ import { SequenceStep } from "./SequenceStep";
 import { ScheduleSettings } from "./ScheduleSettings";
 import { RecipientsSettings } from "./RecipientsSettings";
 import { copyText as t } from "./copy";
-import { CampaignEventContition, CampaignStatus } from "@/app/api/generated/prisma";
-
-// Schema definitions
-const campaignStepSchema = z.object({
-  id: z.number().optional(),
-  sequenceOrder: z.number(),
-  delayDays: z.number(),
-  delayHours: z.number(),
-  templateId: z.number(),
-  campaignId: z.number(),
-  emailSubject: z.string().min(1, t.validation.subject),
-  emailBody: z.string().optional(),
-  condition: z.nativeEnum(CampaignEventContition),
-});
-
-const campaignFormSchema = z.object({
-  id: z.number().optional(),
-  name: z.string().min(1, t.validation.campaignName),
-  fromName: z.string().min(1, t.validation.fromName),
-  fromEmail: z.string().email(t.validation.email),
-  status: z.nativeEnum(CampaignStatus).optional().default("DRAFT"),
-  companyId: z.number().optional(),
-  createdById: z.string().optional(),
-  steps: z.array(campaignStepSchema).min(1, t.validation.minSteps),
-  sendDays: z.array(z.number()).optional(), // Array of weekday numbers (0-6)
-  sendTimeStart: z.string().optional(), // HH:mm format
-  sendTimeEnd: z.string().optional(), // HH:mm format
-  emailsPerDay: z.number().optional(),
-  timezone: z.string().optional().default("UTC"),
-  metrics: z.object({
-    recipients: z.object({
-      sent: z.number(),
-      total: z.number(),
-    }),
-    opens: z.object({
-      total: z.number(),
-      rate: z.number(),
-    }),
-    clicks: z.object({
-      total: z.number(),
-      rate: z.number(),
-    }),
-    replies: z.object({
-      total: z.number(),
-      rate: z.number(),
-    }),
-    bounces: z.object({
-      total: z.number(),
-      rate: z.number(),
-    }).optional(),
-  }).optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-});
-
-export type CampaignFormValues = z.infer<typeof campaignFormSchema>;
-
-interface CampaignFormProps {
-  initialData?: CampaignFormValues;
-  onSubmit: (data: CampaignFormValues) => Promise<void>;
-  onCancel?: () => void;
-  submitLabel?: string;
-  submitLoadingLabel?: string;
-  readOnly?: boolean;
-}
+import { CampaignEventContition } from "@/app/api/generated/prisma";
+import { CampaignFormProps, CampaignFormValues, CampaignSteps, PartialCampaignStep } from "./types";
+import { CampaignDetails } from "./CampaignDetails";
 
 export function CampaignForm({
   initialData,
@@ -88,7 +24,7 @@ export function CampaignForm({
   submitLoadingLabel = t.buttons.creating,
   readOnly = false,
 }: CampaignFormProps) {
-  const [steps, setSteps] = useState<z.infer<typeof campaignStepSchema>[]>(
+  const [steps, setSteps] = useState<CampaignSteps>(
     initialData?.steps || [{
       sequenceOrder: 0,
       delayDays: 0,
@@ -202,13 +138,14 @@ export function CampaignForm({
 
   const updateStep = (
     index: number,
-    updatedStepData: Partial<z.infer<typeof campaignStepSchema>>
+    updatedStepData: PartialCampaignStep
   ) => {
     const newSteps = [...steps];
     newSteps[index] = { ...newSteps[index], ...updatedStepData };
     setSteps(newSteps);
   };
 
+  console.log({ steps })
   return (
     <div className="space-y-6 animate-fade-in">
       <Form {...form}>
@@ -218,25 +155,7 @@ export function CampaignForm({
               <CardTitle>{t.cardTitles.campaignDetails}</CardTitle>
             </CardHeader>
             <CardContent>
-              {readOnly && initialData?.id && (
-                <div className="mb-6 space-y-2 text-sm text-muted-foreground border-b pb-4">
-                  <div>
-                    <span className="font-medium">{t.metadata.id}:</span> {initialData.id}
-                  </div>
-                  {initialData.createdAt && (
-                    <div>
-                      <span className="font-medium">{t.metadata.created}:</span>{" "}
-                      {new Date(initialData.createdAt).toLocaleString()}
-                    </div>
-                  )}
-                  {initialData.updatedAt && (
-                    <div>
-                      <span className="font-medium">{t.metadata.lastUpdated}:</span>{" "}
-                      {new Date(initialData.updatedAt).toLocaleString()}
-                    </div>
-                  )}
-                </div>
-              )}
+              <CampaignDetails readOnly={readOnly} initialData={initialData as CampaignFormValues} />
               <CampaignDetailsForm form={form} readOnly={readOnly} />
             </CardContent>
           </Card>

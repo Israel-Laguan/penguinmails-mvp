@@ -126,47 +126,47 @@ model Template {
 }
 
 model Campaign {
-  id          Int              @id @default(autoincrement())
-  name        String
-  status      CampaignStatus   @default(DRAFT)
-  fromName    String
-  fromEmail   String
-  companyId   Int
-  createdById String?
+  id            Int              @id @default(autoincrement())
+  name          String
+  status        CampaignStatus   @default(DRAFT)
+  fromName      String
+  fromEmail     String
+  companyId     Int
+  createdById   String?
   // Cached metrics for UI
-  metrics     Json?            // Stores aggregated metrics as JSON
+  metrics       Json? // Stores aggregated metrics as JSON
   // Schedule settings at campaign level
-  sendDays      Int[]       // Array of weekday numbers (0-6)
-  sendTimeStart String?     // HH:mm format
-  sendTimeEnd   String?     // HH:mm format
+  sendDays      Int[] // Array of weekday numbers (0-6)
+  sendTimeStart String? // HH:mm format
+  sendTimeEnd   String? // HH:mm format
   emailsPerDay  Int?
-  timezone      String      @default("UTC")
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  company     Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdBy   User?            @relation(fields: [createdById], references: [id])
-  clients     CampaignClient[]
-  steps       CampaignStep[]   @relation("CampaignSteps")
-  emailEvents EmailEvent[]
+  timezone      String           @default("UTC")
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  company       Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy     User?            @relation(fields: [createdById], references: [id])
+  clients       CampaignClient[]
+  steps         CampaignStep[]   @relation("CampaignSteps")
+  emailEvents   EmailEvent[]
 
   @@index([companyId])
   @@index([createdById])
 }
 
 model CampaignStep {
-  id            Int          @id @default(autoincrement())
+  id            Int                    @id @default(autoincrement())
   sequenceOrder Int
-  delayDays     Int         @default(3)
-  delayHours    Int         @default(0)
+  delayDays     Int                    @default(3)
+  delayHours    Int                    @default(0)
   emailSubject  String?
   emailBody     String?
   templateId    Int
   campaignId    Int
-  condition     CampaignEventContition  @default(ALWAYS)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  campaign      Campaign    @relation("CampaignSteps", fields: [campaignId], references: [id], onDelete: Cascade)
-  template      Template    @relation(fields: [templateId], references: [id])
+  condition     CampaignEventContition @default(ALWAYS)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  campaign      Campaign               @relation("CampaignSteps", fields: [campaignId], references: [id], onDelete: Cascade)
+  template      Template               @relation(fields: [templateId], references: [id])
   emailEvents   EmailEvent[]
 
   @@unique([campaignId, sequenceOrder])

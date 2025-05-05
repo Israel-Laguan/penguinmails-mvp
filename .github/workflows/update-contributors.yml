@@ -48,7 +48,7 @@ jobs:
           import os
           import sys
 
-          readme_filename = "readme.md"
+          readme_filename = "README.md"
           start_marker = "<!-- CONTRIBUTORS START -->"
           end_marker = "<!-- CONTRIBUTORS END -->"
 
@@ -69,7 +69,7 @@ jobs:
 
               # (Optional) Check if the PR author is already in readme.md
               if pr_author and pr_author in content:
-                  print(f"User {pr_author} is already in readme.md. No changes made.")
+                  print(f"User {pr_author} is already in README.md. No changes made.")
                   sys.exit(0)
 
               # Build the HTML table for contributors
@@ -106,7 +106,7 @@ jobs:
                   before, current_section_with_markers = content.split(start_marker, 1)
                   current_section, after = current_section_with_markers.split(end_marker, 1)
                   if new_section.strip() == current_section.strip():
-                      print("No changes detected in the contributors list. readme.md will not be updated.")
+                      print("No changes detected in the contributors list. README.md will not be updated.")
                       sys.exit(0)
                   updated_content = f"{before}{start_marker}\n{new_section}\n{end_marker}{after}"
               else:
@@ -116,10 +116,10 @@ jobs:
               with open(readme_filename, "w", encoding="utf-8") as f:
                   f.write(updated_content)
 
-              print("readme.md successfully updated with the contributors list.")
+              print("README.md successfully updated with the contributors list.")
 
           except Exception as e:
-              print(f"Error updating readme.md: {e}", file=sys.stderr)
+              print(f"Error updating README.md: {e}", file=sys.stderr)
               sys.exit(1)
           EOF
 
@@ -127,9 +127,9 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add readme.md
+          git add README.md
           if ! git diff-index --quiet HEAD; then
-            git commit -m "Update contributors list in readme.md"
+            git commit -m "Update contributors list in README.md"
             git push
           else
             echo "No changes to commit."

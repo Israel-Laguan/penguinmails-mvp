@@ -6,18 +6,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { TemplateSelector } from "./TemplateSelector";
 import PersonalizationTags from "@/components/email/PersonalizationTags";
 import { copyText as t } from "./copy";
-
-type EmailStepType = {
-  emailSubject?: string;
-  emailBody?: string;
-}
+import { CampaignStep, Template } from "@/app/api/generated/prisma";
 
 interface EmailStepProps {
   index: number;
-  step: EmailStepType;
+  step: Partial<CampaignStep>;
+  template?: Template;
   onSubjectChange: (value: string) => void;
   onBodyChange: (value: string) => void;
-  onImportTemplate: (subject: string, body: string) => void;
+  onSelectTemplate: (subject: string, body: string) => void;
   onInsertTag: (tag: string) => void;
   isEditing: boolean;
   emailBodyRef: RefObject<HTMLTextAreaElement>;
@@ -26,9 +23,10 @@ interface EmailStepProps {
 export function EmailStep({
   index,
   step,
+  template,
   onSubjectChange,
   onBodyChange,
-  onImportTemplate,
+  onSelectTemplate,
   onInsertTag,
   isEditing,
   emailBodyRef
@@ -37,12 +35,12 @@ export function EmailStep({
     <div className="space-y-4 mt-4">
       <div className="flex justify-between items-center">
         <label htmlFor={`subject-${index}`} className="text-sm font-medium">{t.emailStep.subject.label}</label>
-        <TemplateSelector onSelectTemplate={onImportTemplate} />
+        <TemplateSelector template={template} onSelectTemplate={onSelectTemplate} />
       </div>
       <Input
         id={`subject-${index}`}
         placeholder={t.emailStep.subject.placeholder}
-        value={step.emailSubject}
+        value={step.emailSubject || ""}
         onChange={(e) => onSubjectChange(e.target.value)}
       />
 
@@ -55,7 +53,7 @@ export function EmailStep({
           id={`body-${index}`}
           ref={emailBodyRef}
           placeholder={t.emailStep.body.placeholder}
-          value={step.emailBody}
+          value={step.emailBody || ""}
           onChange={(e) => onBodyChange(e.target.value)}
           rows={isEditing ? 10 : 5}
           className="min-h-[120px] resize-y"

@@ -52,6 +52,7 @@ export const copyText = {
       campaignName: "Campaign Name",
       fromName: "From Name",
       fromEmail: "From Email",
+      status: "Status",
     },
     placeholders: {
       campaignName: "e.g. Q2 CEO Outreach",
@@ -102,6 +103,7 @@ export const copyText = {
     startTime: "Start Time",
     endTime: "End Time",
     timezone: "Timezone",
+    emailsPerDay: "Emails Per Day",
     days: {
       mon: "Mon",
       tue: "Tue",
@@ -175,6 +177,8 @@ export const copyText = {
     fromName: "From name is required",
     email: "Invalid email address",
     minSteps: "Campaign must have at least one step",
+    subject: "Email subject is required",
+    body: "Email body is required",
   },
   stats: {
     openRate: "Open Rate",
@@ -183,6 +187,22 @@ export const copyText = {
     bounceRate: "Bounce Rate",
     fromAverage: "from average",
     belowAverage: "below average",
+    recipients: {
+      title: "Recipients",
+      format: (sent: number, total: number) => `${sent}/${total}`,
+    },
+    opens: {
+      title: "Opens",
+      format: (rate: number, total: number) => `${rate}% (${total})`,
+    },
+    clicks: {
+      title: "Clicks",
+      format: (rate: number, total: number) => `${rate}% (${total})`,
+    },
+    replies: {
+      title: "Replies",
+      format: (rate: number, total: number) => `${rate}% (${total})`,
+    },
   },
   charts: {
     dailyPerformance: "Daily Performance",
@@ -233,5 +253,10 @@ export const copyText = {
     PAUSED: "paused",
     COMPLETED: "completed",
     ARCHIVED: "archived"
-  }
+  },
+  metadata: {
+    id: "ID",
+    created: "Created",
+    lastUpdated: "Last Updated",
+  },
 } as const;

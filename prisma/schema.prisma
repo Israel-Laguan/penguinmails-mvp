@@ -129,8 +129,18 @@ model Campaign {
   id          Int              @id @default(autoincrement())
   name        String
   status      CampaignStatus   @default(DRAFT)
+  fromName    String
+  fromEmail   String
   companyId   Int
   createdById String?
+  // Cached metrics for UI
+  metrics     Json?            // Stores aggregated metrics as JSON
+  // Schedule settings at campaign level
+  sendDays      Int[]       // Array of weekday numbers (0-6)
+  sendTimeStart String?     // HH:mm format
+  sendTimeEnd   String?     // HH:mm format
+  emailsPerDay  Int?
+  timezone      String      @default("UTC")
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
   company     Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
@@ -146,16 +156,17 @@ model Campaign {
 model CampaignStep {
   id            Int          @id @default(autoincrement())
   sequenceOrder Int
-  delayDays     Int
+  delayDays     Int         @default(3)
+  delayHours    Int         @default(0)
+  emailSubject  String?
+  emailBody     String?
   templateId    Int
   campaignId    Int
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  sendDays      String?
-  sendTimeStart String?
-  sendTimeEnd   String?
-  campaign      Campaign     @relation("CampaignSteps", fields: [campaignId], references: [id], onDelete: Cascade)
-  template      Template     @relation(fields: [templateId], references: [id])
+  condition     CampaignEventContition  @default(ALWAYS)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  campaign      Campaign    @relation("CampaignSteps", fields: [campaignId], references: [id], onDelete: Cascade)
+  template      Template    @relation(fields: [templateId], references: [id])
   emailEvents   EmailEvent[]
 
   @@unique([campaignId, sequenceOrder])
@@ -274,6 +285,19 @@ enum CampaignStatus {
   PAUSED
   COMPLETED
   ARCHIVED
+}
+
+enum CampaignEventContition {
+  ALWAYS
+  IF_NOT_OPENED
+  IF_NOT_CLICKED
+  IF_NOT_REPLIED
+  IF_OPTION_A
+  IF_OPTION_B
+  IF_OPTION_C
+  IF_OPTION_D
+  IF_OPTION_E
+  IF_UNSUBSCRIBED
 }
 
 enum ClientCampaignStatus {

@@ -12,18 +12,23 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
+import { Template } from "@/app/api/generated/prisma";
 
 interface TemplateSelectorProps {
+  template?: Template;
   onSelectTemplate: (subject: string, body: string) => void;
 }
 
 // TODO: Fetch templates dynamically
 const templates = t.templates.items.map((item, index) => ({
   id: index + 1,
-  ...item
+  ...item,
 }));
 
-export function TemplateSelector({ onSelectTemplate }: TemplateSelectorProps) {
+export function TemplateSelector({
+  template: currentTemplate,
+  onSelectTemplate,
+}: TemplateSelectorProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -39,15 +44,17 @@ export function TemplateSelector({ onSelectTemplate }: TemplateSelectorProps) {
           <DropdownMenuItem
             key={template.id}
             onClick={() => onSelectTemplate(template.subject, template.body)}
+            className={currentTemplate?.id === template.id ? "bg-accent" : ""}
           >
             {template.name}
           </DropdownMenuItem>
         ))}
         {templates.length === 0 && (
-          <DropdownMenuItem disabled>{t.templates.noTemplatesAvailable}</DropdownMenuItem>
+          <DropdownMenuItem disabled>
+            {t.templates.noTemplatesAvailable}
+          </DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
-

@@ -12,21 +12,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { copyText as t } from "./copy";
+import { CampaignFormValues } from "./CampaignForm";
 
 interface CampaignDetailsFormProps {
-  form: UseFormReturn<{
-    name: string;
-    fromName: string;
-    fromEmail: string;
-    sequence: {
-      type: "email" | "delay";
-      emailSubject?: string;
-      emailBody?: string;
-      delayDays?: number;
-      delayHours?: number;
-      condition?: "always" | "if_not_opened" | "if_not_clicked" | "if_not_replied";
-    }[];
-  }>;
+  form: UseFormReturn<CampaignFormValues>;
+  readOnly?: boolean;
 }
 
 // TODO: Fetch available sending accounts dynamically
@@ -36,7 +26,7 @@ const sendingAccounts = [
   { value: "marketing@example.com", label: "marketing@example.com" },
 ];
 
-export function CampaignDetailsForm({ form }: CampaignDetailsFormProps) {
+export function CampaignDetailsForm({ form, readOnly = false }: CampaignDetailsFormProps) {
   return (
     <div className="space-y-4">
       <FormField
@@ -46,12 +36,27 @@ export function CampaignDetailsForm({ form }: CampaignDetailsFormProps) {
           <FormItem>
             <FormLabel>{t.campaignDetails.labels.campaignName}</FormLabel>
             <FormControl>
-              <Input placeholder={t.campaignDetails.placeholders.campaignName} {...field} />
+              <Input placeholder={t.campaignDetails.placeholders.campaignName} {...field} disabled={readOnly} />
             </FormControl>
             <FormMessage />
           </FormItem>
         )}
       />
+
+      {readOnly && (
+        <FormField
+          control={form.control}
+          name="status"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t.campaignDetails.labels.status}</FormLabel>
+              <FormControl>
+                <Input {...field} disabled value={field.value || 'DRAFT'} />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField
@@ -61,7 +66,7 @@ export function CampaignDetailsForm({ form }: CampaignDetailsFormProps) {
             <FormItem>
               <FormLabel>{t.campaignDetails.labels.fromName}</FormLabel>
               <FormControl>
-                <Input placeholder={t.campaignDetails.placeholders.fromName} {...field} />
+                <Input placeholder={t.campaignDetails.placeholders.fromName} {...field} disabled={readOnly} />
               </FormControl>
               <FormDescription>
                 {t.campaignDetails.descriptions.fromName}
@@ -76,7 +81,7 @@ export function CampaignDetailsForm({ form }: CampaignDetailsFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>{t.campaignDetails.labels.fromEmail}</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} defaultValue={field.value} disabled={readOnly}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder={t.campaignDetails.placeholders.selectAccount} />
@@ -98,6 +103,39 @@ export function CampaignDetailsForm({ form }: CampaignDetailsFormProps) {
           )}
         />
       </div>
+
+      {/* {readOnly && form.getValues().recipients && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
+          <div className="text-sm">
+            <div className="font-medium">{t.stats.recipients.title}</div>
+            <div>{t.stats.recipients.format(
+              form.getValues().recipients?.sent ?? 0,
+              form.getValues().recipients?.total ?? 0
+            )}</div>
+          </div>
+          <div className="text-sm">
+            <div className="font-medium">{t.stats.opens.title}</div>
+            <div>{t.stats.opens.format(
+              form.getValues().opens?.rate ?? 0,
+              form.getValues().opens?.total ?? 0
+            )}</div>
+          </div>
+          <div className="text-sm">
+            <div className="font-medium">{t.stats.clicks.title}</div>
+            <div>{t.stats.clicks.format(
+              form.getValues().clicks?.rate ?? 0,
+              form.getValues().clicks?.total ?? 0
+            )}</div>
+          </div>
+          <div className="text-sm">
+            <div className="font-medium">{t.stats.replies.title}</div>
+            <div>{t.stats.replies.format(
+              form.getValues().replies?.rate ?? 0,
+              form.getValues().replies?.total ?? 0
+            )}</div>
+          </div>
+        </div>
+      )} */}
     </div>
   );
 }

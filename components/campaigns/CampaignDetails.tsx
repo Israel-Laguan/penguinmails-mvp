@@ -6,7 +6,7 @@ import { CampaignFormValues } from "./types";
 
 interface CampaignDetailsProps {
   readOnly: boolean;
-  initialData: CampaignFormValues;
+  initialData: CampaignFormValues | undefined;
 }
 
 export function CampaignDetails({ readOnly, initialData }: CampaignDetailsProps) {

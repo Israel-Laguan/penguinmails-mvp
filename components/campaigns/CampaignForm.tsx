@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useRef } from "react";
-import { useForm, UseFormReturn } from "react-hook-form";
+import { useState, useRef, MouseEvent, ChangeEvent, useEffect } from "react";
+import { SubmitHandler, useForm, UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,6 +15,7 @@ import { copyText as t } from "./copy";
 import { CampaignEventContition } from "@/app/api/generated/prisma";
 import { CampaignFormProps, CampaignFormValues, CampaignSteps, PartialCampaignStep } from "./types";
 import { CampaignDetails } from "./CampaignDetails";
+import { timezones } from "./const-mock";
 
 export function CampaignForm({
   initialData,
@@ -37,6 +38,7 @@ export function CampaignForm({
     }]
   );
   const [currentEditingStep, setCurrentEditingStep] = useState<number | null>(null);
+  const [recipients, setRecipients] = useState<string>('');
   const emailBodyRef = useRef<HTMLTextAreaElement>(null!);
 
   const form = useForm<CampaignFormValues>({
@@ -46,17 +48,23 @@ export function CampaignForm({
       fromEmail: "",
       status: "DRAFT",
       steps: steps,
+      timezone: timezones[7],
+      sendTimeStart: '09:00',
+      sendTimeEnd: '17:00',
+      sendDays: [0, 1, 2, 3, 4]
     },
     mode: "onChange",
   }) as unknown as UseFormReturn<CampaignFormValues>;
 
+  const { timezone = timezones[7], sendTimeStart = '09:00', sendTimeEnd = '17:00', sendDays = [0, 1, 2, 3, 4], clients } = form.getValues();
+
   // Update form state when steps change
-  React.useEffect(() => {
+  useEffect(() => {
     form.setValue("steps", steps, { shouldValidate: true });
   }, [steps, form]);
 
   // Handle form submission
-  async function handleSubmit(data: CampaignFormValues) {
+  const handleSubmit: SubmitHandler<CampaignFormValues> = async (data: CampaignFormValues) => {
     await onSubmit(data);
   }
 
@@ -136,6 +144,14 @@ export function CampaignForm({
     }, 0);
   };
 
+  const handleDayChange = (dayId: number, evt: MouseEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
+    const newSendDays = sendDays.includes(dayId)
+      ? sendDays.filter(d => d !== dayId)
+      : [...sendDays, dayId]
+    form.setValue('sendDays', newSendDays, { shouldValidate: true });
+  };
+
   const updateStep = (
     index: number,
     updatedStepData: PartialCampaignStep
@@ -145,17 +161,34 @@ export function CampaignForm({
     setSteps(newSteps);
   };
 
-  console.log({ steps })
+  const handleChangeScheduleSettings = (field: 'sendTimeEnd' | 'sendTimeStart' | 'timezone', value: string) => {
+    form.setValue(field, value, { shouldValidate: true });
+  };
+
+  const updateRecipients = (evt: ChangeEvent<HTMLTextAreaElement>) => {
+    const clientsTextArea = evt.target.value;
+    const clientsData = clientsTextArea.split('\n').filter((client: string) => client.trim()).map((client: string) => client.trim());
+    setRecipients(clientsTextArea);
+
+    if (clientsData.length === 0) return;
+
+    form.setValue('clients', clientsData, { shouldValidate: true });
+    form.setValue('metrics.recipients.total', clientsData.length, { shouldValidate: true });
+    form.setValue('metrics.recipients.sent', clientsData.length, { shouldValidate: true });
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(handleSubmit)}
+          className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle>{t.cardTitles.campaignDetails}</CardTitle>
             </CardHeader>
             <CardContent>
-              <CampaignDetails readOnly={readOnly} initialData={initialData as CampaignFormValues} />
+              <CampaignDetails readOnly={readOnly} initialData={initialData} />
               <CampaignDetailsForm form={form} readOnly={readOnly} />
             </CardContent>
           </Card>
@@ -214,6 +247,7 @@ export function CampaignForm({
                   </Button>
                 </div>
               </div>
+              {JSON.stringify(form.formState.errors)}
 
               {form.formState.errors.steps?.message && (
                 <p className="text-sm font-medium text-destructive mt-2">
@@ -229,12 +263,12 @@ export function CampaignForm({
 
             <TabsContent value="schedule" className="mt-4">
               {/* Pass form control/register if schedule is part of the main form */}
-              <ScheduleSettings />
+              <ScheduleSettings selectedSendDays={sendDays} timezone={timezone} sendTimeStart={sendTimeStart} sendTimeEnd={sendTimeEnd} handleDayChange={handleDayChange} handleChangeScheduleSettings={handleChangeScheduleSettings} />
             </TabsContent>
 
             <TabsContent value="recipients" className="mt-4">
               {/* Pass form control/register if recipients are part of the main form */}
-              <RecipientsSettings />
+              <RecipientsSettings recipients={recipients} handleChangeRecipients={updateRecipients} />
             </TabsContent>
           </Tabs>
 

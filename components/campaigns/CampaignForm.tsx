@@ -173,8 +173,7 @@ export function CampaignForm({
     if (clientsData.length === 0) return;
 
     form.setValue('clients', clientsData, { shouldValidate: true });
-    form.setValue('metrics.recipients.total', clientsData.length, { shouldValidate: true });
-    form.setValue('metrics.recipients.sent', clientsData.length, { shouldValidate: true });
+    form.setValue('metrics.recipients', { sent: clientsData.length, total: clientsData.length }, { shouldValidate: true });
   };
 
   return (
@@ -247,8 +246,6 @@ export function CampaignForm({
                   </Button>
                 </div>
               </div>
-              {JSON.stringify(form.formState.errors)}
-
               {form.formState.errors.steps?.message && (
                 <p className="text-sm font-medium text-destructive mt-2">
                   {form.formState.errors.steps.message}

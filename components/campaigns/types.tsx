@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { RefObject } from "react";
-import { campaignFormSchema, campaignStepSchema } from "./validations";
+import { campaignFormSchema, campaignStepSchema } from "./schemaValidations";
 import { CampaignEventContition, Template } from "@/app/api/generated/prisma";
 
 export type CampaignFormValues = z.infer<typeof campaignFormSchema>;

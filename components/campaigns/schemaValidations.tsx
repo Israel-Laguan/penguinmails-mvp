@@ -20,7 +20,7 @@ export const campaignFormSchema = z.object({
   name: z.string().min(1, t.validation.campaignName),
   fromName: z.string().min(1, t.validation.fromName),
   fromEmail: z.string().email(t.validation.email),
-  status: z.nativeEnum(CampaignStatus).optional().default("DRAFT"),
+  status: z.nativeEnum(CampaignStatus).default(CampaignStatus.DRAFT),
   companyId: z.number().optional(),
   createdById: z.string().optional(),
   steps: z.array(campaignStepSchema).min(1, t.validation.minSteps),
@@ -29,23 +29,24 @@ export const campaignFormSchema = z.object({
   sendTimeEnd: z.string().optional(), // HH:mm format
   emailsPerDay: z.number().optional(),
   timezone: z.string().optional().default("UTC"),
+  clients: z.array(z.string().email(t.validation.email)),
   metrics: z.object({
     recipients: z.object({
       sent: z.number(),
       total: z.number(),
-    }),
+    }).optional(),
     opens: z.object({
       total: z.number(),
       rate: z.number(),
-    }),
+    }).optional(),
     clicks: z.object({
       total: z.number(),
       rate: z.number(),
-    }),
+    }).optional(),
     replies: z.object({
       total: z.number(),
       rate: z.number(),
-    }),
+    }).optional(),
     bounces: z.object({
       total: z.number(),
       rate: z.number(),

@@ -1,6 +1,5 @@
 import { Template, TemplateCategory } from "@/app/api/generated/prisma";
 
-
 export const userTemplates: Template[] = [
   {
     id: 1,

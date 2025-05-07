@@ -1,4 +1,4 @@
-import { Template } from '@/components/templates/mocks';
+import { Template } from '@/app/api/generated/prisma';
 import { userTemplates, builtInTemplates } from '@/components/templates/mocks';
 // import prisma from '@/lib/prisma';
 
@@ -20,7 +20,7 @@ export async function getTemplates(userId: string): Promise<Template[]> {
   }
 }
 
-export async function getTemplate(id: string): Promise<Template | null> {
+export async function getTemplate(id: number): Promise<Template | null> {
   try {
     // When ready to use Prisma:
     // const template = await prisma.template.findUnique({
@@ -50,7 +50,7 @@ export async function createTemplate(data: Partial<Template>): Promise<Template 
 
     // For now, return mock data
     const newTemplate: Template = {
-      id: `t${userTemplates.length + 1}`,
+      id: userTemplates.length + 1,
       name: data.name || '',
       category: data.category || 'OUTREACH',
       subject: data.subject || '',
@@ -59,7 +59,8 @@ export async function createTemplate(data: Partial<Template>): Promise<Template 
       description: data.description || '',
       createdAt: new Date(),
       updatedAt: new Date(),
-      userId: data.userId || 'user1',
+      companyId: data.companyId || 1,
+      createdById: data.createdById || 'user1',
     };
     userTemplates.push(newTemplate);
     return newTemplate;
@@ -69,7 +70,7 @@ export async function createTemplate(data: Partial<Template>): Promise<Template 
   }
 }
 
-export async function updateTemplate(id: string, data: Partial<Template>): Promise<Template | null> {
+export async function updateTemplate(id: number, data: Partial<Template>): Promise<Template | null> {
   try {
     // When ready to use Prisma:
     // const template = await prisma.template.update({

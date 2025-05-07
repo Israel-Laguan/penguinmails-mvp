@@ -4,7 +4,7 @@ import { copyText as t } from "@/components/campaigns/copy";
 import { mockCampaignDetail, mockDailyData, mockSequenceData, mockStatsComparison, mockChartConfig, mockSettings } from "@/components/campaigns/mock-data";
 import React from "react";
 import { useParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -28,6 +28,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import Link from "next/link";
 
 export default function CampaignDetail() {
   const { id } = useParams();
@@ -273,7 +274,12 @@ export default function CampaignDetail() {
                 {t.recipients.settingsDescription}
               </p>
               <div className="mt-4">
-                <Button variant="outline" size="sm">{t.buttons.viewRecipients}</Button>
+                <Link 
+                  href={`/dashboard/clients?campaignId=${id}`}
+                  className={buttonVariants({ variant: "outline", size: "sm" })}
+                >
+                  {t.buttons.viewRecipients}
+                </Link>
               </div>
             </CardContent>
           </Card>

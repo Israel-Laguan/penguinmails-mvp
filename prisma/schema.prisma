@@ -97,6 +97,7 @@ model Client {
   firstName   String?
   lastName    String?
   notes       String?
+  maskPII     Boolean          @default(false)
   companyId   Int
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt

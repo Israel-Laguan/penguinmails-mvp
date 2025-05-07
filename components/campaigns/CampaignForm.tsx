@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useRef, MouseEvent, ChangeEvent, useEffect } from "react";
-import { SubmitHandler, useForm, UseFormReturn } from "react-hook-form";
+import { ResolverResult, SubmitHandler, useForm, UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form } from "@/components/ui/form";
 import { FileText, Clock, Users } from "lucide-react";
 import { CampaignDetailsForm } from "./CampaignDetailsForm";
-import { SequenceStep } from "./SequenceStep";
 import { ScheduleSettings } from "./ScheduleSettings";
 import { RecipientsSettings } from "./RecipientsSettings";
 import { copyText as t } from "./copy";
@@ -16,6 +15,9 @@ import { CampaignEventContition } from "@/app/api/generated/prisma";
 import { CampaignFormProps, CampaignFormValues, CampaignSteps, PartialCampaignStep } from "./types";
 import { CampaignDetails } from "./CampaignDetails";
 import { timezones } from "./const-mock";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { campaignFormSchema } from "./schemaValidations";
+import { EmailSecuenceSettings } from "./EmailSecuenceSettings";
 
 export function CampaignForm({
   initialData,
@@ -56,7 +58,7 @@ export function CampaignForm({
     mode: "onChange",
   }) as unknown as UseFormReturn<CampaignFormValues>;
 
-  const { timezone = timezones[7], sendTimeStart = '09:00', sendTimeEnd = '17:00', sendDays = [0, 1, 2, 3, 4], clients } = form.getValues();
+  const { timezone = timezones[7], sendDays = [0, 1, 2, 3, 4] } = form.getValues();
 
   // Update form state when steps change
   useEffect(() => {
@@ -149,7 +151,7 @@ export function CampaignForm({
     const newSendDays = sendDays.includes(dayId)
       ? sendDays.filter(d => d !== dayId)
       : [...sendDays, dayId]
-    form.setValue('sendDays', newSendDays, { shouldValidate: true });
+    form.setValue('sendDays', newSendDays.sort((a: number, b: number) => a - b), { shouldValidate: true });
   };
 
   const updateStep = (
@@ -159,10 +161,6 @@ export function CampaignForm({
     const newSteps = [...steps];
     newSteps[index] = { ...newSteps[index], ...updatedStepData };
     setSteps(newSteps);
-  };
-
-  const handleChangeScheduleSettings = (field: 'sendTimeEnd' | 'sendTimeStart' | 'timezone', value: string) => {
-    form.setValue(field, value, { shouldValidate: true });
   };
 
   const updateRecipients = (evt: ChangeEvent<HTMLTextAreaElement>) => {
@@ -209,58 +207,33 @@ export function CampaignForm({
             </TabsList>
 
             <TabsContent value="sequence" className="mt-4">
-              <div className="space-y-8">
-                {steps.map((step, index) => (
-                  <SequenceStep
-                    key={index} // Consider using a more stable key if steps can be reordered significantly
-                    step={step}
-                    index={index}
-                    totalSteps={steps.length}
-                    currentEditingStep={currentEditingStep}
-                    emailBodyRef={emailBodyRef}
-                    onMoveStepUp={moveStepUp}
-                    onMoveStepDown={moveStepDown}
-                    onRemoveStep={removeStep}
-                    onUpdateStep={updateStep}
-                    onInsertTag={handleInsertTag}
-                    onSetCurrentEditingStep={setCurrentEditingStep}
-                    templates={[]}
-                    onSelectTemplate={(templateId) => {
-                      const newSteps = [...steps];
-                      newSteps[index].templateId = templateId;
-                      setSteps(newSteps);
-                      form.setValue(`steps.${index}.templateId`, templateId);
-                    }}
-                  />
-                ))}
-
-                <div className="flex items-center justify-center gap-2 pt-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => addEmailStep(steps.length - 1)}
-                  >
-                    <FileText className="w-4 h-4 mr-2" />
-                    {t.addEmail}
-                  </Button>
-                </div>
-              </div>
-              {form.formState.errors.steps?.message && (
-                <p className="text-sm font-medium text-destructive mt-2">
-                  {form.formState.errors.steps.message}
-                </p>
-              )}
-              {form.formState.errors.steps?.root?.message && (
-                <p className="text-sm font-medium text-destructive mt-2">
-                  {form.formState.errors.steps.root.message}
-                </p>
-              )}
+              <EmailSecuenceSettings
+                steps={steps}
+                currentEditingStep={currentEditingStep}
+                emailBodyRef={emailBodyRef}
+                stepErrors={form.formState.errors.steps}
+                templates={[]}
+                actions={{
+                  onMoveStepUp: moveStepUp,
+                  onMoveStepDown: moveStepDown,
+                  onRemoveStep: removeStep,
+                  onUpdateStep: updateStep,
+                  onInsertTag: handleInsertTag,
+                  onSetCurrentEditingStep: (index) => setCurrentEditingStep(index),
+                  handleAddEmailStep: addEmailStep,
+                  onSelectTemplate: (index, templateId) => {
+                    const newSteps = [...steps];
+                    newSteps[index].templateId = templateId;
+                    setSteps(newSteps);
+                    form.setValue(`steps.${index}.templateId`, templateId);
+                  },
+                }}
+              />
             </TabsContent>
 
             <TabsContent value="schedule" className="mt-4">
               {/* Pass form control/register if schedule is part of the main form */}
-              <ScheduleSettings selectedSendDays={sendDays} timezone={timezone} sendTimeStart={sendTimeStart} sendTimeEnd={sendTimeEnd} handleDayChange={handleDayChange} handleChangeScheduleSettings={handleChangeScheduleSettings} />
+              <ScheduleSettings register={form.register} selectedSendDays={sendDays} timezone={timezone} handleDayChange={handleDayChange} />
             </TabsContent>
 
             <TabsContent value="recipients" className="mt-4">
@@ -268,6 +241,7 @@ export function CampaignForm({
               <RecipientsSettings recipients={recipients} handleChangeRecipients={updateRecipients} />
             </TabsContent>
           </Tabs>
+          {JSON.stringify(form.formState.errors)}
 
           <div className="flex justify-end space-x-2 pt-4">
             {onCancel && (

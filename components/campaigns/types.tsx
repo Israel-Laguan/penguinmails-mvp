@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { RefObject } from "react";
-import { campaignFormSchema, campaignStepSchema } from "./schemaValidations";
+import { MouseEvent, RefObject } from "react";
+import { UseFormRegister } from "react-hook-form";
 import { CampaignEventContition, Template } from "@/app/api/generated/prisma";
+import { campaignFormSchema, campaignStepSchema } from "./schemaValidations";
 
 export type CampaignFormValues = z.infer<typeof campaignFormSchema>;
 
@@ -18,7 +19,28 @@ export type CampaignSteps = z.infer<typeof campaignStepSchema>[];
 
 export type PartialCampaignStep = Partial<z.infer<typeof campaignStepSchema>>;
 
-// Tab types
+// Secuence Types
+export interface SequenceStepActionsProps {
+  onMoveStepUp: (index: number) => void;
+  onMoveStepDown: (index: number) => void;
+  onRemoveStep: (index: number) => void;
+  onUpdateStep: (index: number, updates: Partial<SequenceStepProps["step"]>) => void;
+  onInsertTag: (index: number, tag: string) => void;
+  onSetCurrentEditingStep: (index: number | null) => void;
+  onSelectTemplate: (index: number, templateId: number) => void;
+}
+
+export interface EmailSecuenceSettingsProps {
+  steps: CampaignSteps;
+  templates?: Template[];
+  currentEditingStep: number | null;
+  emailBodyRef: RefObject<HTMLTextAreaElement>;
+  stepErrors: any;
+  actions: SequenceStepActionsProps & {
+    handleAddEmailStep: (index: number) => void;
+  };
+}
+
 export interface SequenceStepProps {
   step: {
     id?: number;
@@ -38,11 +60,13 @@ export interface SequenceStepProps {
   totalSteps: number;
   currentEditingStep: number | null;
   emailBodyRef: RefObject<HTMLTextAreaElement>;
-  onMoveStepUp: (index: number) => void;
-  onMoveStepDown: (index: number) => void;
-  onRemoveStep: (index: number) => void;
-  onUpdateStep: (index: number, updates: Partial<SequenceStepProps["step"]>) => void;
-  onInsertTag: (index: number, tag: string) => void;
-  onSetCurrentEditingStep: (index: number | null) => void;
-  onSelectTemplate: (index: number, templateId: number) => void;
+  actions: SequenceStepActionsProps;
+}
+
+// ScheduleSettings Types
+export interface ScheduleSettingsProps {
+  timezone: string;
+  selectedSendDays: number[];
+  register: UseFormRegister<CampaignFormValues>;
+  handleDayChange: (dayId: number, evt: MouseEvent<HTMLButtonElement>) => void;
 }

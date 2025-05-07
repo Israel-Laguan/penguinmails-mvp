@@ -1,6 +1,6 @@
 "use client";
 
-import React, { MouseEvent } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -14,15 +14,7 @@ import {
 import { Button } from "../ui/button";
 import { copyText as t } from "./copy";
 import { timezones } from "./const-mock";
-
-interface ScheduleSettingsProps {
-  timezone: string;
-  sendTimeStart: string;
-  sendTimeEnd: string;
-  selectedSendDays: number[];
-  handleDayChange: (dayId: number, evt: MouseEvent<HTMLButtonElement>) => void;
-  handleChangeScheduleSettings: (field: 'sendTimeEnd' | 'sendTimeStart' | 'timezone', value: string) => void;
-}
+import { ScheduleSettingsProps } from "./types";
 
 const daysOfWeek = [
   { id: 0, label: t.schedule.days.mon },
@@ -34,7 +26,7 @@ const daysOfWeek = [
   { id: 6, label: t.schedule.days.sun },
 ];
 
-export function ScheduleSettings({ timezone, sendTimeStart, sendTimeEnd, selectedSendDays, handleDayChange, handleChangeScheduleSettings }: ScheduleSettingsProps) {
+export function ScheduleSettings({ timezone, selectedSendDays, register, handleDayChange }: ScheduleSettingsProps) {
 
   return (
     <Card>
@@ -65,8 +57,7 @@ export function ScheduleSettings({ timezone, sendTimeStart, sendTimeEnd, selecte
             <Input
               id="start-time"
               type="time"
-              value={sendTimeStart}
-              onChange={(e) => handleChangeScheduleSettings('sendTimeStart', e.target.value)}
+              {...register('sendTimeStart')}
             />
           </div>
           <div className="space-y-2">
@@ -74,15 +65,17 @@ export function ScheduleSettings({ timezone, sendTimeStart, sendTimeEnd, selecte
             <Input
               id="end-time"
               type="time"
-              value={sendTimeEnd}
-              onChange={(e) => handleChangeScheduleSettings('sendTimeEnd', e.target.value)}
+              {...register('sendTimeEnd')}
             />
           </div>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="timezone">{t.schedule.timezone}</Label>
-          <Select value={timezone} onValueChange={(value) => handleChangeScheduleSettings('timezone', value)}>
+          <Select
+            {...register('timezone')}
+            defaultValue={timezone}
+          >
             <SelectTrigger id="timezone">
               <SelectValue placeholder={t.schedule.selectTimezone} />
             </SelectTrigger>

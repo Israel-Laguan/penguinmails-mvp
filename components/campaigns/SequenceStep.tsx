@@ -16,14 +16,10 @@ export function SequenceStep({
   totalSteps,
   currentEditingStep,
   emailBodyRef,
-  onMoveStepUp,
-  onMoveStepDown,
-  onRemoveStep,
-  onUpdateStep,
-  onInsertTag,
-  onSelectTemplate
+  actions
 }: SequenceStepProps) {
   const selectedTemplate = templates?.find(t => t.id === step.templateId);
+  const { onMoveStepUp, onMoveStepDown, onRemoveStep, onUpdateStep, onInsertTag, onSelectTemplate } = actions;
 
   return (
     <div className="relative group">

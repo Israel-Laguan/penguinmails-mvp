@@ -4,13 +4,15 @@ export const copyText = {
     firstName: "First Name",
     lastName: "Last Name",
     noClientsFound: "No clients found.",
-    pagination: "Page {0} of {1}"
+    pagination: "Page {0} of {1}",
+    notes: "Notes",
   },
   actions: {
     label: "Actions",
     copyData: "Copy client data",
     edit: "Edit client",
-    remove: "Remove from campaign"
+    remove: "Remove from campaign",
+    dataCopied: "Client data copied to clipboard",
   },
   menu: {
     open: "Open menu"
@@ -32,6 +34,11 @@ export const copyText = {
     removeClient: {
       title: "Remove Client from Campaign",
       description: "This action cannot be undone. The client data is shown below for your records.",
+    },
+    notes: {
+      title: "Client Notes",
+      edit: "Edit Notes",
+      description: "The client data is shown below for your records.",
     }
   },
   headers: {

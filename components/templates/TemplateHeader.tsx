@@ -6,9 +6,9 @@ import { ArrowLeft, Copy, Save } from "lucide-react";
 
 interface TemplateHeaderProps {
   templateName: string;
-  templateId: number | string;
+  templateId: number;
   isViewMode: boolean;
-  onSave: () => void;
+  onSave?: () => void;
 }
 
 export function TemplateHeader({ templateName, templateId, isViewMode, onSave }: TemplateHeaderProps) {
@@ -37,7 +37,7 @@ export function TemplateHeader({ templateName, templateId, isViewMode, onSave }:
           </>
         ) : (
           <>
-            <Button variant="outline" onClick={() => router.push(`/dashboard/templates/${templateId}/view`)}>
+            <Button variant="outline" onClick={() => router.push(`/dashboard/templates/${templateId}`)}>
               Cancel
             </Button>
             <Button onClick={onSave}>

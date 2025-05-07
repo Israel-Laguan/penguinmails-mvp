@@ -1,13 +1,9 @@
 
+import { Template } from "@/app/api/generated/prisma";
 import React from "react";
 
 interface TemplateViewModeProps {
-  template: {
-    category: string;
-    subject: string;
-    body: string;
-    createdAt: string;
-  };
+  template: Template;
 }
 
 export function TemplateViewMode({ template }: TemplateViewModeProps) {
@@ -29,7 +25,7 @@ export function TemplateViewMode({ template }: TemplateViewModeProps) {
       </div>
       
       <div className="text-xs text-muted-foreground">
-        Created {template.createdAt}
+        Created {template.createdAt.toLocaleDateString()}
       </div>
     </>
   );

@@ -8,15 +8,16 @@ export const metadata: Metadata = {
   description: t.page.description,
 };
 
-export default function NewClientPage({
-  searchParams,
+export default async function NewClientPage({
+  params,
 }: {
-  searchParams: { campaignId: string };
+  params: { campaignId: string };
 }) {
+  const { campaignId } = await params;
   return (
     <div className="container mx-auto py-6">
       <Header />
-      <NewClientForm campaignId={searchParams.campaignId} />
+      <NewClientForm campaignId={campaignId} />
     </div>
   );
 }

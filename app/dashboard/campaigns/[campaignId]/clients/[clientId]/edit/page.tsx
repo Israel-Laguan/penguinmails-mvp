@@ -4,23 +4,17 @@ import ClientForm from '@/components/clients/client-form';
 import { ClientHeader } from '@/components/clients/client-header';
 
 interface EditClientPageProps {
-  params: {
-    id: string;
-  };
-  searchParams: {
-    campaignId: string;
-  };
+  params: { campaignId: string, clientId?: string;  };
 }
 
-export default async function EditClientPage({ params, searchParams }: EditClientPageProps) {
-    const { id } = await params;
-    const {campaignId} = await searchParams; 
+export default async function EditClientPage({ params }: EditClientPageProps) {
+    const { campaignId, clientId } = await params;
   
-  if (isNaN(Number(id))) {
+  if (isNaN(Number(clientId))) {
     notFound();
   }
 
-  const client = await getClient(Number(id));
+  const client = await getClient(Number(clientId));
   
   if (!client) {
     notFound();

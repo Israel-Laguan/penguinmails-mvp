@@ -6,6 +6,7 @@ export const mockClients = Array.from({ length: 50 }, (_, i) => ({
   createdAt: new Date(2024, 0, i + 1),
   updatedAt: new Date(2024, 0, i + 1),
   notes: `Notes for client ${i + 1}`,
+  maskPII: false,
   campaignId: 1,
   companyId: 1,
 }));

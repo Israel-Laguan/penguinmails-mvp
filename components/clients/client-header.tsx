@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { removeFromCampaign, deleteClient } from '@/app/dashboard/clients/new/actions';
+import { removeFromCampaign, deleteClient } from '@/app/dashboard/campaigns/[campaignId]/clients/new/actions';
 import { copyText as t } from '@/components/clients/copy';
 
 // Add this new action import or create it in the actions file

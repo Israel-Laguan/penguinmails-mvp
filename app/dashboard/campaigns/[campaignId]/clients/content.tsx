@@ -11,7 +11,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
 } from "@tanstack/react-table"
-import { createColumns } from '../../../components/clients/columns'
+import { createColumns } from '../../../../../components/clients/columns'
 import { Client } from '@/app/api/generated/prisma'
 import { getClientsPage } from './actions'
 import { ClientsHeader } from '@/components/clients/clients-header';
@@ -48,7 +48,7 @@ export default function ClientsContent({
 
   const columns = createColumns(
     maskPII,
-    (client) => router.push(`/dashboard/clients/${client.id}/edit?campaignId=${campaignId}`),
+    (client) => router.push(`/dashboard/campaigns/${campaignId}/clients/${client.id}/edit`),
     (client) => {
       setSelectedClient(client);
       setIsModalOpen(true);
@@ -83,7 +83,7 @@ export default function ClientsContent({
       table.setPageSize(10);
       setClients(data.clients);
       setCurrentPage(newPage);
-      router.push(`/dashboard/clients?campaignId=${campaignId}&page=${newPage}`);
+      router.push(`/dashboard/campaigns/${campaignId}/clients?page=${newPage}`);
     } finally {
       setLoading(false);
     }

@@ -31,11 +31,11 @@ import {
 import Link from "next/link";
 
 export default function CampaignDetail() {
-  const { id } = useParams();
+  const { campaignId } = useParams();
   
   const campaign = {
     ...mockCampaignDetail,
-    id: Number(id),
+    id: Number(campaignId),
   };
 
   return (
@@ -43,7 +43,7 @@ export default function CampaignDetail() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight">{campaign.name}</h1>
-          <p className="text-muted-foreground">{t.campaignDetail.id} {id}</p>
+          <p className="text-muted-foreground">{t.campaignDetail.id} {campaignId}</p>
         </div>
         <div className="flex space-x-2">
           <Button variant="outline" size="sm">
@@ -275,7 +275,7 @@ export default function CampaignDetail() {
               </p>
               <div className="mt-4">
                 <Link 
-                  href={`/dashboard/clients?campaignId=${id}`}
+                  href={`/dashboard/campaigns/${campaignId}/clients`}
                   className={buttonVariants({ variant: "outline", size: "sm" })}
                 >
                   {t.buttons.viewRecipients}

@@ -23,7 +23,7 @@ export function ClientsHeader({ showPII, onTogglePII, campaignId, campaignName }
           {showPII ? t.buttons.hidePII : t.buttons.showPII}
         </Button>
         <Link
-          href={`/dashboard/clients/new?campaignId=${campaignId}`}
+          href={`/dashboard/campaigns/${campaignId}/clients/new`}
           className={buttonVariants({ variant: "default" })}
         >
           {t.buttons.addClient}

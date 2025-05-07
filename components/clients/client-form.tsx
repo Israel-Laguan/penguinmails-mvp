@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   createClient,
   updateClient,
-} from "@/app/dashboard/clients/new/actions";
+} from "@/app/dashboard/campaigns/[campaignId]/clients/new/actions";
 import { copyText as t } from "./copy";
 
 interface ClientFormProps {

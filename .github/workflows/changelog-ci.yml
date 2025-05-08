@@ -28,5 +28,5 @@ jobs:
           committer_username: 'test'
           committer_email: 'test@test.com'
 
-          release_version: ${{ github.event.inputs.release_version }}
+          release_version: ${{ github.event.inputs.release_version || '' }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -19,6 +19,10 @@ jobs:
       # Checks-out your repository
       - uses: actions/checkout@v2
 
+      - name: Read version from version.txt
+        id: version
+        run: echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
+
       - name: Run Changelog CI
         uses: saadmk11/changelog-ci@v1.1.2
         with:
@@ -28,5 +32,5 @@ jobs:
           committer_username: 'test'
           committer_email: 'test@test.com'
 
-          release_version: ${{ github.event.inputs.release_version || '' }}
+          release_version: "${{ steps.version.outputs.version }}"
           github_token: ${{ secrets.GITHUB_TOKEN }}

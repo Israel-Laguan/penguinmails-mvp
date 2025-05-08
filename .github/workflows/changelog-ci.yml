@@ -2,9 +2,9 @@ name: Changelog CI
 
 on:
   pull_request:
-    types: [ opened, reopened, closed, synchronize ]
-    branches: [ "main", "dev", "feat/iss-1/create-pipelines" ]
+    types: [ opened ]
 
+  # Optionally you can use `workflow_dispatch` to run Changelog CI Manually
   workflow_dispatch:
     inputs:
       release_version:
@@ -19,18 +19,15 @@ jobs:
       # Checks-out your repository
       - uses: actions/checkout@v2
 
-      - name: Read version from version.txt
-        id: version
-        run: echo "VERSION=$(cat version.txt)" >> $GITHUB_ENV
-
       - name: Run Changelog CI
         uses: saadmk11/changelog-ci@v1.1.2
         with:
-          changelog_filename: CHANGELOG.md
-          config_file: changelog-config.yml
 
+          changelog_filename: CHANGELOG.md
+
+          config_file: changelog-config.yml
           committer_username: 'test'
           committer_email: 'test@test.com'
 
-          release_version: "${{ steps.version.outputs.version }}"
+          release_version: ${{ github.event.inputs.release_version }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

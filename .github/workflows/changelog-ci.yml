@@ -2,7 +2,7 @@ name: Changelog CI
 
 on:
   pull_request:
-    types: [ opened, reopened, closed ]
+    types: [ opened, reopened, closed, synchronize ]
     branches: [ "main", "dev", "feat/iss-1/create-pipelines" ]
 
   workflow_dispatch:

@@ -2,8 +2,8 @@ name: Update Version on PR to Main
 
 on:
   pull_request:
-    types: [opened, reopened]
-    branches: [ "main", "dev" ]
+    types: [opened, reopened, synchronize]
+    branches: [ "main", "dev", "feat/iss-1/create-pipelines" ]
 
 jobs:
   update-version:

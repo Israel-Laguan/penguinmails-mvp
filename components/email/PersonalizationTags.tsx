@@ -30,7 +30,8 @@ export default function PersonalizationTags({
   label = "Personalization Tags", 
   className = ""
 }: PersonalizationTagsProps) {
-  const handleTagClick = (tag: string) => {
+  const handleTagClick = (tag: string, event?: React.BaseSyntheticEvent) => {
+    event?.preventDefault();
     onInsertTag(tag);
     toast.message('Tag inserted', {
       description: `${tag} has been inserted into your template.`,
@@ -46,7 +47,7 @@ export default function PersonalizationTags({
             key={tag.id}
             variant="outline" 
             size="sm" 
-            onClick={() => handleTagClick(tag.tag)}
+            onClick={(event) => handleTagClick(tag.tag, event)}
             className="text-xs"
           >
             <Tag className="h-3 w-3 mr-1" />

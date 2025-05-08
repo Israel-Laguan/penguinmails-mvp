@@ -22,7 +22,10 @@ jobs:
           version=$(tr -d '\n' < version.txt)
           echo "Versión actual: '$version'"
           echo "current_version=$version" >> $GITHUB_OUTPUT
-
+      
+      - name: Grant permissions to the script
+        run: chmod +x ./scripts/update_version.sh
+  
       - name: Update version and push changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

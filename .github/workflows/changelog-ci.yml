@@ -1,14 +1,14 @@
 name: Changelog CI
 
 on:
-  pull_request:
-    types: [ opened ]
-
+  push:
+    branches: [main]
+  
   # Optionally you can use `workflow_dispatch` to run Changelog CI Manually
   workflow_dispatch:
     inputs:
       release_version:
-        description: 'Set Release Version'
+        description: "Set Release Version"
         required: true
 
 jobs:
@@ -19,15 +19,20 @@ jobs:
       # Checks-out your repository
       - uses: actions/checkout@v2
 
+      - name: Get current version
+        id: version
+        run: |
+          VERSION=$(cat version.txt | tr -d '\n')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Run Changelog CI
         uses: saadmk11/changelog-ci@v1.1.2
         with:
-
           changelog_filename: CHANGELOG.md
 
           config_file: changelog-config.yml
-          committer_username: 'test'
-          committer_email: 'test@test.com'
+          committer_username: "test"
+          committer_email: "test@test.com"
 
           release_version: ${{ github.event.inputs.release_version }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

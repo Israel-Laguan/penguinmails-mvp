@@ -1,6 +1,8 @@
 // src/lib/actions/campaignActions.ts
 "use server";
 
+import { mockCampaignEditDetail } from "@/components/campaigns/mock-data";
+
 // Define the structure for campaign data based on the screenshot
 export interface CampaignData {
   id: string;
@@ -95,9 +97,9 @@ const mockCampaigns: CampaignData[] = [
 export async function getCampaignsDataAction(companyId: string) {
   // Simulate fetching data based on companyId (though not used in mock)
   console.log(`Fetching MOCK campaign list data for company: ${companyId}`);
-  
+
   // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 500)); 
+  await new Promise(resolve => setTimeout(resolve, 500));
 
   // Calculate summary data from mock campaigns
   const totalCampaigns = mockCampaigns.length;
@@ -125,4 +127,12 @@ export async function createCampaignMockAction(formData: any) {
   return { success: true, message: "Campaign created successfully (simulation)." };
   // Simulate error
   // return { success: false, message: "Failed to create campaign (simulation)." };
+}
+
+export async function getCampaignMockAction(id: number) {
+  console.log("Simulating campaign fetching:", id);
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  // Simulate success
+  return mockCampaignEditDetail;
 }

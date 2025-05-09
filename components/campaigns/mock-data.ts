@@ -1,5 +1,6 @@
 import { EmailEventType } from "@/app/api/generated/prisma";
 import { CampaignResponse } from "@/types/campaign";
+import { CampaignFormValues } from "./types";
 
 export const mockCampaigns: CampaignResponse[] = [
   {
@@ -118,6 +119,55 @@ export const mockCampaignDetail = {
   openRate: 65.4,
   clickRate: 16.3,
   replyRate: 6.5,
+};
+
+const editMockCampaign: Omit<CampaignResponse, 'event' | 'clients'> = mockCampaigns[0];
+
+export const mockCampaignEditDetail: CampaignFormValues = {
+  ...editMockCampaign,
+  fromEmail: 'juan@gm.com',
+  fromName: 'juan',
+  timezone: '(GMT-01:00) Azores',
+  clients: ['julio@mail.com', 'pedro@gmail.com'],
+  sendDays: [0, 2, 4, 6],
+  sendTimeStart: '07:30',
+  sendTimeEnd: '15:25',
+  steps: [
+    {
+      id: 1,
+      campaignId: 1,
+      emailSubject: "Initial Outreach",
+      emailBody: "Quick question about your software",
+      condition: 'IF_NOT_OPENED',
+      delayDays: 1,
+      delayHours: 2,
+      sequenceOrder: 0,
+      templateId: 0,
+    },
+    {
+      id: 2,
+      campaignId: 1,
+      emailSubject: "Follow-up 1",
+      emailBody: "Re: Quick question about your software",
+      condition: 'IF_NOT_REPLIED',
+      delayDays: 1,
+      delayHours: 1,
+      sequenceOrder: 1,
+      templateId: 0,
+    },
+    {
+      id: 3,
+      campaignId: 1,
+      emailSubject: "Break-up Email",
+      emailBody: "Closing the loop",
+      delayDays: 1,
+      delayHours: 4,
+      sequenceOrder: 2,
+      condition: 'IF_NOT_CLICKED',
+      templateId: 0
+    },
+  ],
+  createdAt: new Date(Date.now() - (3 * 60 * 60 * 1000))
 };
 
 export const mockStatsComparison = {

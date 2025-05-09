@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { copyText as t } from "./copy";
 import { CampaignEventContition, CampaignStatus } from "@/app/api/generated/prisma";
+import { isValidTimeRange } from "@/lib/utils";
 
 // Schema definitions
 export const campaignStepSchema = z.object({
@@ -54,4 +55,18 @@ export const campaignFormSchema = z.object({
   }).optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
-});
+})
+  .refine((data) => {
+    const { sendTimeStart = '', sendTimeEnd = '' } = data;
+    return isValidTimeRange(sendTimeStart, sendTimeEnd);
+  }, {
+    message: t.validation.startTimeLower,
+    path: ['sendTimeStart'],
+  })
+  .refine((data) => {
+    const { sendTimeStart = '', sendTimeEnd = '' } = data;
+    return isValidTimeRange(sendTimeStart, sendTimeEnd);
+  }, {
+    message: t.validation.endTimeGreater,
+    path: ['sendTimeEnd'],
+  });

@@ -15,6 +15,7 @@ import { Button } from "../ui/button";
 import { copyText as t } from "./copy";
 import { timezones } from "./const-mock";
 import { ScheduleSettingsProps } from "./types";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 
 const daysOfWeek = [
   { id: 0, label: t.schedule.days.mon },
@@ -26,7 +27,7 @@ const daysOfWeek = [
   { id: 6, label: t.schedule.days.sun },
 ];
 
-export function ScheduleSettings({ timezone, selectedSendDays, register, handleDayChange }: ScheduleSettingsProps) {
+export function ScheduleSettings({ control, timezone, selectedSendDays, register, handleDayChange }: ScheduleSettingsProps) {
 
   return (
     <Card>
@@ -53,19 +54,33 @@ export function ScheduleSettings({ timezone, selectedSendDays, register, handleD
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="start-time">{t.schedule.startTime}</Label>
-            <Input
-              id="start-time"
-              type="time"
-              {...register('sendTimeStart')}
+            <FormField
+              control={control}
+              name="sendTimeStart"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t.schedule.startTime}</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="end-time">{t.schedule.endTime}</Label>
-            <Input
-              id="end-time"
-              type="time"
-              {...register('sendTimeEnd')}
+            <FormField
+              control={control}
+              name="sendTimeEnd"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t.schedule.endTime}</FormLabel>
+                  <FormControl>
+                    <Input type="time" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
           </div>
         </div>

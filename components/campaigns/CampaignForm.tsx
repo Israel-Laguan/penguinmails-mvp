@@ -40,7 +40,7 @@ export function CampaignForm({
     }]
   );
   const [currentEditingStep, setCurrentEditingStep] = useState<number | null>(null);
-  const [recipients, setRecipients] = useState<string>('');
+  const [recipients, setRecipients] = useState<string>(initialData?.clients.join('\n') ?? '');
   const emailBodyRef = useRef<HTMLTextAreaElement>(null!);
 
   const form = useForm<CampaignFormValues>({
@@ -233,7 +233,7 @@ export function CampaignForm({
 
             <TabsContent value="schedule" className="mt-4">
               {/* Pass form control/register if schedule is part of the main form */}
-              <ScheduleSettings register={form.register} selectedSendDays={sendDays} timezone={timezone} handleDayChange={handleDayChange} />
+              <ScheduleSettings control={form.control} register={form.register} selectedSendDays={sendDays} timezone={timezone} handleDayChange={handleDayChange} />
             </TabsContent>
 
             <TabsContent value="recipients" className="mt-4">
@@ -241,8 +241,6 @@ export function CampaignForm({
               <RecipientsSettings recipients={recipients} handleChangeRecipients={updateRecipients} />
             </TabsContent>
           </Tabs>
-          {JSON.stringify(form.formState.errors)}
-
           <div className="flex justify-end space-x-2 pt-4">
             {onCancel && (
               <Button variant="outline" type="button" onClick={onCancel}>

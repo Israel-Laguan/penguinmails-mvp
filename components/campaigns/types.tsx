@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { MouseEvent, RefObject } from "react";
-import { UseFormRegister } from "react-hook-form";
+import { Control, UseFormRegister } from "react-hook-form";
 import { CampaignEventContition, Template } from "@/app/api/generated/prisma";
 import { campaignFormSchema, campaignStepSchema } from "./schemaValidations";
 
@@ -67,6 +67,7 @@ export interface SequenceStepProps {
 export interface ScheduleSettingsProps {
   timezone: string;
   selectedSendDays: number[];
+  control: Control<CampaignFormValues>;
   register: UseFormRegister<CampaignFormValues>;
   handleDayChange: (dayId: number, evt: MouseEvent<HTMLButtonElement>) => void;
 }

@@ -26,7 +26,7 @@ const NotFound = () => {
       <div className="min-h-screen flex flex-col items-center justify-center text-primary-800"
            style={{
              background: 'linear-gradient(-45deg, #f8fafc, #e2e8f0, #cbd5e1, #94a3b8)',
-             backgroundSize: '400% 400%',
+             background: 'linear-gradient(-45deg, #e0f2f7, #b2ebf2, #80deea, #4dd0e1)',
              animation: 'gradientAnimation 15s ease infinite',
            }}>
         <div className="flex flex-col items-center text-center p-8 bg-white rounded-lg shadow-lg">
@@ -43,16 +43,15 @@ const NotFound = () => {
           <h1 className="text-6xl font-extrabold text-primary-600 mb-4">404</h1>
           <p className="text-2xl text-primary-700 mb-6">Oops! The page you're looking for doesn't exist.</p>
           <p className="text-lg text-primary-600 mb-8">
-            You tried to enter an incorrect route. Please check if there is a typo, or try one of these common routes:
-            <ul className="list-disc list-inside mt-2">
-              <li><Link href="/" className="text-primary-600 hover:underline">Home</Link></li>
-              <li><Link href="/login" className="text-primary-600 hover:underline">Login</Link></li>
-              <li><Link href="/signup" className="text-primary-600 hover:underline">Sign Up</Link></li>
-              <li><Link href="/dashboard" className="text-primary-600 hover:underline">Dashboard</Link></li>
+ You tried to enter an incorrect route. Please check if there is a typo, or try one of these common routes:
+            <ul className="mt-2 list-none">
+              <li><Link href="/login" className="text-primary-600 underline hover:no-underline">Login</Link></li>
+              <li><Link href="/signup" className="text-primary-600 underline hover:no-underline">Sign Up</Link></li>
+              <li><Link href="/dashboard" className="text-primary-600 underline hover:no-underline">Dashboard</Link></li>
             </ul>
             or return home.
           </p>
-          <Link href="/" className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-md hover:bg-primary-700 transition-colors duration-300 ease-in-out">
+          <Link href="/" className="px-6 py-3 bg-secondary text-white font-semibold rounded-md hover:bg-primary-700 transition-colors duration-300 ease-in-out">
             Go back home
           </Link>
         </div>

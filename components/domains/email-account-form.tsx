@@ -10,8 +10,8 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
 import { Switch } from "@/components/ui/switch"
-import { emailAccountCopy } from "./copy"
-import { EmailProvider } from "./constants"
+import { emailAccountCopy } from "../domains/copy"
+import { EmailProvider } from "../domains/constants"
 
 const copy = emailAccountCopy.form
 

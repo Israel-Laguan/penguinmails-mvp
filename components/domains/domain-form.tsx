@@ -26,7 +26,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { InfoIcon } from "lucide-react";
 import { DnsProvider, DNS_RECORD_TYPES, DkimManagementType } from "./constants";
-import { VerificationStatus } from "@/components/accounts/types"; // Assuming VerificationStatus is in accounts/types for now
+import { VerificationStatus } from "@/components/domains/types"; // Assuming VerificationStatus is in accounts/types for now
 import { copyText as t } from "./copy";
 
 const DOMAIN_REGEX = /^(?!:\/\/)([a-zA-Z0-9-_]+\.)*[a-zA-Z0-9][a-zA-Z0-9-_]+\.[a-zA-Z]{2,11}$/;

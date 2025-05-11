@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { EmailsTable } from "@/components/accounts/emails-table";
+import { EmailsTable } from "@/components/domains/emails-table";
 import { EmailAccount } from "@/components/accounts/types";
 import { ArrowLeft, PlusCircle } from "lucide-react";
 import Link from "next/link";

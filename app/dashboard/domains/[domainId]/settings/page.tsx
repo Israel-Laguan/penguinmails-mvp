@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 import {
   Accordion,
   AccordionContent,
@@ -35,6 +36,11 @@ export default function DomainSettingsPage({ params }: { params: { domainId: str
     warmupEnabled: true,
     dailyIncrease: 10,
     maxDailyEmails: 1000,
+    initialDailyVolume: 10, // New
+    warmupSpeed: "moderate", // New: 'slow', 'moderate', 'fast'
+    replyRate: "80", // New: '70', '80', '90', '100' (as strings for Select)
+    threadDepth: "3", // New: '1', '2', '3', '5' (as strings for Select)
+    autoAdjustWarmup: true, // New
     reputationFactors: {
       bounceRate: 0.3,
       spamComplaints: 0.3,
@@ -286,24 +292,132 @@ export default function DomainSettingsPage({ params }: { params: { domainId: str
                 defaultChecked={domain.warmupEnabled}
               />
             </div>
-            
-            <div className="grid gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="daily-increase">Daily Email Increase</Label>
-                <Input
-                  id="daily-increase"
-                  type="number"
-                  defaultValue={domain.dailyIncrease}
-                />
-              </div>
 
-              <div className="grid gap-2">
-                <Label htmlFor="max-daily">Maximum Daily Emails</Label>
-                <Input
-                  id="max-daily"
-                  type="number"
-                  defaultValue={domain.maxDailyEmails}
-                />
+            {/* Warmup Schedule Section */}
+            <div className="space-y-2">
+              <h3 className="text-md font-medium">Warmup Schedule</h3>
+              <p className="text-sm text-muted-foreground">
+                Configure how your email accounts are warmed up over time.
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2 pt-2">
+                {/* Initial Daily Volume - NEW */}
+                <div className="grid gap-2">
+                  <Label htmlFor="initial-daily-volume">Initial Daily Volume</Label>
+                  <Input
+                    id="initial-daily-volume"
+                    type="number"
+                    defaultValue={domain.initialDailyVolume}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Number of emails sent on day one
+                  </p>
+                </div>
+
+                {/* Daily Email Increase - EXISTING (with description) */}
+                <div className="grid gap-2">
+                  <Label htmlFor="daily-increase">Daily Email Increase</Label>
+                  <Input
+                    id="daily-increase"
+                    type="number"
+                    defaultValue={domain.dailyIncrease}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Emails added each day
+                  </p>
+                </div>
+
+                {/* Maximum Daily Emails - EXISTING (with description) */}
+                <div className="grid gap-2">
+                  <Label htmlFor="max-daily">Maximum Daily Emails</Label>
+                  <Input
+                    id="max-daily"
+                    type="number"
+                    defaultValue={domain.maxDailyEmails}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Maximum number of daily emails
+                  </p>
+                </div>
+
+                {/* Warmup Speed - NEW */}
+                <div className="grid gap-2">
+                  <Label htmlFor="warmup-speed">Warmup Speed</Label>
+                  <Select defaultValue={domain.warmupSpeed}>
+                    <SelectTrigger id="warmup-speed">
+                      <SelectValue placeholder="Select speed" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="slow">Slow (Safe)</SelectItem>
+                      <SelectItem value="moderate">Moderate</SelectItem>
+                      <SelectItem value="fast">Fast (Aggressive)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    How aggressively to increase volume
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* Seed Network Section - NEW */}
+            <div className="space-y-2">
+              <h3 className="text-md font-medium">Seed Network Settings</h3>
+              <p className="text-sm text-muted-foreground">
+                Configure how your emails interact with our network of seed accounts.
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2 pt-2">
+                {/* Reply Rate - NEW */}
+                <div className="grid gap-2">
+                  <Label htmlFor="reply-rate">Reply Rate</Label>
+                  <Select defaultValue={domain.replyRate}>
+                    <SelectTrigger id="reply-rate">
+                      <SelectValue placeholder="Select reply rate" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="70">70%</SelectItem>
+                      <SelectItem value="80">80%</SelectItem>
+                      <SelectItem value="90">90%</SelectItem>
+                      <SelectItem value="100">100%</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    Percentage of emails that receive replies
+                  </p>
+                </div>
+
+                {/* Thread Depth - NEW */}
+                <div className="grid gap-2">
+                  <Label htmlFor="thread-depth">Thread Depth</Label>
+                  <Select defaultValue={domain.threadDepth}>
+                    <SelectTrigger id="thread-depth">
+                      <SelectValue placeholder="Select thread depth" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">1 reply</SelectItem>
+                      <SelectItem value="2">2 replies</SelectItem>
+                      <SelectItem value="3">3 replies</SelectItem>
+                      <SelectItem value="5">5 replies</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">
+                    How many back-and-forth replies in each thread
+                  </p>
+                </div>
+              </div>
+              {/* Auto-adjust - NEW */}
+              <div className="pt-4">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="auto-adjust-warmup"
+                    defaultChecked={domain.autoAdjustWarmup}
+                  />
+                  <Label htmlFor="auto-adjust-warmup">Auto-adjust warmup based on performance</Label>
+                </div>
+                <p className="pl-7 text-xs text-muted-foreground mt-1">
+                  Automatically adjust warmup parameters based on email performance
+                </p>
               </div>
             </div>
           </CardContent>

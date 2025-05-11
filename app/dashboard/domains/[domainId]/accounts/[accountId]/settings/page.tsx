@@ -22,10 +22,10 @@ import { Progress } from "@/components/ui/progress";
 // } from "@/components/ui/select"; // No longer directly used by this page
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import EmailAccountForm, { EmailAccountFormValues } from "@/components/accounts/email-account-form";
+import EmailAccountForm, { EmailAccountFormValues } from "@/components/domains/email-account-form";
 import { EmailAccount, EmailAccountStatus, WarmupStatus } from "@/app/api/generated/prisma"; // For mock data type
-import { AccountCreationType, RelayType, VerificationStatus } from "@/components/accounts/types";
-import { EmailProvider } from "@/components/accounts/constants";
+import { AccountCreationType, RelayType, VerificationStatus } from "@/components/domains/types";
+import { EmailProvider } from "@/components/domains/constants";
 
 // Define the type for the data EmailAccountForm expects for its initialData prop
 type EmailAccountFormInitialData = Partial<EmailAccountFormValues> & {

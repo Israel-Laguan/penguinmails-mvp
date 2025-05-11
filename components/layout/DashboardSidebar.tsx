@@ -54,13 +54,8 @@ const mainNavItems: NavItem[] = [
     },
   },
   {
-    title: "Accounts",
-    href: "/dashboard/accounts",
-    icon: UserCircle,
-  },
-  {
-    title: "Warm-up",
-    href: "/dashboard/warmup",
+    title: "Domains",
+    href: "/dashboard/domains",
     icon: Zap,
   },
   {

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { EmailsTable } from "@/components/accounts/emails-table";
+import { EmailsTable } from "@/components/domains/emails-table";
 import { EmailAccount } from "@/components/accounts/types";
 import {
   ArrowLeft,

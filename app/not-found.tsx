@@ -3,6 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Logo from "@/public/logo.svg";
 
+
 const NotFound = () => {
   const backgroundAnimation = `
     @keyframes gradientAnimation {
@@ -18,7 +19,6 @@ const NotFound = () => {
       50% { transform: translateY(-20px); }
     }
   `;
-
   return (
     <LandingLayout>
       <style>{backgroundAnimation}</style>
@@ -42,9 +42,18 @@ const NotFound = () => {
           />
           <h1 className="text-6xl font-extrabold text-primary-600 mb-4">404</h1>
           <p className="text-2xl text-primary-700 mb-6">Oops! The page you're looking for doesn't exist.</p>
-          <p className="text-lg text-primary-600 mb-8">It might have been moved or deleted.</p>
+          <p className="text-lg text-primary-600 mb-8">
+            You tried to enter an incorrect route. Please check if there is a typo, or try one of these common routes:
+            <ul className="list-disc list-inside mt-2">
+              <li><Link href="/" className="text-primary-600 hover:underline">Home</Link></li>
+              <li><Link href="/login" className="text-primary-600 hover:underline">Login</Link></li>
+              <li><Link href="/signup" className="text-primary-600 hover:underline">Sign Up</Link></li>
+              <li><Link href="/dashboard" className="text-primary-600 hover:underline">Dashboard</Link></li>
+            </ul>
+            or return home.
+          </p>
           <Link href="/" className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-md hover:bg-primary-700 transition-colors duration-300 ease-in-out">
-            Return to Home
+            Go back home
           </Link>
         </div>
       </div>

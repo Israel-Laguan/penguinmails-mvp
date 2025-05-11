@@ -1,18 +1,18 @@
-export type EmailAccountStatus = 
+export type EmailAccountStatus =
   | "PENDING"
   | "ACTIVE"
   | "ISSUE"
   | "SUSPENDED"
   | "DELETED";
 
-export type DomainStatus = 
+export type DomainStatus =
   | "PENDING"
   | "VERIFIED"
   | "SETUP_REQUIRED"
   | "FAILED"
   | "DELETED";
 
-export type WarmupStatusType = 
+export type WarmupStatusType =
   | "NOT_STARTED"
   | "WARMING"
   | "WARMED"
@@ -52,3 +52,22 @@ export type Domain = {
   companyId: number;
   createdById: string;
 };
+
+export enum VerificationStatus {
+  VERIFIED = "VERIFIED",
+  PENDING = "PENDING",
+  ERROR = "ERROR",
+  NOT_CONFIGURED = "NOT_CONFIGURED",
+  DISABLED = "DISABLED"
+}
+
+export enum RelayType {
+  INTERNAL = "INTERNAL",
+  EXTERNAL = "EXTERNAL",
+  DEFAULT_SERVER_CONFIG = "DEFAULT_SERVER_CONFIG"
+}
+
+export enum AccountCreationType {
+  LINUX_USER = "LINUX_USER",
+  VIRTUAL_USER_DB = "VIRTUAL_USER_DB",
+}

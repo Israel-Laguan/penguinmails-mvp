@@ -19,12 +19,14 @@ import {
 } from "lucide-react";
 import { copyText as t } from "./copy";
 import { EmailAccount } from "./types";
+import Link from "next/link";
 
 type EmailsTableProps = {
   emailAccounts: EmailAccount[];
+  domainId: string;
 };
 
-export function EmailsTable({ emailAccounts }: EmailsTableProps) {
+export function EmailsTable({ emailAccounts, domainId }: EmailsTableProps) {
   return (
     <Card>
         <CardHeader>
@@ -51,7 +53,14 @@ export function EmailsTable({ emailAccounts }: EmailsTableProps) {
             <TableBody>
               {emailAccounts.map((account) => (
                 <TableRow key={account.id}>
-                  <TableCell className="font-medium">{account.email}</TableCell>
+                  <TableCell className="font-medium">
+                    <Link
+                      className="text-blue-500 hover:text-blue-700"
+                      href={`${domainId}/accounts/${account.id}`}
+                    >
+                    {account.email}
+                    </Link>
+                    </TableCell>
                   <TableCell>{account.provider}</TableCell>
                   <TableCell>
                     {account.status === 'ACTIVE' ? (

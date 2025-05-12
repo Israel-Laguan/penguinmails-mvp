@@ -2,28 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-// import { Switch } from "@/components/ui/switch"; // No longer directly used by this page
-import { Progress } from "@/components/ui/progress";
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "@/components/ui/select"; // No longer directly used by this page
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import EmailAccountForm, { EmailAccountFormValues } from "@/components/domains/email-account-form";
-import { EmailAccount, EmailAccountStatus, WarmupStatus } from "@/app/api/generated/prisma"; // For mock data type
+import { EmailAccountStatus, WarmupStatus } from "@/app/api/generated/prisma"; // For mock data type
 import { AccountCreationType, RelayType, VerificationStatus } from "@/components/domains/types";
 import { EmailProvider } from "@/components/domains/constants";
 
@@ -82,12 +64,6 @@ export default function AccountSettingsPage({
   const [isLoading, setIsLoading] = useState(true); // For form submission
   const [isFetchingData, setIsFetchingData] = useState(true); // For initial data load
 
-  // TODO: Replace with actual domain data fetching or context if needed for breadcrumbs/links
-  const domain = {
-    id: parseInt(params.domainId),
-    name: "example.com", // Mocked
-  };
-
   useEffect(() => {
     async function loadAccountData() {
       setIsFetchingData(true);
@@ -123,19 +99,6 @@ export default function AccountSettingsPage({
   if (!initialData) {
     return <div className="container mx-auto py-6">Failed to load account settings. Please try again.</div>;
   }
-  
-  // Mock metrics data, as it's separate from the form
-  const accountMetrics = {
-      bounceRate: 0.02,
-      spamComplaints: 0.001,
-      openRate: 0.45,
-      replyRate: 0.12,
-      maxBounceRateThreshold: 0.05,
-      maxSpamComplaintRateThreshold: 0.005,
-      minOpenRateThreshold: 0.20,
-      minReplyRateThreshold: 0.05,
-  };
-
 
   return (
     <div className="container mx-auto py-6">
@@ -160,110 +123,6 @@ export default function AccountSettingsPage({
           isLoading={isLoading}
           isEditing={true}
         />
-
-        {/* Performance Metrics Card (kept separate as discussed) */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Performance Metrics</CardTitle>
-            <CardDescription>
-              View and manage email performance thresholds
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid gap-4">
-              <div>
-                <Label>Bounce Rate</Label>
-                <div className="flex items-center justify-between mt-2">
-                  <div className="text-2xl font-bold">
-                    {(accountMetrics.bounceRate * 100).toFixed(2)}%
-                  </div>
-                  <Progress
-                    value={100 - accountMetrics.bounceRate * 100}
-                    className="w-[160px] h-2"
-                  />
-                </div>
-                <div className="grid gap-2 mt-4">
-                  <Label htmlFor="max-bounce-rate">Max Bounce Rate Threshold (%)</Label>
-                  <Input
-                    id="max-bounce-rate"
-                    type="number"
-                    step="0.1"
-                    defaultValue={(accountMetrics.maxBounceRateThreshold * 100).toFixed(1)}
-                  />
-                  <div className="text-sm text-muted-foreground">
-                    Set a maximum acceptable bounce rate.
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <Label>Spam Complaints</Label>
-                <div className="flex items-center justify-between mt-2">
-                  <div className="text-2xl font-bold">
-                    {(accountMetrics.spamComplaints * 100).toFixed(3)}%
-                  </div>
-                  <Progress
-                    value={100 - accountMetrics.spamComplaints * 100}
-                    className="w-[160px] h-2"
-                  />
-                </div>
-                <div className="grid gap-2 mt-4">
-                  <Label htmlFor="max-spam-complaints">Max Spam Complaint Rate Threshold (%)</Label>
-                  <Input
-                    id="max-spam-complaints"
-                    type="number"
-                    step="0.01"
-                    defaultValue={(accountMetrics.maxSpamComplaintRateThreshold * 100).toFixed(2)}
-                  />
-                  <div className="text-sm text-muted-foreground">
-                    Set a maximum acceptable spam complaint rate.
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <Label>Engagement</Label>
-                <div className="flex items-center justify-between mt-2">
-                  <div className="grid gap-1">
-                    <div className="text-sm">Open Rate: {(accountMetrics.openRate * 100).toFixed(1)}%</div>
-                    <div className="text-sm">Reply Rate: {(accountMetrics.replyRate * 100).toFixed(1)}%</div>
-                  </div>
-                  <Progress
-                    value={accountMetrics.openRate * 100}
-                    className="w-[160px] h-2"
-                  />
-                </div>
-                 <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div className="grid gap-2">
-                        <Label htmlFor="min-open-rate">Min Open Rate Threshold (%)</Label>
-                        <Input
-                        id="min-open-rate"
-                        type="number"
-                        step="0.1"
-                        defaultValue={(accountMetrics.minOpenRateThreshold * 100).toFixed(1)}
-                        />
-                        <div className="text-sm text-muted-foreground">
-                        Set a minimum acceptable open rate.
-                        </div>
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="min-reply-rate">Min Reply Rate Threshold (%)</Label>
-                        <Input
-                        id="min-reply-rate"
-                        type="number"
-                        step="0.1"
-                        defaultValue={(accountMetrics.minReplyRateThreshold * 100).toFixed(1)}
-                        />
-                        <div className="text-sm text-muted-foreground">
-                        Set a minimum acceptable reply rate.
-                        </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        {/* The Save/Cancel buttons are now part of EmailAccountForm */}
       </div>
     </div>
   );

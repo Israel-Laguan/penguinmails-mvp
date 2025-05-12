@@ -9,7 +9,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { EmailsTable } from "@/components/domains/emails-table";
-import { EmailAccount } from "@/components/accounts/types";
+import { EmailAccount } from "@/components/domains/types";
 import {
   ArrowLeft,
   ArrowRight,
@@ -20,11 +20,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-export default function DomainPage({
+export default async function DomainPage({
   params,
 }: {
   params: { domainId: string };
 }) {
+  const { domainId } = await params;
   // TODO: Fetch domain data based on domainId
   const domain = {
     id: parseInt(params.domainId),
@@ -293,7 +294,7 @@ export default function DomainPage({
             </div>
           </CardHeader>
           <CardContent>
-            <EmailsTable emailAccounts={topAccounts} />
+            <EmailsTable emailAccounts={topAccounts} domainId={domainId} />
           </CardContent>
         </Card>
       </div>

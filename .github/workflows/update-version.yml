@@ -3,7 +3,7 @@ name: Update Version on PR to dev
 on:
   pull_request:
     types: [closed]
-    branches: [ "dev" ]
+    branches: [ "dev", "main" ]
 
 jobs:
   update-version:

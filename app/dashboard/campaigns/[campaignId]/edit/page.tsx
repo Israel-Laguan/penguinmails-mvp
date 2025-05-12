@@ -10,7 +10,7 @@ import { ParamValue } from "next/dist/server/request/params";
 
 export default function CampaignCreatePage() {
   const router = useRouter();
-  const { id } = useParams<{ id?: ParamValue }>();
+  const { campaignId } = useParams<{ campaignId?: ParamValue }>();
   const [campaign, setCampaign] = useState<CampaignFormValues>();
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -26,17 +26,16 @@ export default function CampaignCreatePage() {
 
   useEffect(() => {
     const fetchCampagingData = async () => {
-      if (!id) return;
+      if (!campaignId) return;
       if (loading) setLoading(true);
 
-      const campaignId = (typeof id === 'string') ? Number(id) : 0;
-      const campaign: CampaignFormValues = await getCampaignMockAction(campaignId);
+      const campaign: CampaignFormValues = await getCampaignMockAction(Number(campaignId));
       setCampaign(campaign);
       setLoading(false);
     };
     fetchCampagingData();
 
-  }, [id]);
+  }, [campaignId]);
 
   return (
     <div className="space-y-6">

@@ -1,12 +1,17 @@
 {pkgs}: {
-  channel = "stable-24.05";
+  channel = "stable-24.11";
   packages = [
-    pkgs.nodejs_20
+    pkgs.nodejs_22
+    pkgs.prisma-engines
   ];
-  idx.extensions = [
-    
-  ];
+  idx.workspace.onCreate = {
+    npm-install = "npm install";
+  };
+  idx.workspace.onStart = {
+    npm-dev = "npm run dev";
+  };
   idx.previews = {
+    enable = false;
     previews = {
       web = {
         command = [

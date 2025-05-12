@@ -1,68 +1,88 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AccountSettings } from "@/components/settings/AccountSettings";
-import { AppearanceSettings } from "@/components/settings/AppearanceSettings";
-import { NotificationSettings } from "@/components/settings/NotificationSettings";
+import AccountSettings from "@/components/settings/AccountSettings";
+import AppearanceSettings from "@/components/settings/AppearanceSettings";
+import NotificationSettings from "@/components/settings/NotificationSettings";
 import { ComplianceSettings } from "@/components/settings/ComplianceSettings";
-import { BillingSettings } from "@/components/settings/BillingSettings";
+import BillingSettings from "@/components/settings/BillingSettings";
 
 interface UserProfileData {
- name: string;
- email: string;
- username: string;
- bio?: string;
- avatarUrl?: string;
+  name: string;
+  email: string;
+  username: string;
+  role: string;
+  avatarUrl?: string;
 }
 
 interface AppearanceData {
- theme: "light" | "dark" | "system";
- density: "compact" | "default" | "comfortable";
- showCampaignPreviews: boolean;
+  theme: "light" | "dark" | "system" | string;
+  density: "compact" | "default" | "comfortable" | string;
+  showCampaignPreviews: boolean;
 }
 
 interface NotificationData {
- email: {
- campaignCompletions: boolean;
- newReplies: boolean;
- weeklyReports: boolean;
- systemAnnouncements: boolean;
- };
- inApp: {
- realTimeCampaignAlerts: boolean;
- emailAccountAlerts: boolean;
- };
+  email: {
+    campaignCompletions: boolean;
+    newReplies: boolean;
+    weeklyReports: boolean;
+    systemAnnouncements: boolean;
+  };
+  inApp: {
+    realTimeCampaignAlerts: boolean;
+    emailAccountAlerts: boolean;
+  };
 }
 
 interface ComplianceData {
- autoAddUnsubscribeLink: boolean;
- unsubscribeText: string;
- unsubscribeLandingPage: string;
- companyName: string;
- addressLine1: string;
- addressLine2?: string;
- city: string;
- state: string;
- zip: string;
- country: string;
+  autoAddUnsubscribeLink: boolean;
+  unsubscribeText: string;
+  unsubscribeLandingPage: string;
+  companyName: string;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
 }
 
 interface BillingData {
- plan: string;
- nextBillingDate: string;
- planDetails: { label: string; value: string }[];
- paymentMethod: { type: string; last4: string; expiry: string };
- billingHistory: { date: string; description: string; amount: string; method: string }[];
+  renewalDate: string;
+  emailAccountsUsed: number;
+  campaignsUsed: number;
+  emailsPerMonthUsed: number;
+  planDetails: {
+    id: string;
+    name: string;
+    isMonthly: boolean;
+    price: number;
+    description: string;
+    maxEmailAccounts: number;
+    maxCampaigns: number;
+    maxEmailsPerMonth: number;
+  };
+  paymentMethod: {
+    lastFour: string;
+    expiry: string;
+    brand: string; // e.g., "Visa"
+  };
+  billingHistory: Array<{
+    date: string;
+    description: string;
+    amount: string;
+    method: string; // e.g., "Visa •••• 4242"
+  }>;
 }
 
 // Mock data structure based on potential server-fetched data
 interface MockSettingsData {
- userProfile: UserProfileData;
- appearance: AppearanceData;
- notifications: NotificationData;
- compliance: ComplianceData;
- billing: BillingData;
+  userProfile: UserProfileData;
+  appearance: AppearanceData;
+  notifications: NotificationData;
+  compliance: ComplianceData;
+  billing: BillingData;
 }
 
 interface SettingsContentProps {
@@ -73,7 +93,8 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
   const [currentTab, setCurrentTab] = useState("account");
 
   // Use the mock data passed as props
-  const { userProfile, appearance, notifications, compliance, billing } = settingsData;
+  const { userProfile, appearance, notifications, compliance, billing } =
+    settingsData;
 
   // You can add state or effects here if needed for client-side interactions
   // For now, we just use the data passed down.
@@ -82,8 +103,8 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
     <div className="space-y-6">
       <Tabs defaultValue={currentTab} className="w-full">
         <TabsList>
- <TabsTrigger value="account" onClick={() => setCurrentTab("account")}>
- Account
+          <TabsTrigger value="account" onClick={() => setCurrentTab("account")}>
+            Account
           </TabsTrigger>
           <TabsTrigger
             value="appearance"
@@ -91,18 +112,18 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
           >
             Appearance
           </TabsTrigger>
- <TabsTrigger
- value="notifications"
- onClick={() => setCurrentTab("notifications")}
- >
- Notifications
- </TabsTrigger>
- <TabsTrigger
- value="compliance"
- onClick={() => setCurrentTab("compliance")}
- >
- Compliance
- </TabsTrigger>
+          <TabsTrigger
+            value="notifications"
+            onClick={() => setCurrentTab("notifications")}
+          >
+            Notifications
+          </TabsTrigger>
+          <TabsTrigger
+            value="compliance"
+            onClick={() => setCurrentTab("compliance")}
+          >
+            Compliance
+          </TabsTrigger>
           <TabsTrigger value="billing" onClick={() => setCurrentTab("billing")}>
             Billing
           </TabsTrigger>
@@ -112,11 +133,26 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
         </TabsContent>
         <TabsContent value="appearance" className="pt-4">
           {/* Pass relevant mock data to AppearancePage */}
-          <AppearancePage appearance={appearance} />
+          <AppearanceSettings
+            theme={appearance.theme}
+            density={appearance.density}
+            showCampaignPreviews={appearance.showCampaignPreviews}
+          />
+        </TabsContent>
+        <TabsContent value="notifications" className="pt-4">
+          {/* Pass relevant mock data to NotificationPage */}
+          <NotificationSettings
+            email={notifications.email}
+            inApp={notifications.inApp}
+          />
+        </TabsContent>
+        <TabsContent value="compliance" className="pt-4">
+          {/* Pass relevant mock data to CompliancePage */}
+          <ComplianceSettings complianceData={compliance} />
         </TabsContent>
         <TabsContent value="billing" className="pt-4">
           {/* Pass relevant mock data to BillingPage */}
-          <BillingPage billing={billing} />
+          <BillingSettings billing={billing} />
         </TabsContent>
       </Tabs>
     </div>

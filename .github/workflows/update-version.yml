@@ -1,8 +1,8 @@
-name: Update Version on PR to Main
+name: Update Version on PR to dev
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [closed]
     branches: [ "dev" ]
 
 jobs:

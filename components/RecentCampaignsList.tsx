@@ -1,8 +1,10 @@
 import React from 'react';
 import { Mail, BarChart2, MessageSquare, MousePointer } from 'lucide-react'; // Using lucide-react for icons
+import Link from 'next/link';
 
 // Define the expected data structure for props
 interface CampaignStat {
+  id: number;
   name: string;
   total: number;
   opens: number;
@@ -24,7 +26,14 @@ const RecentCampaignsList: React.FC<RecentCampaignsListProps> = ({ campaigns }) 
         <ul className="divide-y divide-gray-200">
           {campaigns.map((campaign, index) => (
             <li key={index} className="py-3">
-              <p className="text-sm font-medium text-gray-800 truncate mb-1">{campaign.name}</p>
+              <p className="text-sm font-medium text-gray-800 truncate mb-1">
+                <Link
+                  href={`/dashboard/campaigns/${campaign.id}`}
+                  className="hover:text-blue-500"
+                >
+                {campaign.name}
+                </Link>
+              </p>
               <div className="flex items-center space-x-3 text-xs text-gray-500">
                 <span className="flex items-center">
                   <Mail size={12} className="mr-1" /> {campaign.total}

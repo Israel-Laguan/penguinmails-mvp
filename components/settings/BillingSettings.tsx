@@ -5,15 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface BillingData {
-  plan: string;
-  price: string;
   renewalDate: string;
-  emailAccounts: {
-    used: number;
-    limit: number;
+  emailAccountsUsed: number;
+  campaignsUsed: number;
+  emailsPerMonthUsed: number;
+  planDetails: { 
+    id: string; 
+    name: string; 
+    isMonthly: boolean;
+    price: number;
+    description: string;
+    maxEmailAccounts: number;  // 0 for "Unlimited" or a number
+    maxCampaigns: number;
+    maxEmailsPerMonth: number;
   };
-  campaigns: string; // "Unlimited" or a number
-  emailsPerMonth: number;
   paymentMethod: {
     lastFour: string;
     expiry: string;
@@ -23,15 +28,15 @@ interface BillingData {
     date: string;
     description: string;
     amount: string;
-    paymentMethod: string; // e.g., "Visa •••• 4242"
+    method: string; // e.g., "Visa •••• 4242"
   }>;
 }
 
 interface BillingSettingsProps {
-  billingData: BillingData;
+  billing: BillingData;
 }
 
-export const BillingSettings: React.FC<BillingSettingsProps> = ({ billingData }) => {
+const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
   return (
     <Card>
       <CardHeader>
@@ -44,9 +49,9 @@ export const BillingSettings: React.FC<BillingSettingsProps> = ({ billingData })
         <div className="rounded-md border p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-medium">{billingData.plan}</h3>
+              <h3 className="text-lg font-medium">{billing.planDetails.name}</h3>
               <p className="text-sm text-muted-foreground">
-                {billingData.price} / month • Renews on {billingData.renewalDate}{" "}
+                {billing.planDetails.price} / month • Renews on {billing.renewalDate}{" "}
               </p>
             </div>
             <Button variant="outline">Change Plan</Button>
@@ -56,16 +61,16 @@ export const BillingSettings: React.FC<BillingSettingsProps> = ({ billingData })
             <div className="flex justify-between text-sm">
               <span>Email accounts</span>
               <span>
-                {billingData.emailAccounts.used} / {billingData.emailAccounts.limit}
+                {billing.emailAccountsUsed} / {billing.planDetails.maxEmailAccounts}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span>Campaigns</span>
-              <span>{billingData.campaigns}</span>
+              <span>{billing.campaignsUsed}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span>Emails per month</span>
-              <span>{billingData.emailsPerMonth.toLocaleString()}</span>
+              <span>{billing.emailsPerMonthUsed.toLocaleString()}</span>
             </div>
           </div>
         </div>
@@ -92,10 +97,10 @@ export const BillingSettings: React.FC<BillingSettingsProps> = ({ billingData })
               </div>
               <div>
                 <p className="font-medium">
-                  •••• •••• •••• {billingData.paymentMethod.lastFour}
+                  •••• •••• •••• {billing.paymentMethod.lastFour}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Expires {billingData.paymentMethod.expiry}
+                  Expires {billing.paymentMethod.expiry}
                 </p>
               </div>
             </div>
@@ -108,7 +113,7 @@ export const BillingSettings: React.FC<BillingSettingsProps> = ({ billingData })
         <div className="space-y-4">
           <h3 className="text-lg font-medium">Billing History</h3>
           <div className="rounded-md border">
-            {billingData.billingHistory.map((item, index) => (
+            {billing.billingHistory.map((item, index) => (
               <div key={index} className={`p-4 flex items-center justify-between text-sm ${index > 0 ? 'border-t' : ''}`}>
                 <div
                   key={index}
@@ -121,7 +126,7 @@ export const BillingSettings: React.FC<BillingSettingsProps> = ({ billingData })
                 </div>
                 <div className="text-right">
                   <p className="font-medium">{item.amount}</p>
-                  <p className="text-xs text-muted-foreground">{item.paymentMethod}</p>
+                  <p className="text-xs text-muted-foreground">{item.method}</p>
                 </div>
               </div>
             ))}
@@ -136,3 +141,5 @@ export const BillingSettings: React.FC<BillingSettingsProps> = ({ billingData })
     </Card>
   );
 };
+
+export default BillingSettings;

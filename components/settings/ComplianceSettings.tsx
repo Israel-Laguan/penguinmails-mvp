@@ -4,18 +4,17 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
+// import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 const complianceFormSchema = z.object({
-  autoAddUnsubscribe: z.boolean().default(true),
+  autoAddUnsubscribeLink: z.boolean().default(true),
   unsubscribeText: z.string().min(1, { message: "Unsubscribe text is required." }),
-  unsubscribePage: z.string().url({ message: "Please enter a valid URL." }),
+  unsubscribeLandingPage: z.string().url({ message: "Please enter a valid URL." }),
   companyName: z.string().min(1, { message: "Company name is required." }),
   addressLine1: z.string().min(1, { message: "Address line 1 is required." }),
   addressLine2: z.string().optional(),
@@ -33,7 +32,7 @@ interface ComplianceSettingsProps {
 
 export function ComplianceSettings({ complianceData }: ComplianceSettingsProps) {
   const form = useForm<ComplianceFormValues>({
-    resolver: zodResolver(complianceFormSchema),
+    // resolver: zodResolver(complianceFormSchema),
     defaultValues: complianceData,
     mode: "onChange",
   });
@@ -59,7 +58,7 @@ export function ComplianceSettings({ complianceData }: ComplianceSettingsProps) 
 
               <FormField
                 control={form.control}
-                name="autoAddUnsubscribe"
+                name="autoAddUnsubscribeLink"
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between space-x-2">
                     <div className="space-y-0.5">
@@ -97,7 +96,7 @@ export function ComplianceSettings({ complianceData }: ComplianceSettingsProps) 
                 />
                 <FormField
                   control={form.control}
-                  name="unsubscribePage"
+                  name="unsubscribeLandingPage"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Unsubscribe Landing Page</FormLabel>

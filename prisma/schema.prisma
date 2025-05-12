@@ -75,18 +75,19 @@ model VerificationToken {
 }
 
 model Company {
-  id               Int            @id @default(autoincrement())
-  name             String
-  stripeCustomerId String?        @unique
-  planType         PlanType       @default(FREE)
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  campaigns        Campaign[]
-  clients          Client[]
-  templates        Template[]
-  users            User[]
-  emailAccounts    EmailAccount[]
-  domains          Domain[]
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  stripeCustomerId    String?              @unique
+  planType            PlanType             @default(FREE)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  campaigns           Campaign[]
+  clients             Client[]
+  templates           Template[]
+  personalizationTags PersonalizationTag[]
+  users               User[]
+  emailAccounts       EmailAccount[]
+  domains             Domain[]
 
   @@index([stripeCustomerId])
 }
@@ -97,6 +98,7 @@ model Client {
   firstName   String?
   lastName    String?
   notes       String?
+  maskPII     Boolean          @default(false)
   companyId   Int
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -108,18 +110,63 @@ model Client {
   @@index([companyId])
 }
 
+enum PersonalizationTagType {
+  COMPANY // {Company}, {Company Name}, {Industry}
+  MARKETING // {Campaign Name}, {Offer}, {Product}
+  CLIENT // {First Name}, {Last Name}, {Email}
+  CUSTOM // User defined tags
+}
+
+model PersonalizationTag {
+  id           Int                    @id @default(autoincrement())
+  name         String // Display name: "First Name"
+  identifier   String // Tag ID: "firstName"
+  visualText   String // How it appears in editor: "{First Name}"
+  description  String? // Help text
+  defaultValue String? // Default fallback value
+  type         PersonalizationTagType
+  companyId    Int
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+  company      Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  templates    TemplateTag[]
+
+  @@unique([companyId, identifier])
+  @@index([companyId])
+}
+
+model TemplateTag {
+  id         Int                @id @default(autoincrement())
+  templateId Int
+  tagId      Int
+  required   Boolean            @default(false)
+  order      Int                @default(0)
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  template   Template           @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  tag        PersonalizationTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, tagId])
+  @@index([templateId])
+  @@index([tagId])
+}
+
 model Template {
-  id            Int            @id @default(autoincrement())
+  id            Int              @id @default(autoincrement())
   name          String
   subject       String
-  bodyHtml      String
+  body          String           @db.Text
+  bodyHtml      String           @db.Text
+  category      TemplateCategory
+  tags          TemplateTag[]
+  description   String
   companyId     Int
   createdById   String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
   campaignSteps CampaignStep[]
-  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdBy     User?          @relation(fields: [createdById], references: [id])
+  company       Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy     User?            @relation(fields: [createdById], references: [id])
 
   @@index([companyId])
   @@index([createdById])
@@ -354,4 +401,20 @@ enum DomainStatus {
   SETUP_REQUIRED
   FAILED
   DELETED
+}
+
+enum TemplateCategory {
+  OUTREACH
+  INTRODUCTION
+  FOLLOW_UP
+  MEETING
+  VALUE
+  SAAS
+  AGENCY
+  CONSULTING
+  ECOMMERCE
+  REAL_ESTATE
+  HR
+  FINANCE
+  HEALTHCARE
 }

@@ -6,26 +6,24 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Settings, Filter, ArrowDown, RefreshCcw } from "lucide-react";
 import InboxMessages from "./components/inbox-messages";
 import { mockEmails } from "./mockEmails";
-import { Email } from "./schemas/schemas";
+import { EmailsType, EmailsTypeSchema } from "./schemas/schemas";
 
 export default function InboxPage() {
-  const [emails, setEmails] = React.useState<Email[]>([]);
+  const [emails, setEmails] = React.useState<EmailsType>(null);
   const [unreadCount, setUnreadCount] = React.useState(3);
 
-  const getMessages = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(mockEmails);
-      }, 1000);
-    });
+  const getMessages = async () => {
+    await new Promise((r) => setTimeout(r, 1000));
+    return EmailsTypeSchema.parse({emails: mockEmails});
   };
+  
+  const fetchMessages = async () => {
+    const messages: EmailsType = await getMessages();
+    setEmails(messages);
+  };
+  
 
   React.useEffect(() => {
-    const fetchMessages = async () => {
-      const messages = await getMessages();
-      setEmails(emails);
-    };
-
     fetchMessages();
   }, []);
 
@@ -75,7 +73,7 @@ export default function InboxPage() {
               </div>
             </div>
 
-            <InboxMessages emails={emails} />
+            <InboxMessages emails={emails?.emails ?? []} />
           </Tabs>
         </div>
 

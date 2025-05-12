@@ -8,7 +8,7 @@ export default function EmailActions({ email }: { email: Email }) {
   const handleAction = (action: string, icon: JSX.Element) => {
     showCustomToast({
       title: `Email "${email.subject}"`,
-      description: `Has ${action} este correo.`,
+      description: `Email ${action}.`,
       icon,
     });
   };
@@ -16,24 +16,24 @@ export default function EmailActions({ email }: { email: Email }) {
   return (
     <div className="flex gap-1 mt-2">
       <TooltipButton
-        label="Borrar"
+        label="Deleted"
         icon={<Trash2 className="w-4 h-4 text-red-500" />}
         onClick={() =>
-          handleAction("borrado", <Trash2 className="w-5 h-5 text-red-500" />)
+          handleAction("deleted", <Trash2 className="w-5 h-5 text-red-500" />)
         }
       />
       <TooltipButton
-        label="Archivar"
+        label="Filed"
         icon={<Archive className="w-4 h-4" />}
         onClick={() =>
-          handleAction("archivado", <Archive className="w-5 h-5 text-blue-500" />)
+          handleAction("filed", <Archive className="w-5 h-5 text-blue-500" />)
         }
       />
       <TooltipButton
-        label="Marcar como leído"
+        label="Mark as read"
         icon={<MailOpen className="w-4 h-4" />}
         onClick={() =>
-          handleAction("marcado como leído", <MailOpen className="w-5 h-5 text-green-500" />)
+          handleAction("mark as read", <MailOpen className="w-5 h-5 text-green-500" />)
         }
       />
     </div>

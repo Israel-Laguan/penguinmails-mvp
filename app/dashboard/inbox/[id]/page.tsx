@@ -55,11 +55,7 @@ export default async function EmailDetailPage({ params }: Props) {
           <span>{email.date}</span>
         </div>
       </div>
-
-      {/* Asunto */}
       <h1 className="text-2xl font-semibold text-gray-900">{email.subject}</h1>
-
-      {/* Contenido */}
       <div className="border-t pt-4 prose prose-sm max-w-none">
         <div dangerouslySetInnerHTML={{ __html: email.htmlContent }} />
       </div>

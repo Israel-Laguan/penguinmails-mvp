@@ -18,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -43,19 +42,18 @@ const profileFormSchema = z.object({
   name: z.string().min(2, {
     message: 'Name must be at least 2 characters.',
   }),
-  bio: z.string().max(160).optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 interface AccountSettingsProps {
-  initialData: ProfileFormValues & { role: string, avatarUrl?: string };
+  userProfile: ProfileFormValues & { role: string, avatarUrl?: string };
 }
 
-export default function AccountSettings({ initialData }: AccountSettingsProps) {
+export default function AccountSettings({ userProfile }: AccountSettingsProps) {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues: initialData,
+    defaultValues: userProfile,
     mode: 'onChange',
   });
 
@@ -79,8 +77,8 @@ export default function AccountSettings({ initialData }: AccountSettingsProps) {
               <Avatar className="h-16 w-16 border border-gray-200">
                 <AvatarImage alt="User" src="" />
                 <AvatarFallback className="text-xl">
-                  {initialData.name
-                    ? initialData.name
+                  {userProfile.name
+                    ? userProfile.name
                         .split(' ')
                         .map((part) => part[0])
                         .join('')
@@ -136,7 +134,7 @@ export default function AccountSettings({ initialData }: AccountSettingsProps) {
               />
               <div className="space-y-2">
                 <Label>Role</Label>
-                <Select disabled defaultValue={initialData.role}>
+                <Select disabled defaultValue={userProfile.role}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your role" />
                   </SelectTrigger>
@@ -151,23 +149,6 @@ export default function AccountSettings({ initialData }: AccountSettingsProps) {
                 </p>
               </div>
             </div>
-
-            <FormField
-              control={form.control}
-              name="bio"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Bio</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Tell us a little about yourself"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <div className="flex justify-end">
               <Button type="submit">Save Changes</Button>

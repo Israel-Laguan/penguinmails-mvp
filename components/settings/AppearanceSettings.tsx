@@ -15,12 +15,12 @@ import React from "react";
 interface AppearanceSettingsProps {
   // Define props for appearance settings data if needed
   // For now, using mock data structure based on the JSX
-  theme: "light" | "dark" | "system";
-  density: "compact" | "default" | "comfortable";
+  theme: "light" | "dark" | "system" | string;
+  density: "compact" | "default" | "comfortable" | string;
   showCampaignPreviews: boolean;
 }
 
-export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
+const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
   theme,
   density,
   showCampaignPreviews
@@ -151,3 +151,5 @@ export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
     </Card>
   );
 };
+
+export default AppearanceSettings;

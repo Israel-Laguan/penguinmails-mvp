@@ -19,6 +19,7 @@ interface PieChartDataPoint {
 }
 
 interface RecentCampaignStat {
+  id: number;
   name: string;
   total: number;
   opens: number;
@@ -79,6 +80,7 @@ export async function getDashboardMockDataAction(companyId: string): Promise<Das
     ],
     recentCampaigns: [
       {
+        id: 1,
         name: "Software CEOs Outreach",
         total: 2500,
         opens: 1625,
@@ -86,6 +88,7 @@ export async function getDashboardMockDataAction(companyId: string): Promise<Das
         replies: 323,
       },
       {
+        id: 2,
         name: "Marketing Directors Follow-up",
         total: 1800,
         opens: 1170,
@@ -93,6 +96,7 @@ export async function getDashboardMockDataAction(companyId: string): Promise<Das
         replies: 216,
       },
       {
+        id: 3,
         name: "Startup Founders Introduction",
         total: 1200,
         opens: 780,

@@ -1,4 +1,3 @@
-typescriptreact
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 const profileFormSchema = z.object({
   name: z
@@ -41,16 +41,19 @@ const defaultValues: Partial<ProfileFormValues> = {
   avatar: "", // Default avatar
 };
 
-export function ProfileSettingsForm() {
+export function ProfileSettingsForm({
+  userProfile,
+}: {
+  userProfile: ProfileFormValues;
+}) {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues,
+    defaultValues: { ...defaultValues, ...userProfile },
     mode: "onChange",
   });
 
   function onSubmit(data: ProfileFormValues) {
-    toast({
-      title: "You submitted the following values:",
+    toast("You submitted the following values:", {
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
           <code className="text-white">{JSON.stringify(data, null, 2)}</code>
@@ -71,10 +74,13 @@ export function ProfileSettingsForm() {
             <FormItem>
               <FormLabel>Avatar</FormLabel>
               <FormControl>
-                <AvatarSelector
-                  value={field.value}
-                  onChange={(avatarUrl) => field.onChange(avatarUrl)}
-                />
+                <Avatar>
+                  <AvatarImage src={field.value} alt="Avatar" />
+                  <AvatarFallback>
+                    <span className="text-sm text-gray-500">No image</span>
+                  </AvatarFallback>
+                  <span className="sr-only">Avatar</span>
+                </Avatar>
               </FormControl>
               <FormMessage />
             </FormItem>

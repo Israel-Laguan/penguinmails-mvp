@@ -167,6 +167,7 @@ The Dashboard > Analytics page provides visualizations and metrics for campaign 
   <tbody>
     <tr><td><img src="https://avatars.githubusercontent.com/u/36519478?v=4?s=50" alt="Avatar" width="50" height="50"></td><td><a href="https://github.com/Israel-Laguan">Israel-Laguan</a></td><td><a href="https://github.com/Israel-Laguan/penguinmails-mvp/graphs/contributors">📈</a></td></tr>
     <tr><td><img src="https://avatars.githubusercontent.com/u/52115726?v=4?s=50" alt="Avatar" width="50" height="50"></td><td><a href="https://github.com/ARenzDev">ARenzDev</a></td><td><a href="https://github.com/Israel-Laguan/penguinmails-mvp/graphs/contributors">📈</a></td></tr>
+    <tr><td><img src="https://avatars.githubusercontent.com/u/49282275?v=4?s=50" alt="Avatar" width="50" height="50"></td><td><a href="https://github.com/joset98">joset98</a></td><td><a href="https://github.com/Israel-Laguan/penguinmails-mvp/graphs/contributors">📈</a></td></tr>
   </tbody>
 </table>
 <!-- CONTRIBUTORS END -->

@@ -162,6 +162,7 @@ export const copyText = {
     ]
   },
   pageTitle: "Create Campaign",
+  pageTitleEdition: "Edit Campaign",
   tabs: {
     sequence: "Sequence",
     schedule: "Schedule",
@@ -179,6 +180,8 @@ export const copyText = {
     minSteps: "Campaign must have at least one step",
     subject: "Email subject is required",
     body: "Email body is required",
+    startTimeLower: "Start time must be lower than end time",
+    endTimeGreater: "End time must be greater than start time.",
   },
   stats: {
     openRate: "Open Rate",

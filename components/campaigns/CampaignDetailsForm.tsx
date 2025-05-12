@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { copyText as t } from "./copy";
-import { CampaignFormValues } from "./CampaignForm";
+import { CampaignFormValues } from "./types";
 
 interface CampaignDetailsFormProps {
   form: UseFormReturn<CampaignFormValues>;

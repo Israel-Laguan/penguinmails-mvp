@@ -8,7 +8,6 @@ import {
   BarChart3,
   Mail,
   Settings,
-  MessageSquare,
   PlusCircle,
   Inbox,
   Layers,
@@ -46,16 +45,6 @@ const mainNavItems: NavItem[] = [
     icon: FileText,
   },
   {
-    title: "Clients", // Added based on previous app structure
-    href: "/dashboard/clients",
-    icon: UserCircle, // Assuming Users icon exists or use appropriate one
-  },
-  // {
-  //   title: "Analytics", // Added based on previous app structure
-  //   href: "/dashboard/analytics",
-  //   icon: BarChart3, // Reusing icon, consider a different one
-  // },
-  {
     title: "Inbox",
     href: "/dashboard/inbox",
     icon: Inbox,
@@ -65,13 +54,8 @@ const mainNavItems: NavItem[] = [
     },
   },
   {
-    title: "Accounts",
-    href: "/dashboard/accounts",
-    icon: UserCircle,
-  },
-  {
-    title: "Warm-up",
-    href: "/dashboard/warmup",
+    title: "Domains",
+    href: "/dashboard/domains",
     icon: Zap,
   },
   {

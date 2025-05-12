@@ -2,16 +2,16 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Copy, Save } from "lucide-react";
+import { ArrowLeft, Copy } from "lucide-react";
+import { copyText as t } from "./copy";
 
 interface TemplateHeaderProps {
   templateName: string;
-  templateId: number | string;
+  templateId: number;
   isViewMode: boolean;
-  onSave: () => void;
 }
 
-export function TemplateHeader({ templateName, templateId, isViewMode, onSave }: TemplateHeaderProps) {
+export function TemplateHeader({ templateName, templateId, isViewMode }: TemplateHeaderProps) {
   const router = useRouter();
 
   return (
@@ -21,28 +21,18 @@ export function TemplateHeader({ templateName, templateId, isViewMode, onSave }:
           <ArrowLeft className="h-4 w-4" />
         </Button>
         <h1 className="text-2xl font-bold tracking-tight">
-          {isViewMode ? templateName : `Edit: ${templateName}`}
+          {isViewMode ? templateName : `${t.templateCard.actions.edit} ${templateName}`}
         </h1>
       </div>
       <div className="flex items-center space-x-2">
-        {isViewMode ? (
+        {isViewMode && (
           <>
             <Button variant="outline" onClick={() => router.push(`/dashboard/templates/${templateId}/edit`)}>
-              Edit Template
+              {t.viewTemplate.actions.edit}
             </Button>
             <Button variant="outline">
               <Copy className="mr-2 h-4 w-4" />
-              Duplicate
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button variant="outline" onClick={() => router.push(`/dashboard/templates/${templateId}/view`)}>
-              Cancel
-            </Button>
-            <Button onClick={onSave}>
-              <Save className="mr-2 h-4 w-4" />
-              Save Changes
+              {t.viewTemplate.actions.duplicate}
             </Button>
           </>
         )}

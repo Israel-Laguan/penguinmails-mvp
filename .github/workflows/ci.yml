@@ -1,0 +1,46 @@
+name: Lint Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: ['main', 'dev', '**']
+
+jobs:
+  lint:
+    name: Run ESLint and Prettier
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with: 
+            ref: ${{ github.event.pull_request.head.sha }} 
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: v23.6.0
+
+      - name: Restore cached dependencies 
+        id: cache-restore 
+        uses: actions/cache@v3 
+        with: 
+            path: ./src/node_modules 
+            key: npm-${{ hashFiles('./src/package-lock.json') }} 
+
+      - name: Install dependencies
+        if: steps.cache-restore.outputs.cache-hit != 'true'
+        run: |
+          echo "Installing dependencies with legacy-peer-deps..."
+          npm ci --legacy-peer-deps
+
+      - name: Run ESLint
+        run: npm run lint
+        env:
+          CI: true
+
+      #- name: Run Prettier
+      #  run: npm run format:check
+
+      #- name: Run Jest
+      #  run: npm run test

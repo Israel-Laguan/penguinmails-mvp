@@ -2,6 +2,11 @@
 
 This is an MVP (Minimum Viable Product) of an email outreach web application built with Next.js and SQLite. The application allows users to manage clients, create email sequence campaigns, manage templates, and track basic results.
 
+## What is PenguinMails?
+
+This project is a platform for managing and automating email campaigns and outreach. It helps users create, send, and track the performance of their email campaigns. The platform also provides tools for managing clients, domains, and email accounts, as well as features for analyzing campaign statistics and managing templates. It aims to streamline the process of reaching out to clients and prospects through email.
+
+
 ## Features
 
 - **User Authentication:** Email/password signup and login with session management

@@ -1,57 +1,34 @@
 "use client";
 
-import { useRef } from "react";
-import { ColumnMeta, Row, Table } from "@tanstack/react-table";
+import { useRef, useState } from "react";
+import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  CheckIcon,
   Cross,
+  Filter,
   Mail,
   RefreshCcw,
-  TrashIcon,
+  Search,
   User,
-  X,
 } from "lucide-react";
 import { DataTableViewOptions } from "./datatable-view-options";
 import { DataTableFacetedFilter } from "./datatable-faceted-filter";
 
-interface CustomColumnMeta<TData> extends ColumnMeta<TData, unknown> {
-  name?: string;
-}
-
-export const priorityType = [
-  {
-    label: "Baja",
-    value: "LOW",
-    icon: CheckIcon,
-  },
-  {
-    label: "Media",
-    value: "MEDIUM",
-    icon: X,
-  },
-  {
-    label: "Alta",
-    value: "HIGH",
-    icon: X,
-  },
-];
-
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  disabled: boolean;
-  onDelete: (rows: Row<TData>[]) => void;
+  selectedValues: string[];
+  setSelectedValues: (values: string[]) => void;
 }
 
 export function DataTableToolbar<TData>({
   table,
-  onDelete,
-}:
-DataTableToolbarProps<TData>) {
+  selectedValues,
+  setSelectedValues
+}: DataTableToolbarProps<TData>) {
   const searchRef = useRef<HTMLInputElement>(null);
-  const isFiltered = table.getState().columnFilters.length > 0;
+  
 
   const clearSearchInput = () => {
     if (searchRef.current) {
@@ -60,26 +37,18 @@ DataTableToolbarProps<TData>) {
     }
   };
 
-  const handleBulkDelete = async () => {
-    const ok = await confirm();
-    if (ok) {
-      onDelete(table.getFilteredSelectedRowModel().rows);
-      table.resetRowSelection();
-    }
-  };
-
-  const users = Array.from(
-    new Set(table.getRowModel().rows.map((row) => row.getValue("name")))
-  ).map((user: string) => ({
-    label: user,
-    value: user,
+  const from = Array.from(
+    new Set(table.getRowModel().rows.map((row) => row.getValue<string>("from")))
+  ).map((fromValue) => ({
+    label: fromValue,
+    value: fromValue,
     icon: User,
   }));
   const emails = Array.from(
-    new Set(table.getRowModel().rows.map((row) => row.getValue("email")))
-  ).map((email: string) => ({
-    label: email,
-    value: email,
+    new Set(table.getRowModel().rows.map((row) => row.getValue<string>("email")))
+  ).map((emailValue) => ({
+    label: emailValue,
+    value: emailValue,
     icon: Mail,
   }));
 
@@ -87,7 +56,7 @@ DataTableToolbarProps<TData>) {
     <>
       <div className="flex items-start lg:items-center md:justify-between w-full flex-col md:flex-row space-y-2 md:space-y-0">
         <div className="flex items-start md:items-center gap-2 flex-col md:flex-row w-full md:w-fit">
-          <div className="relative w-full">
+          <div className="flex flex-row relative w-full">
             <Input
               ref={searchRef}
               placeholder="Search..."
@@ -96,6 +65,17 @@ DataTableToolbarProps<TData>) {
               }}
               className="h-8 w-full md:w-[250px]"
             />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                table.resetColumnFilters();
+              }}
+              className="px-2 ml-2 border-black"
+            >
+              <Search className="ml-2 siz-3" />
+              Search
+            </Button>
             {searchRef.current && searchRef.current?.value.length > 0 && (
               <Cross
                 onClick={clearSearchInput}
@@ -104,11 +84,13 @@ DataTableToolbarProps<TData>) {
             )}
           </div>
           <div className="flex items-center gap-2">
-            {table.getColumn("name") && users.length > 0 && (
+            {table.getColumn("from") && from.length > 0 && (
               <DataTableFacetedFilter
-                column={table.getColumn("name")}
-                title="Name"
-                options={users}
+                column={table.getColumn("from")}
+                title="From"
+                options={from}
+                selectedValues={selectedValues}
+                setSelectedValues={setSelectedValues}
               />
             )}
             {table.getColumn("email") && emails.length > 0 && (
@@ -116,14 +98,30 @@ DataTableToolbarProps<TData>) {
                 column={table.getColumn("email")}
                 title="Email"
                 options={emails}
+                selectedValues={selectedValues}
+                setSelectedValues={setSelectedValues}
               />
             )}
-            {isFiltered && (
+            {
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  table.resetColumnFilters();
+                  setSelectedValues([]);
+                }}
+                className="px-2"
+              >
+                <Filter className="ml-2 siz-3" />
+                Apply Filters
+              </Button>
+            }
+            {selectedValues.length > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  table.resetColumnFilters();
+                  setSelectedValues([]);
                 }}
                 className="px-2"
               >
@@ -135,12 +133,6 @@ DataTableToolbarProps<TData>) {
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
-          {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-            <Button variant="outline" size="sm" onClick={handleBulkDelete}>
-              <TrashIcon className="mr-2 size-4" aria-hidden="true" />
-              Delete ({table.getFilteredSelectedRowModel().rows.length})
-            </Button>
-          ) : null}
           <DataTableViewOptions table={table} />
         </div>
       </div>

@@ -12,6 +12,10 @@ interface ColumnVisibilityProps<TData> {
   table: Table<TData>;
 }
 
+type CustomColumnMeta = {
+  name?: string;
+};
+
 export default function ColumnVisibility<TData>({
   table,
 }: ColumnVisibilityProps<TData>) {
@@ -20,7 +24,7 @@ export default function ColumnVisibility<TData>({
       <DropdownMenuTrigger asChild>
         <Button size="sm" variant="outline" className="space-x-2">
           <SlidersHorizontal size={16} />
-          <p>Columnas</p>
+          <p>Columns</p>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

@@ -11,11 +11,15 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Filter, MailX } from "lucide-react";
+import { Barcode } from "lucide-react";
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
 }
+
+type CustomColumnMeta = {
+  name?: string;
+};
 
 export function DataTableViewOptions<TData>({
   table,
@@ -24,8 +28,8 @@ export function DataTableViewOptions<TData>({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="lg:ml-auto h-8 flex">
-          <Filter className="mr-2 size-4" />
-          Columnas
+          <Barcode className="mr-2 size-4" />
+          Columns
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[150px]">

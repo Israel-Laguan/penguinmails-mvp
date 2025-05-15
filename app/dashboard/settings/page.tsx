@@ -7,8 +7,8 @@ export default async function SettingsPage() {
       name: "John Doe",
       email: "john.doe@example.com",
       username: "johndoe",
-      role: "admin",
-      avatarUrl: "https://example.com/avatar.jpg",
+      role: "ADMIN",
+      avatarUrl: "https://ui-avatars.com/api/?name=John+Doe",
     },
     appearance: {
       theme: "light",

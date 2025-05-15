@@ -8,7 +8,6 @@ import {
   BarChart3,
   Mail,
   Settings,
-  MessageSquare,
   PlusCircle,
   Inbox,
   Layers,
@@ -46,16 +45,6 @@ const mainNavItems: NavItem[] = [
     icon: FileText,
   },
   {
-    title: "Clients", // Added based on previous app structure
-    href: "/dashboard/clients",
-    icon: UserCircle, // Assuming Users icon exists or use appropriate one
-  },
-  {
-    title: "Analytics", // Added based on previous app structure
-    href: "/dashboard/analytics",
-    icon: BarChart3, // Reusing icon, consider a different one
-  },
-  {
     title: "Inbox",
     href: "/dashboard/inbox",
     icon: Inbox,
@@ -65,13 +54,8 @@ const mainNavItems: NavItem[] = [
     },
   },
   {
-    title: "Accounts",
-    href: "/dashboard/accounts",
-    icon: UserCircle,
-  },
-  {
-    title: "Warm-up",
-    href: "/dashboard/warmup",
+    title: "Domains",
+    href: "/dashboard/domains",
     icon: Zap,
   },
   {
@@ -95,16 +79,6 @@ export function DashboardSidebar() {
       </div>
 
       <div className="flex-1 overflow-auto py-4 px-3">
-        <div className="mb-4">
-          {/* TODO: Link to actual campaign creation page when implemented */}
-          <Button asChild className="w-full justify-start gap-2" size="sm">
-            <Link href="/dashboard/campaigns/create"> {/* Updated link */}
-              <PlusCircle className="mr-2 h-4 w-4" />
-              New Campaign
-            </Link>
-          </Button>
-        </div>
-
         <nav className="grid gap-1">
           {mainNavItems.map((item, index) => (
             <Link

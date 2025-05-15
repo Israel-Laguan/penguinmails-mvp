@@ -3,42 +3,46 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Upload, List } from "lucide-react";
+import { Upload } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { copyText as t } from "./copy";
 
-export function RecipientsSettings() {
+type RecipientsSettingsProps = {
+  recipients: string;
+  handleChangeRecipients: (evt: any) => void;
+};
+
+export function RecipientsSettings({ recipients, handleChangeRecipients }: RecipientsSettingsProps) {
   // TODO: Implement actual file upload/CSV parsing/manual entry logic
-  // TODO: Connect state to react-hook-form or parent state
-  const [recipientInput, setRecipientInput] = React.useState("");
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recipients</CardTitle>
+        <CardTitle>{t.recipients.title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-sm text-muted-foreground">
-          Add recipients by uploading a CSV file or manually entering email addresses.
+          {t.recipients.description}
         </p>
         <div className="flex gap-2">
           <Button variant="outline" className="gap-1">
             <Upload className="h-4 w-4" />
-            Upload CSV
+            {t.recipients.uploadCsvButton}
           </Button>
           {/* Add functionality to switch to manual input */}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="manual-recipients">Manually Add Recipients</Label>
+          <Label htmlFor="manual-recipients">{t.recipients.manualInputLabel}</Label>
           <Textarea
             id="manual-recipients"
-            placeholder="Enter email addresses, one per line...\nExample:\njohn.doe@example.com\njane.smith@example.com"
-            value={recipientInput}
-            onChange={(e) => setRecipientInput(e.target.value)}
+            placeholder={t.recipients.textareaPlaceholder}
+            value={recipients}
+            onChange={(evt) => handleChangeRecipients(evt)}
             rows={6}
           />
           <p className="text-xs text-muted-foreground">
-            Enter one email address per line. You can also include variables like: email,firstName,lastName\njohn.doe@example.com,John,Doe
+            {t.recipients.helpText}
           </p>
         </div>
         {/* TODO: Display added recipients count or list preview */}

@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 // Default avatar options
 const defaultAvatars = [
-  { id: 'male1', src: '/avatars/male1.png', alt: 'Male avatar 1' },
+  { id: 'male1', src: 'https://api.dicebear.com/9.x/adventurer/svg?seed=Kingston', alt: 'Male avatar 1' },
   { id: 'male2', src: '/avatars/male2.png', alt: 'Male avatar 2' },
   { id: 'female1', src: '/avatars/female1.png', alt: 'Female avatar 1' },
   { id: 'female2', src: '/avatars/female2.png', alt: 'Female avatar 2' },
@@ -18,7 +18,7 @@ const defaultAvatars = [
 ];
 
 interface AvatarSelectorProps {
-  currentAvatarUrl: string | null;
+  currentAvatarUrl?: string;
   onAvatarChange: (url: string) => void;
 }
 

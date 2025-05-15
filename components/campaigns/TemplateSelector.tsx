@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { copyText as t } from "./copy";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,43 +12,49 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
+import { Template } from "@/app/api/generated/prisma";
 
 interface TemplateSelectorProps {
+  template?: Template;
   onSelectTemplate: (subject: string, body: string) => void;
 }
 
 // TODO: Fetch templates dynamically
-const templates = [
-  { id: 1, name: "Intro Offer", subject: "Quick Question about [Company Name]", body: "Hi {{firstName}},\n\nI saw you recently..." },
-  { id: 2, name: "Follow Up 1", subject: "Re: Quick Question", body: "Hi {{firstName}},\n\nJust wanted to follow up..." },
-  { id: 3, name: "Breakup Email", subject: "Closing the loop", body: "Hi {{firstName}},\n\nSince I haven't heard back..." },
-];
+const templates = t.templates.items.map((item, index) => ({
+  id: index + 1,
+  ...item,
+}));
 
-export function TemplateSelector({ onSelectTemplate }: TemplateSelectorProps) {
+export function TemplateSelector({
+  template: currentTemplate,
+  onSelectTemplate,
+}: TemplateSelectorProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="gap-1">
           <FileText className="h-4 w-4" />
-          Import Template
+          {t.templates.buttonLabel}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Select a Template</DropdownMenuLabel>
+        <DropdownMenuLabel>{t.templates.dropdownLabel}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {templates.map((template) => (
           <DropdownMenuItem
             key={template.id}
             onClick={() => onSelectTemplate(template.subject, template.body)}
+            className={currentTemplate?.id === template.id ? "bg-accent" : ""}
           >
             {template.name}
           </DropdownMenuItem>
         ))}
         {templates.length === 0 && (
-          <DropdownMenuItem disabled>No templates available</DropdownMenuItem>
+          <DropdownMenuItem disabled>
+            {t.templates.noTemplatesAvailable}
+          </DropdownMenuItem>
         )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
-

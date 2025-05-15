@@ -22,7 +22,6 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, className }) =>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
-        {/* Optional: Add comparison text like '+20.1% from last month' here */}
       </CardContent>
     </Card>
   );

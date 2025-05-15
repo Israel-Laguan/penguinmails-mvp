@@ -2,6 +2,11 @@
 
 This is an MVP (Minimum Viable Product) of an email outreach web application built with Next.js and SQLite. The application allows users to manage clients, create email sequence campaigns, manage templates, and track basic results.
 
+## What is PenguinMails?
+
+This project is a platform for managing and automating email campaigns and outreach. It helps users create, send, and track the performance of their email campaigns. The platform also provides tools for managing clients, domains, and email accounts, as well as features for analyzing campaign statistics and managing templates. It aims to streamline the process of reaching out to clients and prospects through email.
+
+
 ## Features
 
 - **User Authentication:** Email/password signup and login with session management
@@ -152,3 +157,17 @@ The Dashboard > Analytics page provides visualizations and metrics for campaign 
 - Add user dropdown and logout functionality to the Dashboard Header.
 - Refine mobile responsiveness, potentially adding a mobile sidebar toggle.
 - Integrate with third-party services like Stripe for payments.
+
+<!-- CONTRIBUTORS START -->
+<h2>Contributors</h2>
+<table border='1' cellspacing='0' cellpadding='5'>
+  <thead>
+    <tr><th>Avatar</th><th>Username</th><th>Insights</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><img src="https://avatars.githubusercontent.com/u/36519478?v=4?s=50" alt="Avatar" width="50" height="50"></td><td><a href="https://github.com/Israel-Laguan">Israel-Laguan</a></td><td><a href="https://github.com/Israel-Laguan/penguinmails-mvp/graphs/contributors">📈</a></td></tr>
+    <tr><td><img src="https://avatars.githubusercontent.com/u/52115726?v=4?s=50" alt="Avatar" width="50" height="50"></td><td><a href="https://github.com/ARenzDev">ARenzDev</a></td><td><a href="https://github.com/Israel-Laguan/penguinmails-mvp/graphs/contributors">📈</a></td></tr>
+    <tr><td><img src="https://avatars.githubusercontent.com/u/49282275?v=4?s=50" alt="Avatar" width="50" height="50"></td><td><a href="https://github.com/joset98">joset98</a></td><td><a href="https://github.com/Israel-Laguan/penguinmails-mvp/graphs/contributors">📈</a></td></tr>
+  </tbody>
+</table>
+<!-- CONTRIBUTORS END -->

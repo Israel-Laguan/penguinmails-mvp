@@ -26,6 +26,8 @@ model User {
   templates     Template[]
   company       Company?        @relation(fields: [companyId], references: [id])
   preferences   UserPreference?
+  EmailAccount  EmailAccount[]
+  Domain        Domain[]
 
   @@index([email])
   @@index([companyId])
@@ -73,16 +75,19 @@ model VerificationToken {
 }
 
 model Company {
-  id               Int        @id @default(autoincrement())
-  name             String
-  stripeCustomerId String?    @unique
-  planType         PlanType   @default(FREE)
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
-  campaigns        Campaign[]
-  clients          Client[]
-  templates        Template[]
-  users            User[]
+  id                  Int                  @id @default(autoincrement())
+  name                String
+  stripeCustomerId    String?              @unique
+  planType            PlanType             @default(FREE)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  campaigns           Campaign[]
+  clients             Client[]
+  templates           Template[]
+  personalizationTags PersonalizationTag[]
+  users               User[]
+  emailAccounts       EmailAccount[]
+  domains             Domain[]
 
   @@index([stripeCustomerId])
 }
@@ -93,6 +98,7 @@ model Client {
   firstName   String?
   lastName    String?
   notes       String?
+  maskPII     Boolean          @default(false)
   companyId   Int
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -104,54 +110,110 @@ model Client {
   @@index([companyId])
 }
 
+enum PersonalizationTagType {
+  COMPANY // {Company}, {Company Name}, {Industry}
+  MARKETING // {Campaign Name}, {Offer}, {Product}
+  CLIENT // {First Name}, {Last Name}, {Email}
+  CUSTOM // User defined tags
+}
+
+model PersonalizationTag {
+  id           Int                    @id @default(autoincrement())
+  name         String // Display name: "First Name"
+  identifier   String // Tag ID: "firstName"
+  visualText   String // How it appears in editor: "{First Name}"
+  description  String? // Help text
+  defaultValue String? // Default fallback value
+  type         PersonalizationTagType
+  companyId    Int
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
+  company      Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  templates    TemplateTag[]
+
+  @@unique([companyId, identifier])
+  @@index([companyId])
+}
+
+model TemplateTag {
+  id         Int                @id @default(autoincrement())
+  templateId Int
+  tagId      Int
+  required   Boolean            @default(false)
+  order      Int                @default(0)
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  template   Template           @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  tag        PersonalizationTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, tagId])
+  @@index([templateId])
+  @@index([tagId])
+}
+
 model Template {
-  id            Int            @id @default(autoincrement())
+  id            Int              @id @default(autoincrement())
   name          String
   subject       String
-  bodyHtml      String
+  body          String           @db.Text
+  bodyHtml      String           @db.Text
+  category      TemplateCategory
+  tags          TemplateTag[]
+  description   String
   companyId     Int
   createdById   String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
   campaignSteps CampaignStep[]
-  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdBy     User?          @relation(fields: [createdById], references: [id])
+  company       Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy     User?            @relation(fields: [createdById], references: [id])
 
   @@index([companyId])
   @@index([createdById])
 }
 
 model Campaign {
-  id          Int              @id @default(autoincrement())
-  name        String
-  status      CampaignStatus   @default(DRAFT)
-  companyId   Int
-  createdById String?
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  company     Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdBy   User?            @relation(fields: [createdById], references: [id])
-  clients     CampaignClient[]
-  steps       CampaignStep[]   @relation("CampaignSteps")
-  emailEvents EmailEvent[]
+  id            Int              @id @default(autoincrement())
+  name          String
+  status        CampaignStatus   @default(DRAFT)
+  fromName      String
+  fromEmail     String
+  companyId     Int
+  createdById   String?
+  // Cached metrics for UI
+  metrics       Json? // Stores aggregated metrics as JSON
+  // Schedule settings at campaign level
+  sendDays      Int[] // Array of weekday numbers (0-6)
+  sendTimeStart String? // HH:mm format
+  sendTimeEnd   String? // HH:mm format
+  emailsPerDay  Int?
+  timezone      String           @default("UTC")
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  company       Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy     User?            @relation(fields: [createdById], references: [id])
+  clients       CampaignClient[]
+  steps         CampaignStep[]   @relation("CampaignSteps")
+  emailEvents   EmailEvent[]
 
   @@index([companyId])
   @@index([createdById])
 }
 
 model CampaignStep {
-  id            Int          @id @default(autoincrement())
+  id            Int                    @id @default(autoincrement())
   sequenceOrder Int
-  delayDays     Int
+  delayDays     Int                    @default(3)
+  delayHours    Int                    @default(0)
+  emailSubject  String?
+  emailBody     String?
   templateId    Int
   campaignId    Int
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  sendDays      String?
-  sendTimeStart String?
-  sendTimeEnd   String?
-  campaign      Campaign     @relation("CampaignSteps", fields: [campaignId], references: [id], onDelete: Cascade)
-  template      Template     @relation(fields: [templateId], references: [id])
+  condition     CampaignEventContition @default(ALWAYS)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  campaign      Campaign               @relation("CampaignSteps", fields: [campaignId], references: [id], onDelete: Cascade)
+  template      Template               @relation(fields: [templateId], references: [id])
   emailEvents   EmailEvent[]
 
   @@unique([campaignId, sequenceOrder])
@@ -206,6 +268,53 @@ model UserPreference {
   @@index([userId])
 }
 
+model EmailAccount {
+  id           Int                @id @default(autoincrement())
+  email        String
+  provider     String
+  status       EmailAccountStatus @default(PENDING)
+  reputation   Int                @default(0)
+  warmupStatus WarmupStatus       @default(NOT_STARTED)
+  dayLimit     Int                @default(100)
+  sent24h      Int                @default(0)
+  lastSync     DateTime?
+  spf          Boolean            @default(false)
+  dkim         Boolean            @default(false)
+  dmarc        Boolean            @default(false)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  companyId    Int
+  createdById  String
+  company      Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy    User               @relation(fields: [createdById], references: [id])
+
+  @@unique([companyId, email])
+  @@index([companyId])
+  @@index([createdById])
+}
+
+model Domain {
+  id          Int          @id @default(autoincrement())
+  domain      String
+  provider    String
+  status      DomainStatus @default(PENDING)
+  daysActive  Int          @default(0)
+  reputation  Int          @default(0)
+  spf         Boolean      @default(false)
+  dkim        Boolean      @default(false)
+  dmarc       Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  companyId   Int
+  createdById String
+  company     Company      @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy   User         @relation(fields: [createdById], references: [id])
+
+  @@unique([companyId, domain])
+  @@index([companyId])
+  @@index([createdById])
+}
+
 enum UserRole {
   ADMIN
   MEMBER
@@ -223,6 +332,19 @@ enum CampaignStatus {
   PAUSED
   COMPLETED
   ARCHIVED
+}
+
+enum CampaignEventContition {
+  ALWAYS
+  IF_NOT_OPENED
+  IF_NOT_CLICKED
+  IF_NOT_REPLIED
+  IF_OPTION_A
+  IF_OPTION_B
+  IF_OPTION_C
+  IF_OPTION_D
+  IF_OPTION_E
+  IF_UNSUBSCRIBED
 }
 
 enum ClientCampaignStatus {
@@ -255,4 +377,44 @@ enum EmailEventType {
   BOUNCED
   SPAM_COMPLAINT
   UNSUBSCRIBED
+  REPLIED
+}
+
+enum EmailAccountStatus {
+  PENDING
+  ACTIVE
+  ISSUE
+  SUSPENDED
+  DELETED
+}
+
+enum WarmupStatus {
+  NOT_STARTED
+  WARMING
+  WARMED
+  PAUSED
+}
+
+enum DomainStatus {
+  PENDING
+  VERIFIED
+  SETUP_REQUIRED
+  FAILED
+  DELETED
+}
+
+enum TemplateCategory {
+  OUTREACH
+  INTRODUCTION
+  FOLLOW_UP
+  MEETING
+  VALUE
+  SAAS
+  AGENCY
+  CONSULTING
+  ECOMMERCE
+  REAL_ESTATE
+  HR
+  FINANCE
+  HEALTHCARE
 }

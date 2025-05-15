@@ -5,18 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { TemplateSelector } from "./TemplateSelector";
 import PersonalizationTags from "@/components/email/PersonalizationTags";
-
-type EmailStepType = {
-  emailSubject?: string;
-  emailBody?: string;
-}
+import { copyText as t } from "./copy";
+import { CampaignStep, Template } from "@/app/api/generated/prisma";
 
 interface EmailStepProps {
   index: number;
-  step: EmailStepType;
+  step: Partial<CampaignStep>;
+  template?: Template;
   onSubjectChange: (value: string) => void;
   onBodyChange: (value: string) => void;
-  onImportTemplate: (subject: string, body: string) => void;
+  onSelectTemplate: (subject: string, body: string) => void;
   onInsertTag: (tag: string) => void;
   isEditing: boolean;
   emailBodyRef: RefObject<HTMLTextAreaElement>;
@@ -25,9 +23,10 @@ interface EmailStepProps {
 export function EmailStep({
   index,
   step,
+  template,
   onSubjectChange,
   onBodyChange,
-  onImportTemplate,
+  onSelectTemplate,
   onInsertTag,
   isEditing,
   emailBodyRef
@@ -35,28 +34,28 @@ export function EmailStep({
   return (
     <div className="space-y-4 mt-4">
       <div className="flex justify-between items-center">
-        <label htmlFor={`subject-${index}`} className="text-sm font-medium">Subject</label>
-        <TemplateSelector onSelectTemplate={onImportTemplate} />
+        <label htmlFor={`subject-${index}`} className="text-sm font-medium">{t.emailStep.subject.label}</label>
+        <TemplateSelector template={template} onSelectTemplate={onSelectTemplate} />
       </div>
       <Input
         id={`subject-${index}`}
-        placeholder="Enter email subject"
-        value={step.emailSubject}
+        placeholder={t.emailStep.subject.placeholder}
+        value={step.emailSubject || ""}
         onChange={(e) => onSubjectChange(e.target.value)}
       />
 
       <div>
         <div className="flex justify-between items-center mb-2">
-          <label htmlFor={`body-${index}`} className="text-sm font-medium">Body</label>
+          <label htmlFor={`body-${index}`} className="text-sm font-medium">{t.emailStep.body.label}</label>
           <PersonalizationTags onInsertTag={onInsertTag} />
         </div>
         <Textarea
           id={`body-${index}`}
-          ref={emailBodyRef} // Attach ref here
-          placeholder="Write your email content here... Use {{variable}} for personalization."
-          value={step.emailBody}
+          ref={emailBodyRef}
+          placeholder={t.emailStep.body.placeholder}
+          value={step.emailBody || ""}
           onChange={(e) => onBodyChange(e.target.value)}
-          rows={isEditing ? 10 : 5} // Expand when editing
+          rows={isEditing ? 10 : 5}
           className="min-h-[120px] resize-y"
         />
       </div>

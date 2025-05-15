@@ -1,0 +1,78 @@
+name: Bump Version on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: ["dev", "main"]
+
+jobs:
+  update-version:
+    if: >-
+      github.event.pull_request.merged == true &&
+      (github.event.pull_request.base.ref == 'dev' || github.event.pull_request.base.ref == 'main')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout base branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get current version
+        id: get_version
+        run: |
+          version=$(< version.txt tr -d '\n')
+          echo "Versión actual: $version"
+          echo "current_version=$version" >> $GITHUB_OUTPUT
+
+      - name: Make bump script executable
+        run: chmod +x ./scripts/update_version.sh
+
+      - name: Prepare env vars
+        run: |
+          echo "BASE_REF=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
+          echo "HEAD_REF=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+
+      - name: Compute new version
+        id: bump
+        run: |
+          CURRENT=${{ steps.get_version.outputs.current_version }}
+          BASE=${BASE_REF}
+          HEAD=${HEAD_REF}
+          NEW=$CURRENT
+
+          if [[ "$BASE" == "main" ]]; then
+            # Major++
+            NEW=$(echo $CURRENT | awk -F. '{ $1++; $2=0; $3=0; print }' OFS=".")
+          elif [[ "$BASE" == "dev" && "$HEAD" =~ ^feat/ ]]; then
+            # Minor++
+            NEW=$(echo $CURRENT | awk -F. '{ $2++; $3=0; print }' OFS=".")
+          elif [[ "$BASE" == "dev" && "$HEAD" =~ ^hotfix/ ]]; then
+            # Patch++
+            NEW=$(echo $CURRENT | awk -F. '{ $3++; print }' OFS=".")
+          fi
+
+          echo "new_version=$NEW" >> $GITHUB_OUTPUT
+
+      - name: Bump version & push to ${{ github.event.pull_request.base.ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CURRENT=${{ steps.get_version.outputs.current_version }}
+          NEW=${{ steps.bump.outputs.new_version }}
+          TARGET_BRANCH=${{ github.event.pull_request.base.ref }}
+
+          if [[ "$NEW" != "$CURRENT" ]]; then
+            echo "🔄 Bumping version: $CURRENT → $NEW on $TARGET_BRANCH"
+            ./scripts/update_version.sh "$NEW"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add version.txt
+            git commit -m "🚀 Bump version to $NEW [skip ci]"
+            git push origin "$TARGET_BRANCH"
+          else
+            echo "⏩ No version bump needed for $TARGET_BRANCH"
+          fi

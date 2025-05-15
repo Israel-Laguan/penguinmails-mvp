@@ -3,7 +3,7 @@ name: Changelog CI
 on:
   push:
     branches: [main]
-  
+
   # Optionally you can use `workflow_dispatch` to run Changelog CI Manually
   workflow_dispatch:
     inputs:
@@ -14,6 +14,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
       # Checks-out your repository
@@ -34,5 +37,5 @@ jobs:
           committer_username: "test"
           committer_email: "test@test.com"
 
-          release_version: ${{ github.event.inputs.release_version }}
+          release_version: ${{ github.event.inputs.release_version || steps.version.outputs.version }}
           github_token: ${{ secrets.GITHUB_TOKEN }}

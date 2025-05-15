@@ -11,13 +11,10 @@ import { DataTable } from "@/components/ui/data-table/data-table";
 export default function InboxPage() {
   const [emails, setEmails] = React.useState<EmailsType>(null);
   const [unreadCount, setUnreadCount] = React.useState<number>(0);
-  const [selectedValues, setSelectedValues] = React.useState<string[]>([]);
-
+  const [filterValue, setFilterValue] = React.useState<{ [key: string]: string[] | undefined }>({});
 
   const fetchAllMessages = async () => {
-    console.log(selectedValues);
-    
-    const messages: EmailsType = await getAllMessages({selectedValues});
+    const messages: EmailsType = await getAllMessages(filterValue);
     setEmails(messages);
     setUnreadCount(messages?.unread || 0);
   };
@@ -70,7 +67,7 @@ export default function InboxPage() {
               </TabsList>
             </div>
             <div className="mt-4">
-              <DataTable columns={inboxColumns} data={currentEmails} selectedValues={selectedValues} setSelectedValues={setSelectedValues} />
+              <DataTable columns={inboxColumns} data={currentEmails} filterValue={filterValue} setFilterValue={setFilterValue} />
             </div>
           </Tabs>
         </div>

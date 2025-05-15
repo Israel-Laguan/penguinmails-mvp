@@ -29,22 +29,14 @@ interface DataTableProps<TData> {
   data?: TData[];
   disabled: boolean;
   onDelete: (rows: Row<TData>[]) => void;
-  selectedValues: string[];
-  setSelectedValues: (values: string[]) => void;
-}
-
-function useIsMobile(breakpoint = 1024) {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(`(max-width: ${breakpoint}px)`);
-    const update = () => setIsMobile(mediaQuery.matches);
-    update();
-    mediaQuery.addEventListener("change", update);
-    return () => mediaQuery.removeEventListener("change", update);
-  }, [breakpoint]);
-
-  return isMobile;
+  filterValue: {
+    [key: string]: string[] | undefined;
+  };
+  setFilterValue: React.Dispatch<
+    React.SetStateAction<{
+      [key: string]: string[] | undefined;
+    }>
+  >;
 }
 
 function highlightMatch(text: string, query: string) {
@@ -62,11 +54,25 @@ function highlightMatch(text: string, query: string) {
   );
 }
 
+function useIsMobile(breakpoint = 1024) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(`(max-width: ${breakpoint}px)`);
+    const update = () => setIsMobile(mediaQuery.matches);
+    update();
+    mediaQuery.addEventListener("change", update);
+    return () => mediaQuery.removeEventListener("change", update);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
 export function DataTable<TData>({
   columns,
   data = [],
-  selectedValues,
-  setSelectedValues,
+  filterValue,
+  setFilterValue,
 }: DataTableProps<TData>) {
   const isMobile = useIsMobile();
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -179,8 +185,8 @@ export function DataTable<TData>({
       <div className="flex space-y-2 lg:items-center flex-col lg:flex-row py-4 items-start lg:justify-between">
         <DataTableToolbar
           table={table}
-          selectedValues={selectedValues}
-          setSelectedValues={setSelectedValues}
+          filterValue={filterValue}
+          setFilterValue={setFilterValue}
         />
       </div>
       <div className="w-full">{renderTable()}</div>

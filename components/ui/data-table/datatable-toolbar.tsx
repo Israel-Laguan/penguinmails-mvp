@@ -5,30 +5,28 @@ import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Cross,
-  Filter,
-  Mail,
-  RefreshCcw,
-  Search,
-  User,
-} from "lucide-react";
+import { Cross, Filter, Mail, RefreshCcw, Search, User } from "lucide-react";
 import { DataTableViewOptions } from "./datatable-view-options";
 import { DataTableFacetedFilter } from "./datatable-faceted-filter";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
-  selectedValues: string[];
-  setSelectedValues: (values: string[]) => void;
+  filterValue: {
+    [key: string]: string[] | undefined;
+  };
+  setFilterValue: React.Dispatch<
+    React.SetStateAction<{
+      [key: string]: string[] | undefined;
+    }>
+  >;
 }
 
 export function DataTableToolbar<TData>({
   table,
-  selectedValues,
-  setSelectedValues
+  filterValue,
+  setFilterValue,
 }: DataTableToolbarProps<TData>) {
   const searchRef = useRef<HTMLInputElement>(null);
-  
 
   const clearSearchInput = () => {
     if (searchRef.current) {
@@ -45,12 +43,16 @@ export function DataTableToolbar<TData>({
     icon: User,
   }));
   const emails = Array.from(
-    new Set(table.getRowModel().rows.map((row) => row.getValue<string>("email")))
+    new Set(
+      table.getRowModel().rows.map((row) => row.getValue<string>("email"))
+    )
   ).map((emailValue) => ({
     label: emailValue,
     value: emailValue,
     icon: Mail,
   }));
+
+  const [selectedValues, setSelectedValues] = useState<string[]>([]);
 
   return (
     <>
@@ -89,6 +91,8 @@ export function DataTableToolbar<TData>({
                 column={table.getColumn("from")}
                 title="From"
                 options={from}
+                filterValue={filterValue}
+                setFilterValue={setFilterValue}
                 selectedValues={selectedValues}
                 setSelectedValues={setSelectedValues}
               />
@@ -98,24 +102,24 @@ export function DataTableToolbar<TData>({
                 column={table.getColumn("email")}
                 title="Email"
                 options={emails}
+                filterValue={filterValue}
+                setFilterValue={setFilterValue}
                 selectedValues={selectedValues}
                 setSelectedValues={setSelectedValues}
               />
             )}
-            {
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  table.resetColumnFilters();
-                  setSelectedValues([]);
-                }}
-                className="px-2"
-              >
-                <Filter className="ml-2 siz-3" />
-                Apply Filters
-              </Button>
-            }
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                table.resetColumnFilters();
+                setSelectedValues([]);
+              }}
+              className="px-2"
+            >
+              <Filter className="ml-2 siz-3" />
+              Apply Filters
+            </Button>
             {selectedValues.length > 0 && (
               <Button
                 variant="ghost"

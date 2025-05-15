@@ -6,18 +6,26 @@ export const getAllMessages = async (query = {}) => {
 
   await new Promise((r) => setTimeout(r, 1000));
 
-  console.log("getAllMessages", query);
-  
   const filteredEmails = mockEmails.filter((msg) => {
-    const matchesEmail = email
-      ? msg.email.toLowerCase().includes(email.toLowerCase())
-      : true;
-    const matchesFrom = from
-      ? msg.from.toLowerCase().includes(from.toLowerCase())
-      : true;
-    const matchesCampaign = campaign
-      ? msg.campaign.toLowerCase().includes(campaign.toLowerCase())
-      : true;
+    const matchesEmail = Array.isArray(email)
+      ? email.some((e) => msg.email.toLowerCase().includes(e.toLowerCase()))
+      : email
+        ? msg.email.toLowerCase().includes(email.toLowerCase())
+        : true;
+
+    const matchesFrom = Array.isArray(from)
+      ? from.some((f) => msg.from.toLowerCase().includes(f.toLowerCase()))
+      : from
+        ? msg.from.toLowerCase().includes(from.toLowerCase())
+        : true;
+
+    const matchesCampaign = Array.isArray(campaign)
+      ? campaign.some((c) =>
+          msg.campaign.toLowerCase().includes(c.toLowerCase())
+        )
+      : campaign
+        ? msg.campaign.toLowerCase().includes(campaign.toLowerCase())
+        : true;
 
     return matchesEmail && matchesFrom && matchesCampaign;
   });

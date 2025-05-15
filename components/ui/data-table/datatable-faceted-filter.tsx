@@ -28,14 +28,24 @@ interface DataTableFacetedFilterProps<TData, TValue> {
     value: string;
     icon?: React.ComponentType<{ className?: string }>;
   }[];
+  filterValue: {
+    [key: string]: string[] | undefined;
+  };
+  setFilterValue: React.Dispatch<
+    React.SetStateAction<{
+      [key: string]: string[] | undefined;
+    }>
+  >;
   selectedValues: string[];
-  setSelectedValues: (values: string[]) => void;
+  setSelectedValues: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export function DataTableFacetedFilter<TData, TValue>({
   column,
   title,
   options,
+  filterValue,
+  setFilterValue,
   selectedValues,
   setSelectedValues
 }: DataTableFacetedFilterProps<TData, TValue>) {
@@ -94,11 +104,25 @@ export function DataTableFacetedFilter<TData, TValue>({
                   <CommandItem
                     key={option.value}
                     onSelect={() => {
-                      const newSelectedValues = isSelected
-                      ? selectedValues.filter((val) => val !== option.value)
-                      : [...selectedValues, option.value];
+                      const colId = column?.id;
+                      if (!colId) return;
                     
-                    setSelectedValues(newSelectedValues);
+                      const currentValues = selectedValues;
+                      const newSelectedValues = isSelected
+                        ? currentValues.filter((val) => val !== option.value)
+                        : [...currentValues, option.value];
+                    
+                      setSelectedValues(newSelectedValues);
+                    
+                      setFilterValue((prev) => ({
+                        ...prev,
+                        [colId]: newSelectedValues,
+                      }));
+                    
+                      console.log("Updated filterValue:", {
+                        ...filterValue,
+                        [colId]: newSelectedValues,
+                      });
                     }}
                   >
                     {option.icon && (

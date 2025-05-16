@@ -3,6 +3,9 @@ name: Changelog CI
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "CHANGELOG.md"
+      - "version.txt"
 
   # Optionally you can use `workflow_dispatch` to run Changelog CI Manually
   workflow_dispatch:
@@ -10,10 +13,10 @@ on:
       release_version:
         description: "Set Release Version"
         required: true
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'test' }}
     permissions:
       contents: write
       pull-requests: write

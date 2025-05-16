@@ -1,9 +1,10 @@
-name: Generate Changelog
+name: Changelog CI
 
 on:
   push:
     branches:
-      - main
+      - feat/iss/test
+  workflow_dispatch:
 
 jobs:
   changelog:

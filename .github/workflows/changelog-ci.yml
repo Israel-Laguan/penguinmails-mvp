@@ -2,7 +2,9 @@ name: Changelog CI
 
 on:
   push:
-    branches: [main, feat/iss/test]
+    branches:
+      - main
+      - feat/iss/test
     paths-ignore:
       - CHANGELOG.md
       - version.txt
@@ -37,16 +39,20 @@ jobs:
         with:
           changelog_filename: CHANGELOG.md
           config_file: changelog-config.yml
-          committer_username: "test"
-          committer_email: "test@test.com"
           release_version: ${{ github.event.inputs.release_version || steps.version.outputs.version }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          # Firmado por el bot:
+          committer_username: "github-actions[bot]"
+          committer_email: "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Push changelog to main
+      - name: Push changelog to branch
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
-          git push origin main
+          # Configura el bot como autor/committer
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Detecta la rama actual (main o feat/iss/test) y empuja ahí
+          BRANCH=${GITHUB_REF##*/}
+          git push origin HEAD:$BRANCH
 
       - name: Tag release
         run: |

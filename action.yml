@@ -1,33 +1,61 @@
-name: Changelog CI
-description: Changelog CI is a GitHub Action that generates changelog, then it is committed and/or commented to the release pull request.
-author: Maksudul Haque
-branding:
-  icon: 'clock'
-  color: 'blue'
+name: 'Changelog from Conventional Commits'
+description: 'Generate and update the CHANGELOG from conventional commits since latest tag or from a given tag range'
+author: ARenzDev
 inputs:
-  changelog_filename:
-    description: 'Name of the changelog file if not provided defaults to CHANGELOG.md'
+  token:
+    description: GitHub Token
+    required: true
+  tag:
+    description: The latest tag (which triggered this job) (only if using latest tag)
+    required: false
+  fromTag:
+    description: The tag from which the changelog is to be determined (only if using tag range)
+    required: false
+  toTag:
+    description: The tag up to which the changelog is to be determined (only if using tag range)
+    required: false
+  excludeTypes:
+    description: Types to exclude from the Changelog
+    required: false
+    default: build,docs,other,style
+  excludeScopes:
+    description: Scopes to exclude from the Changelog
+    required: false
+    default: ''
+  restrictToTypes:
+    description: Types to restrict to for the Changelog (overrides excludeTypes if defined)
+    required: false
+    default: ''
+  writeToFile:
+    description: Should CHANGELOG.md be updated with latest changelog
+    required: false
+    default: 'true'
+  changelogFilePath:
+    description: Path to the changelog file
     required: false
     default: 'CHANGELOG.md'
-  config_file:
-    description: 'Location of the config JSON file'
+  includeRefIssues:
+    description: Should the changelog include the issues referenced for each PR.
     required: false
-  committer_username:
-    description: 'Name of the user who will commit the changes to GitHub'
+    default: 'true'
+  useGitmojis:
+    description: Prepend type headers with their corresponding gitmoji
     required: false
-    default: 'github-actions[bot]'
-  committer_email:
-    description: 'Email Address of the user who will commit the changes to GitHub'
+    default: 'true'
+  includeInvalidCommits:
+    description: Whether to include commits that don't respect the Conventional Commits format
     required: false
-    default: 'github-actions[bot]@users.noreply.github.com'
-  release_version:
-    description: 'The release version that will be used on the generated Changelog'
+    default: 'false'
+  reverseOrder:
+    description: List commits in reverse order (from newer to older) instead of the default (older to newer).
     required: false
-  github_token:
-    description: 'GITHUB_TOKEN or Personal Access Token (PAT)'
-    required: false
-    default: ${{ github.token }}
-
+    default: 'false'
+outputs:
+  changes:
+    description: Generated changelog
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: 'node20'
+  main: 'dist/index.js'
+branding:
+  icon: wind
+  color: red

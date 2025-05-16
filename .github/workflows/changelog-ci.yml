@@ -31,6 +31,19 @@ jobs:
           body: "*pending*"
           token: ${{ github.token }}
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install action dependencies
+        run: npm ci
+        working-directory: .
+
+      - name: Build action
+        run: npm run build
+        working-directory: .
+
       - name: Update CHANGELOG
         id: changelog
         uses: ./

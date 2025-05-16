@@ -3,7 +3,7 @@ name: Changelog CI
 on:
   push:
     branches: [main]
-    paths:
+    paths-ignore:
       - "CHANGELOG.md"
       - "version.txt"
 

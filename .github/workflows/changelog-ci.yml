@@ -1,71 +1,68 @@
-name: Changelog CI
+name: Deploy
 
 on:
-  push:
-    branches:
-      - main
-      - feat/iss/test
-    paths-ignore:
-      - CHANGELOG.md
-      - version.txt
   workflow_dispatch:
-    inputs:
-      release_version:
-        description: "Set Release Version"
-        required: true
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'test' }}
-    permissions:
-      contents: write
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          persist-credentials: true
 
-      - name: Get current version
-        id: version
-        run: |
-          VERSION=$(cat version.txt | tr -d '\n')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Run Changelog CI
-        uses: saadmk11/changelog-ci@v1.1.2
+      - name: Get Next Version
+        id: semver
+        uses: ietf-tools/semver-action@v1
         with:
-          changelog_filename: CHANGELOG.md
-          config_file: changelog-config.yml
-          release_version: ${{ github.event.inputs.release_version || steps.version.outputs.version }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          # Firmado por el bot:
-          committer_username: "github-actions[bot]"
-          committer_email: "41898282+github-actions[bot]@users.noreply.github.com"
+          token: ${{ github.token }}
+          branch: feat/iss/test
 
-      - name: Push changelog to branch
-        run: |
-          # Configura el bot como autor/committer
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # Detecta la rama actual (main o feat/iss/test) y empuja ahí
-          BRANCH=${GITHUB_REF##*/}
-          git push origin HEAD:$BRANCH
-
-      - name: Tag release
-        run: |
-          TAG=v${{ steps.version.outputs.version }}
-          git tag $TAG
-          git push origin $TAG
-
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
+      - name: Create Draft Release
+        uses: ncipollo/release-action@v1.12.0
         with:
-          tag_name: $TAG
-          release_name: Release ${{ steps.version.outputs.version }}
+          prerelease: true
           draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          commit: ${{ github.sha }}
+          tag: ${{ steps.semver.outputs.next }}
+          name: ${{ steps.semver.outputs.next }}
+          body: "*pending*"
+          token: ${{ github.token }}
+
+      - name: Update CHANGELOG
+        id: changelog
+        uses: ./
+        with:
+          token: ${{ github.token }}
+          tag: ${{ steps.semver.outputs.next }}
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          allowUpdates: true
+          draft: false
+          makeLatest: true
+          tag: ${{ steps.semver.outputs.next }}
+          name: ${{ steps.semver.outputs.next }}
+          body: ${{ steps.changelog.outputs.changes }}
+          token: ${{ github.token }}
+
+      - name: Create Release (Major-only)
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          allowUpdates: true
+          draft: false
+          commit: ${{ github.sha }}
+          tag: ${{ steps.semver.outputs.nextMajor }}
+          name: ${{ steps.semver.outputs.nextMajor }}
+          body: ${{ steps.changelog.outputs.changes }}
+          token: ${{ github.token }}
+
+      - name: Commit CHANGELOG.md
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: feat/iss/test
+          commit_message: "docs: update CHANGELOG.md for ${{ github.ref_name }} [skip ci]"
+          file_pattern: CHANGELOG.md

@@ -2,28 +2,29 @@ name: Changelog CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/iss/test]
     paths-ignore:
-      - "CHANGELOG.md"
-      - "version.txt"
-
-  # Optionally you can use `workflow_dispatch` to run Changelog CI Manually
+      - CHANGELOG.md
+      - version.txt
   workflow_dispatch:
     inputs:
       release_version:
         description: "Set Release Version"
         required: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
     if: ${{ github.actor != 'test' }}
     permissions:
       contents: write
-      pull-requests: write
 
     steps:
-      # Checks-out your repository
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Get current version
         id: version
@@ -35,10 +36,30 @@ jobs:
         uses: saadmk11/changelog-ci@v1.1.2
         with:
           changelog_filename: CHANGELOG.md
-
           config_file: changelog-config.yml
           committer_username: "test"
           committer_email: "test@test.com"
-
           release_version: ${{ github.event.inputs.release_version || steps.version.outputs.version }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push changelog to main
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git push origin main
+
+      - name: Tag release
+        run: |
+          TAG=v${{ steps.version.outputs.version }}
+          git tag $TAG
+          git push origin $TAG
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        with:
+          tag_name: $TAG
+          release_name: Release ${{ steps.version.outputs.version }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

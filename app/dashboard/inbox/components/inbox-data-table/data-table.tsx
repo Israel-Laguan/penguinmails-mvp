@@ -20,8 +20,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import DatatablePagination from "./data-table-pagination";
 import { DataTableToolbar } from "./datatable-toolbar";
 
 interface DataTableProps<TData> {
@@ -37,6 +35,8 @@ interface DataTableProps<TData> {
       [key: string]: string[] | undefined;
     }>
   >;
+  fetchAllMessages: () => void;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
 
 function highlightMatch(text: string, query: string) {
@@ -54,27 +54,14 @@ function highlightMatch(text: string, query: string) {
   );
 }
 
-function useIsMobile(breakpoint = 1024) {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(`(max-width: ${breakpoint}px)`);
-    const update = () => setIsMobile(mediaQuery.matches);
-    update();
-    mediaQuery.addEventListener("change", update);
-    return () => mediaQuery.removeEventListener("change", update);
-  }, [breakpoint]);
-
-  return isMobile;
-}
-
-export function DataTable<TData>({
+export function InboxDataTable<TData>({
   columns,
   data = [],
   filterValue,
   setFilterValue,
+  fetchAllMessages,
+  setSearch
 }: DataTableProps<TData>) {
-  const isMobile = useIsMobile();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filtering, setFiltering] = useState("");
   const [rowSelection, setRowSelection] = useState({});
@@ -155,31 +142,6 @@ export function DataTable<TData>({
     </div>
   );
 
-  const renderMobilePagination = () => (
-    <div className="flex items-center justify-end space-x-2 py-4">
-      <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} de{" "}
-        {table.getFilteredRowModel().rows.length} fila(s) seleccionadas.
-      </div>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => table.previousPage()}
-        disabled={!table.getCanPreviousPage()}
-      >
-        Preview
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        onClick={() => table.nextPage()}
-        disabled={!table.getCanNextPage()}
-      >
-        Next
-      </Button>
-    </div>
-  );
-
   return (
     <div>
       <div className="flex space-y-2 lg:items-center flex-col lg:flex-row py-4 items-start lg:justify-between">
@@ -187,14 +149,11 @@ export function DataTable<TData>({
           table={table}
           filterValue={filterValue}
           setFilterValue={setFilterValue}
+          fetchAllMessages={fetchAllMessages}
+          setSearch={setSearch}
         />
       </div>
       <div className="w-full">{renderTable()}</div>
-      {isMobile ? (
-        renderMobilePagination()
-      ) : (
-        <DatatablePagination table={table} />
-      )}
     </div>
   );
 }

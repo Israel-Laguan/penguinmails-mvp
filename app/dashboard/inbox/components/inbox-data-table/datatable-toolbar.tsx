@@ -1,11 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Cross, Filter, Mail, RefreshCcw, Search, User } from "lucide-react";
+import { Cross, Filter, Mail, Search, User } from "lucide-react";
 import { DataTableViewOptions } from "./datatable-view-options";
 import { DataTableFacetedFilter } from "./datatable-faceted-filter";
 
@@ -19,12 +19,16 @@ interface DataTableToolbarProps<TData> {
       [key: string]: string[] | undefined;
     }>
   >;
+  fetchAllMessages: () => void;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export function DataTableToolbar<TData>({
   table,
   filterValue,
   setFilterValue,
+  fetchAllMessages,
+  setSearch
 }: DataTableToolbarProps<TData>) {
   const searchRef = useRef<HTMLInputElement>(null);
 
@@ -51,8 +55,15 @@ export function DataTableToolbar<TData>({
     value: emailValue,
     icon: Mail,
   }));
-
-  const [selectedValues, setSelectedValues] = useState<string[]>([]);
+  const campaigns = Array.from(
+    new Set(
+      table.getRowModel().rows.map((row) => row.getValue<string>("campaign"))
+    )
+  ).map((campaignValue) => ({
+    label: campaignValue,
+    value: campaignValue,
+    icon: Mail,
+  }));
 
   return (
     <>
@@ -63,7 +74,7 @@ export function DataTableToolbar<TData>({
               ref={searchRef}
               placeholder="Search..."
               onChange={(event) => {
-                table.setGlobalFilter(event.target.value);
+                setSearch(event.target.value);
               }}
               className="h-8 w-full md:w-[250px]"
             />
@@ -71,21 +82,24 @@ export function DataTableToolbar<TData>({
               variant="outline"
               size="sm"
               onClick={() => {
-                table.resetColumnFilters();
+                fetchAllMessages();
               }}
               className="px-2 ml-2 border-black"
             >
               <Search className="ml-2 siz-3" />
               Search
             </Button>
-            {searchRef.current && searchRef.current?.value.length > 0 && (
-              <Cross
-                onClick={clearSearchInput}
-                className="absolute right-0 top-0 m-2 size-4 text-muted-foreground hover:cursor-pointer"
-              />
-            )}
           </div>
           <div className="flex items-center gap-2">
+            {table.getColumn("campaign") && campaigns.length > 0 && (
+              <DataTableFacetedFilter
+                column={table.getColumn("campaign")}
+                title="Campaign"
+                options={campaigns}
+                filterValue={filterValue}
+                setFilterValue={setFilterValue}
+              />
+            )}
             {table.getColumn("from") && from.length > 0 && (
               <DataTableFacetedFilter
                 column={table.getColumn("from")}
@@ -93,8 +107,6 @@ export function DataTableToolbar<TData>({
                 options={from}
                 filterValue={filterValue}
                 setFilterValue={setFilterValue}
-                selectedValues={selectedValues}
-                setSelectedValues={setSelectedValues}
               />
             )}
             {table.getColumn("email") && emails.length > 0 && (
@@ -104,8 +116,6 @@ export function DataTableToolbar<TData>({
                 options={emails}
                 filterValue={filterValue}
                 setFilterValue={setFilterValue}
-                selectedValues={selectedValues}
-                setSelectedValues={setSelectedValues}
               />
             )}
             <Button
@@ -113,26 +123,24 @@ export function DataTableToolbar<TData>({
               size="sm"
               onClick={() => {
                 table.resetColumnFilters();
-                setSelectedValues([]);
+                table.setGlobalFilter("");
+                fetchAllMessages();
               }}
               className="px-2"
             >
               <Filter className="ml-2 siz-3" />
               Apply Filters
             </Button>
-            {selectedValues.length > 0 && (
+            {/*}
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => {
-                  setSelectedValues([]);
-                }}
                 className="px-2"
               >
                 Restart
                 <RefreshCcw className="ml-2 siz-3" />
               </Button>
-            )}
+              */}
           </div>
         </div>
 

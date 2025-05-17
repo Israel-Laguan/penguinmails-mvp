@@ -1,56 +1,70 @@
 import { mockEmails } from "../mockEmails";
-import { EmailsTypeSchema } from "../schemas/schemas";
 
-export const getAllMessages = async (query = {}) => {
-  const { email, from, campaign } = query;
+interface Query {
+  email?: string[];
+  from?: string[];
+  campaign?: string[];
+}
 
-  await new Promise((r) => setTimeout(r, 1000));
+type Type = "all" | "unread" | "starred";
+
+interface PaginationOptions {
+  page?: number;
+  limit?: number;
+}
+
+export const getAllMessages = async (
+  query: Query = {},
+  type: Type = "all",
+  pagination: PaginationOptions = {},
+  search = "",
+) => {
+  const { email = [], from = [], campaign = [] } = query;
+  const { page = 1, limit = 10 } = pagination;
 
   const filteredEmails = mockEmails.filter((msg) => {
-    const matchesEmail = Array.isArray(email)
-      ? email.some((e) => msg.email.toLowerCase().includes(e.toLowerCase()))
-      : email
-        ? msg.email.toLowerCase().includes(email.toLowerCase())
-        : true;
+    const matchesEmail =
+      email.length === 0 ||
+      email.some((e) => msg.email.toLowerCase().includes(e.toLowerCase()));
 
-    const matchesFrom = Array.isArray(from)
-      ? from.some((f) => msg.from.toLowerCase().includes(f.toLowerCase()))
-      : from
-        ? msg.from.toLowerCase().includes(from.toLowerCase())
-        : true;
+    const matchesFrom =
+      from.length === 0 ||
+      from.some((f) => msg.from.toLowerCase().includes(f.toLowerCase()));
 
-    const matchesCampaign = Array.isArray(campaign)
-      ? campaign.some((c) =>
-          msg.campaign.toLowerCase().includes(c.toLowerCase())
-        )
-      : campaign
-        ? msg.campaign.toLowerCase().includes(campaign.toLowerCase())
-        : true;
+    const matchesCampaign =
+      campaign.length === 0 ||
+      campaign.some((c) => msg.campaign.toLowerCase().includes(c.toLowerCase()));
 
-    return matchesEmail && matchesFrom && matchesCampaign;
+      const matchesSearch =
+      search === "" ||
+      [msg.from, msg.email, msg.subject, msg.preview, msg.campaign]
+        .some((field) =>
+          field.toLowerCase().includes(search.toLowerCase())
+        );
+
+    return matchesEmail && matchesFrom && matchesCampaign && matchesSearch;
   });
 
-  const unreadCount = filteredEmails.filter((email) => email.isRead === false);
+  const unreadCount = filteredEmails.filter((email) => !email.isRead);
 
-  return EmailsTypeSchema.parse({
-    emails: filteredEmails,
+  let emailsToReturn = filteredEmails;
+
+  if (type === "unread") {
+    emailsToReturn = filteredEmails.filter((email) => !email.isRead);
+  } else if (type === "starred") {
+    emailsToReturn = filteredEmails.filter((email) => email.isStarred);
+  }
+
+  const startIndex = (page - 1) * limit;
+  const paginatedEmails = emailsToReturn.slice(startIndex, startIndex + limit);
+
+  return {
+    emails: paginatedEmails,
     unread: unreadCount.length,
-  });
-};
-
-
-export const getUnreadMessages = async () => {
-  await new Promise((r) => setTimeout(r, 1000));
-  return EmailsTypeSchema.parse({
-    emails: mockEmails.filter((email) => email.isRead === false),
-  });
-};
-
-export const getStarredMessages = async () => {
-  await new Promise((r) => setTimeout(r, 1000));
-  return EmailsTypeSchema.parse({
-    emails: mockEmails.filter((email) => email.isStarred === true),
-  });
+    total: filteredEmails.length,
+    totalPages: Math.ceil(filteredEmails.length / limit),
+    currentPage: page,
+  };
 };
 
 export const getUniqueEmails = () => {

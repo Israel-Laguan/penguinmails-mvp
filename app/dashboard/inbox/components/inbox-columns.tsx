@@ -43,4 +43,8 @@ export const inboxColumns: ColumnDef<Email>[] = [
     accessorKey: "isRead",
     header: "Read",
   },
+  {
+    accessorKey: "campaign",
+    header: "Campaign",
+  },
 ];

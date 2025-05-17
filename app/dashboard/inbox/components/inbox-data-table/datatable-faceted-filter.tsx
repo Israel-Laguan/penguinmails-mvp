@@ -36,8 +36,6 @@ interface DataTableFacetedFilterProps<TData, TValue> {
       [key: string]: string[] | undefined;
     }>
   >;
-  selectedValues: string[];
-  setSelectedValues: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 export function DataTableFacetedFilter<TData, TValue>({
@@ -46,9 +44,10 @@ export function DataTableFacetedFilter<TData, TValue>({
   options,
   filterValue,
   setFilterValue,
-  selectedValues,
-  setSelectedValues
 }: DataTableFacetedFilterProps<TData, TValue>) {
+  const colId = column?.id;
+  const selectedValues = colId ? filterValue[colId] ?? [] : [];
+
   const facets = column?.getFacetedUniqueValues();
 
   return (
@@ -57,7 +56,7 @@ export function DataTableFacetedFilter<TData, TValue>({
         <Button variant="outline" size="sm" className="h-8 border-dashed">
           <PlusCircleIcon className="mr-2 h-4 w-4" />
           {title}
-          {selectedValues?.length > 0 && (
+          {selectedValues.length > 0 && (
             <>
               <Separator orientation="vertical" className="mx-2 h-4" />
               <Badge
@@ -76,7 +75,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                   </Badge>
                 ) : (
                   options
-                  .filter((option) => selectedValues.includes(option.value))                
+                    .filter((option) => selectedValues.includes(option.value))
                     .map((option) => (
                       <Badge
                         variant="secondary"
@@ -104,25 +103,16 @@ export function DataTableFacetedFilter<TData, TValue>({
                   <CommandItem
                     key={option.value}
                     onSelect={() => {
-                      const colId = column?.id;
                       if (!colId) return;
-                    
-                      const currentValues = selectedValues;
+
                       const newSelectedValues = isSelected
-                        ? currentValues.filter((val) => val !== option.value)
-                        : [...currentValues, option.value];
-                    
-                      setSelectedValues(newSelectedValues);
-                    
+                        ? selectedValues.filter((val) => val !== option.value)
+                        : [...selectedValues, option.value];
+
                       setFilterValue((prev) => ({
                         ...prev,
                         [colId]: newSelectedValues,
                       }));
-                    
-                      console.log("Updated filterValue:", {
-                        ...filterValue,
-                        [colId]: newSelectedValues,
-                      });
                     }}
                   >
                     {option.icon && (

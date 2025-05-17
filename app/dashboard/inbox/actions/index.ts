@@ -67,20 +67,20 @@ export const getAllMessages = async (
   };
 };
 
-export const getUniqueEmails = () => {
-  return [...new Set(mockEmails.map((email) => email.email))];
-};
+export const getUniqueFilters = () => {
+  const emailsSet = new Set<string>();
+  const namesSet = new Set<string>();
+  const campaignsSet = new Set<string>();
 
-export const getUniqueNames = () => {
-  return [...new Set(mockEmails.map((email) => email.from))];
-};
+  for (const msg of mockEmails) {
+    emailsSet.add(msg.email);
+    namesSet.add(msg.from);
+    campaignsSet.add(msg.campaign);
+  }
 
-export const getUniqueCampaigns = () => {
-  return [
-    ...new Set(
-      mockEmails.map((email) => {
-        return email.campaign;
-      })
-    ),
-  ];
+  return {
+    email: [...emailsSet],
+    from: [...namesSet],
+    campaign: [...campaignsSet],
+  };
 };

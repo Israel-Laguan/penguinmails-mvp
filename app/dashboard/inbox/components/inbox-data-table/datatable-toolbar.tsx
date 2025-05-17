@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import React from "react";
 import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Cross, Filter, Mail, Search, User } from "lucide-react";
 import { DataTableViewOptions } from "./datatable-view-options";
 import { DataTableFacetedFilter } from "./datatable-faceted-filter";
+import { getUniqueFilters } from "../../actions";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -30,36 +31,36 @@ export function DataTableToolbar<TData>({
   fetchAllMessages,
   setSearch
 }: DataTableToolbarProps<TData>) {
-  const searchRef = useRef<HTMLInputElement>(null);
+  const searchRef = React.useRef<HTMLInputElement>(null);
+  const [filterOptions, setFilterOptions] = React.useState<{
+    email: string[];
+    from: string[];
+    campaign: string[];
+  }>({ email: [], from: [], campaign: [] });
+  
+  React.useEffect(() => {
+    const fetchFilters = async () => {
+      const filters = await getUniqueFilters();
+      setFilterOptions(filters);
+    };
+  
+    fetchFilters();
+  }, []);
+  
 
-  const clearSearchInput = () => {
-    if (searchRef.current) {
-      searchRef.current.value = "";
-      table.setGlobalFilter("");
-    }
-  };
-
-  const from = Array.from(
-    new Set(table.getRowModel().rows.map((row) => row.getValue<string>("from")))
-  ).map((fromValue) => ({
+  const from = filterOptions.from.map((fromValue) => ({
     label: fromValue,
     value: fromValue,
     icon: User,
   }));
-  const emails = Array.from(
-    new Set(
-      table.getRowModel().rows.map((row) => row.getValue<string>("email"))
-    )
-  ).map((emailValue) => ({
+  
+  const emails = filterOptions.email.map((emailValue) => ({
     label: emailValue,
     value: emailValue,
     icon: Mail,
   }));
-  const campaigns = Array.from(
-    new Set(
-      table.getRowModel().rows.map((row) => row.getValue<string>("campaign"))
-    )
-  ).map((campaignValue) => ({
+  
+  const campaigns = filterOptions.campaign.map((campaignValue) => ({
     label: campaignValue,
     value: campaignValue,
     icon: Mail,

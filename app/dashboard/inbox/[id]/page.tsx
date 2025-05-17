@@ -1,8 +1,10 @@
 "client";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Star, EllipsisVertical, CornerUpLeft, OctagonAlert, Trash2 } from "lucide-react";
 import Image from "next/image";
+import { fetchEmailById } from "./actions";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   params: {
@@ -20,13 +22,19 @@ export default async function EmailDetailPage({ params }: Props) {
 
   return (
     <div className="p-6 space-y-6 bg-white rounded-xl shadow-md border">
-      <div>
+      <div className="flex flex-row bg-primary p-4 rounded-2xl">
         <Link
           href="/dashboard/inbox"
-          className="text-lg text-blue-600 bg-gray-100 rounded-md"
+          className="w-10 h-10 flex items-center justify-center bg-muted rounded-full hover:bg-accent transition-colors"
         >
-          <ArrowLeft />
+          <ArrowLeft className="text-foreground" />
         </Link>
+        <Button variant="ghost" size="lg">
+          <OctagonAlert className="h-52 w-auto" />
+            </Button>
+            <Button variant="ghost" size="lg">
+          <Trash2 className="h-52 w-auto" />
+            </Button>
       </div>
 
       <div className="text-gray-800 text-sm border-b pb-4">
@@ -34,7 +42,24 @@ export default async function EmailDetailPage({ params }: Props) {
           <span>
             <strong>{email.from}</strong> &lt;{email.email}&gt;
           </span>
-          <span>{email.date}</span>
+          <div>
+            <span>{email.date}</span>
+            <Button variant="ghost" size="icon" className="h-6 w-6">
+              <Star
+                className={`h-4 w-4 ${
+                  email.isStarred
+                    ? "fill-yellow-400 text-yellow-400"
+                    : "text-muted-foreground"
+                }`}
+              />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-6 w-6">
+              <CornerUpLeft />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-6 w-6">
+              <EllipsisVertical />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -52,7 +77,6 @@ export default async function EmailDetailPage({ params }: Props) {
               {email.from} &lt;{email.email}&gt;
             </span>
           </div>
-          <span>{email.date}</span>
         </div>
       </div>
       <h1 className="text-2xl font-semibold text-gray-900">{email.subject}</h1>
@@ -61,22 +85,4 @@ export default async function EmailDetailPage({ params }: Props) {
       </div>
     </div>
   );
-}
-
-async function fetchEmailById(id: string) {
-  return {
-    id,
-    subject: "Ejemplo de asunto",
-    from: "Eric Johnson",
-    email: "news@notice.alibaba.com",
-    date: "3:45 (hace 11 horas)",
-    htmlContent: `
-      <p>Hola <strong>Eric</strong>,</p>
-      <p>
-        Este es el contenido completo del <em>mensaje</em>. Podés revisarlo y 
-        <a href="#">responder</a> cuando quieras.
-      </p>
-      <p>Saludos,<br />El equipo.</p>
-    `,
-  };
 }

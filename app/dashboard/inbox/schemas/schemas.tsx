@@ -17,6 +17,7 @@ export type Email = z.infer<typeof EmailSchema>;
 export const EmailsTypeSchema = z
   .object({
     emails: z.array(EmailSchema).nullable(),
+    unread: z.number().optional(),
   })
   .optional()
   .nullable();

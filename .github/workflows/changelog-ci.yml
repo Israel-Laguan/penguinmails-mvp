@@ -3,7 +3,7 @@ name: Changelog CI
 on:
   push:
     branches:
-      - feat/iss/test
+      - main
   workflow_dispatch:
 
 jobs:

@@ -1,61 +1,78 @@
-name: Update Version on PR to dev
+name: Bump Version on PR Merge
 
 on:
   pull_request:
     types: [closed]
-    branches: [ "dev" ]
+    branches: ["dev", "main"]
 
 jobs:
   update-version:
+    if: >-
+      github.event.pull_request.merged == true &&
+      (github.event.pull_request.base.ref == 'dev' || github.event.pull_request.base.ref == 'main')
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
-      - name: Checkout code
+      - name: Checkout base branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.base.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get current version
         id: get_version
         run: |
-          version=$(tr -d '\n' < version.txt)
-          echo "Versión actual: '$version'"
+          version=$(< version.txt tr -d '\n')
+          echo "Versión actual: $version"
           echo "current_version=$version" >> $GITHUB_OUTPUT
-      
-      - name: Grant permissions to the script
+
+      - name: Make bump script executable
         run: chmod +x ./scripts/update_version.sh
-  
-      - name: Update version and push changes
+
+      - name: Prepare env vars
+        run: |
+          echo "BASE_REF=${{ github.event.pull_request.base.ref }}" >> $GITHUB_ENV
+          echo "HEAD_REF=${{ github.event.pull_request.head.ref }}" >> $GITHUB_ENV
+
+      - name: Compute new version
+        id: bump
+        run: |
+          CURRENT=${{ steps.get_version.outputs.current_version }}
+          BASE=${BASE_REF}
+          HEAD=${HEAD_REF}
+          NEW=$CURRENT
+
+          if [[ "$BASE" == "main" ]]; then
+            # Major++
+            NEW=$(echo $CURRENT | awk -F. '{ $1++; $2=0; $3=0; print }' OFS=".")
+          elif [[ "$BASE" == "dev" && "$HEAD" =~ ^feat/ ]]; then
+            # Minor++
+            NEW=$(echo $CURRENT | awk -F. '{ $2++; $3=0; print }' OFS=".")
+          elif [[ "$BASE" == "dev" && "$HEAD" =~ ^hotfix/ ]]; then
+            # Patch++
+            NEW=$(echo $CURRENT | awk -F. '{ $3++; print }' OFS=".")
+          fi
+
+          echo "new_version=$NEW" >> $GITHUB_OUTPUT
+
+      - name: Bump version & push to ${{ github.event.pull_request.base.ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Configurar git
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          CURRENT=${{ steps.get_version.outputs.current_version }}
+          NEW=${{ steps.bump.outputs.new_version }}
+          TARGET_BRANCH=${{ github.event.pull_request.base.ref }}
 
-          # Obtener variables
-          CURRENT_VERSION="${{ steps.get_version.outputs.current_version }}"
-          BASE_REF="${{ github.event.pull_request.base.ref }}"  # Rama destino (main/dev)
-          HEAD_REF="${{ github.event.pull_request.head.ref }}"  # Rama origen (feat/hotfix)
-
-          # Lógica de incremento
-          NEW_VERSION=$CURRENT_VERSION
-          if [[ "$BASE_REF" == "main" && "$HEAD_REF" =~ ^release/.* ]]; then
-            NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{ $1++; $2=0; $3=0; print }' OFS=".")  # Major++
-          elif [[ "$BASE_REF" == "dev" && "$HEAD_REF" =~ ^feat/.* ]]; then
-            NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{ $2++; $3=0; print }' OFS=".")  # Minor++
-          elif [[ "$BASE_REF" == "dev" && "$HEAD_REF" =~ ^hotfix/.* ]]; then
-            NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{ $3++; print }' OFS=".")  # Patch++
-          fi
-
-          # Actualizar y hacer commit si hay cambios
-          if [[ "$NEW_VERSION" != "$CURRENT_VERSION" ]]; then
-            echo "🔄 Actualizando versión: $CURRENT_VERSION → $NEW_VERSION"
-            ./scripts/update_version.sh "$NEW_VERSION"
+          if [[ "$NEW" != "$CURRENT" ]]; then
+            echo "🔄 Bumping version: $CURRENT → $NEW on $TARGET_BRANCH"
+            ./scripts/update_version.sh "$NEW"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add version.txt
-            git commit -m "🚀 Bump version: $NEW_VERSION [skip ci]"
-            git push origin HEAD:${{ github.event.pull_request.head.ref }}  # Pushear a la rama del PR
+            git commit -m "🚀 Bump version to $NEW [skip ci]"
+            git push origin "$TARGET_BRANCH"
           else
-            echo "⏩ No se requiere actualización"
+            echo "⏩ No version bump needed for $TARGET_BRANCH"
           fi

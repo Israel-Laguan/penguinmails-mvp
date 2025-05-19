@@ -32,7 +32,7 @@ import Link from "next/link";
 
 export default function CampaignDetail() {
   const { campaignId } = useParams();
-  
+
   const campaign = {
     ...mockCampaignDetail,
     id: Number(campaignId),
@@ -46,9 +46,11 @@ export default function CampaignDetail() {
           <p className="text-muted-foreground">{t.campaignDetail.id} {campaignId}</p>
         </div>
         <div className="flex space-x-2">
-          <Button variant="outline" size="sm">
-            <Edit className="mr-2 h-4 w-4" />
-            {t.buttons.edit}
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`${campaignId}/edit`}>
+              <Edit className="mr-2 h-4 w-4" />
+              {t.buttons.edit}
+            </Link>
           </Button>
           <Button variant="outline" size="sm">
             <Copy className="mr-2 h-4 w-4" />
@@ -60,7 +62,7 @@ export default function CampaignDetail() {
           </Button>
         </div>
       </div>
-      
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -77,7 +79,7 @@ export default function CampaignDetail() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -93,7 +95,7 @@ export default function CampaignDetail() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -109,7 +111,7 @@ export default function CampaignDetail() {
             </div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -126,7 +128,7 @@ export default function CampaignDetail() {
           </CardContent>
         </Card>
       </div>
-      
+
       <Tabs defaultValue="overview">
         <TabsList className="grid w-full grid-cols-4 md:w-auto md:inline-grid md:grid-cols-4">
           <TabsTrigger value="overview">{t.tabs.overview}</TabsTrigger>
@@ -134,7 +136,7 @@ export default function CampaignDetail() {
           <TabsTrigger value="recipients">{t.tabs.recipients}</TabsTrigger>
           <TabsTrigger value="settings">{t.tabs.settings}</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="overview" className="space-y-4">
           <Card>
             <CardHeader>
@@ -178,7 +180,7 @@ export default function CampaignDetail() {
               </ResponsiveContainer>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader>
               <CardTitle>{t.charts.sequencePerformance}</CardTitle>
@@ -206,7 +208,7 @@ export default function CampaignDetail() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="sequence" className="space-y-4">
           <Card>
             <CardHeader>
@@ -251,7 +253,7 @@ export default function CampaignDetail() {
                         </div>
                       </div>
                     </div>
-                    
+
                     {index < campaign.sequence.length - 1 && (
                       <div className="ml-6 pl-10 mt-2 mb-2 text-xs text-muted-foreground">
                         {t.sequence.waitMessage}
@@ -263,7 +265,7 @@ export default function CampaignDetail() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="recipients" className="space-y-4">
           <Card>
             <CardHeader>
@@ -274,7 +276,7 @@ export default function CampaignDetail() {
                 {t.recipients.settingsDescription}
               </p>
               <div className="mt-4">
-                <Link 
+                <Link
                   href={`/dashboard/campaigns/${campaignId}/clients`}
                   className={buttonVariants({ variant: "outline", size: "sm" })}
                 >
@@ -284,7 +286,7 @@ export default function CampaignDetail() {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="settings" className="space-y-4">
           <Card>
             <CardHeader>
@@ -313,7 +315,7 @@ export default function CampaignDetail() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="font-medium">{t.settings.sections.schedule.title}</h3>
                   <div className="grid grid-cols-2 gap-4 mt-2">

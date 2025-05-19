@@ -8,10 +8,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { copyText as t } from "./copy";
 
-export function RecipientsSettings() {
+type RecipientsSettingsProps = {
+  recipients: string;
+  handleChangeRecipients: (evt: any) => void;
+};
+
+export function RecipientsSettings({ recipients, handleChangeRecipients }: RecipientsSettingsProps) {
   // TODO: Implement actual file upload/CSV parsing/manual entry logic
-  // TODO: Connect state to react-hook-form or parent state
-  const [recipientInput, setRecipientInput] = React.useState("");
 
   return (
     <Card>
@@ -34,8 +37,8 @@ export function RecipientsSettings() {
           <Textarea
             id="manual-recipients"
             placeholder={t.recipients.textareaPlaceholder}
-            value={recipientInput}
-            onChange={(e) => setRecipientInput(e.target.value)}
+            value={recipients}
+            onChange={(evt) => handleChangeRecipients(evt)}
             rows={6}
           />
           <p className="text-xs text-muted-foreground">

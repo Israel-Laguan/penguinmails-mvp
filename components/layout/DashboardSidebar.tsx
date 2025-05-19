@@ -79,16 +79,6 @@ export function DashboardSidebar() {
       </div>
 
       <div className="flex-1 overflow-auto py-4 px-3">
-        <div className="mb-4">
-          {/* TODO: Link to actual campaign creation page when implemented */}
-          <Button asChild className="w-full justify-start gap-2" size="sm">
-            <Link href="/dashboard/campaigns/create"> {/* Updated link */}
-              <PlusCircle className="mr-2 h-4 w-4" />
-              New Campaign
-            </Link>
-          </Button>
-        </div>
-
         <nav className="grid gap-1">
           {mainNavItems.map((item, index) => (
             <Link

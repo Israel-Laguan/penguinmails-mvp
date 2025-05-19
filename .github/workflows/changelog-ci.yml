@@ -2,43 +2,36 @@ name: Changelog CI
 
 on:
   push:
-    branches: [main]
-    paths-ignore:
-      - "CHANGELOG.md"
-      - "version.txt"
-
-  # Optionally you can use `workflow_dispatch` to run Changelog CI Manually
+    branches:
+      - main
   workflow_dispatch:
-    inputs:
-      release_version:
-        description: "Set Release Version"
-        required: true
+
 jobs:
-  build:
+  changelog:
     runs-on: ubuntu-latest
-    if: ${{ github.actor != 'test' }}
-    permissions:
-      contents: write
-      pull-requests: write
-
     steps:
-      # Checks-out your repository
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Get current version
-        id: version
+      - name: Read version from version.txt
+        id: get_version
         run: |
-          VERSION=$(cat version.txt | tr -d '\n')
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          version=$(< version.txt tr -d '\n')
+          echo "Versión actual: $version"
+          echo "current_version=$version" >> $GITHUB_OUTPUT
 
-      - name: Run Changelog CI
-        uses: saadmk11/changelog-ci@v1.1.2
+      - name: Generate changelog
+        uses: mikepenz/release-changelog-builder-action@v4
         with:
-          changelog_filename: CHANGELOG.md
+          configuration: changelog-config.yml
+          toTag: ${{ steps.get_version.outputs.current_version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          config_file: changelog-config.yml
-          committer_username: "test"
-          committer_email: "test@test.com"
-
-          release_version: ${{ github.event.inputs.release_version || steps.version.outputs.version }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Commit and push changelog
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add CHANGELOG.md
+          git commit -m "chore: update CHANGELOG.md [skip ci]" || echo "No changes to commit"
+          git push

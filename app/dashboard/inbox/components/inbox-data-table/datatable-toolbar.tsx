@@ -5,10 +5,10 @@ import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Cross, Filter, Mail, Search, User } from "lucide-react";
+import { Mail, Search, User, X } from "lucide-react";
 import { DataTableViewOptions } from "./datatable-view-options";
-import { DataTableFacetedFilter } from "./datatable-faceted-filter";
 import { getUniqueFilters } from "../../actions";
+import { ModalFilter } from "./modal-filter";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -37,29 +37,28 @@ export function DataTableToolbar<TData>({
     from: string[];
     campaign: string[];
   }>({ email: [], from: [], campaign: [] });
-  
+
   React.useEffect(() => {
     const fetchFilters = async () => {
       const filters = await getUniqueFilters();
       setFilterOptions(filters);
     };
-  
+
     fetchFilters();
   }, []);
-  
 
   const from = filterOptions.from.map((fromValue) => ({
     label: fromValue,
     value: fromValue,
     icon: User,
   }));
-  
+
   const emails = filterOptions.email.map((emailValue) => ({
     label: emailValue,
     value: emailValue,
     icon: Mail,
   }));
-  
+
   const campaigns = filterOptions.campaign.map((campaignValue) => ({
     label: campaignValue,
     value: campaignValue,
@@ -84,6 +83,10 @@ export function DataTableToolbar<TData>({
               size="sm"
               onClick={() => {
                 fetchAllMessages();
+                setSearch("");
+                if (searchRef.current) {
+                  searchRef.current.value = "";
+                }
               }}
               className="px-2 ml-2 border-black"
             >
@@ -91,58 +94,7 @@ export function DataTableToolbar<TData>({
               Search
             </Button>
           </div>
-          <div className="flex items-center gap-2">
-            {table.getColumn("campaign") && campaigns.length > 0 && (
-              <DataTableFacetedFilter
-                column={table.getColumn("campaign")}
-                title="Campaign"
-                options={campaigns}
-                filterValue={filterValue}
-                setFilterValue={setFilterValue}
-              />
-            )}
-            {table.getColumn("from") && from.length > 0 && (
-              <DataTableFacetedFilter
-                column={table.getColumn("from")}
-                title="From"
-                options={from}
-                filterValue={filterValue}
-                setFilterValue={setFilterValue}
-              />
-            )}
-            {table.getColumn("email") && emails.length > 0 && (
-              <DataTableFacetedFilter
-                column={table.getColumn("email")}
-                title="Email"
-                options={emails}
-                filterValue={filterValue}
-                setFilterValue={setFilterValue}
-              />
-            )}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                table.resetColumnFilters();
-                table.setGlobalFilter("");
-                fetchAllMessages();
-              }}
-              className="px-2"
-            >
-              <Filter className="ml-2 siz-3" />
-              Apply Filters
-            </Button>
-            {/*}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="px-2"
-              >
-                Restart
-                <RefreshCcw className="ml-2 siz-3" />
-              </Button>
-              */}
-          </div>
+          <ModalFilter campaigns={campaigns} emails={emails} fetchAllMessages={fetchAllMessages} filterValue={filterValue} from={from} setFilterValue={setFilterValue} table={table} />
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">

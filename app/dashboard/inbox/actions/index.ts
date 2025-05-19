@@ -39,7 +39,7 @@ export const getAllMessages = async (
       search === "" ||
       [msg.from, msg.email, msg.subject, msg.preview, msg.campaign]
         .some((field) =>
-          field.toLowerCase().includes(search.toLowerCase())
+          field.toLowerCase().includes(search.toLowerCase().trim())
         );
 
     return matchesEmail && matchesFrom && matchesCampaign && matchesSearch;

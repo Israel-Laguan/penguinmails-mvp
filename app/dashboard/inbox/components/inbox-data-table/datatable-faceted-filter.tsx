@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { PlusCircleIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
@@ -114,6 +115,10 @@ export function DataTableFacetedFilter<TData, TValue>({
                         [colId]: newSelectedValues,
                       }));
                     }}
+                    className={cn(
+                      "cursor-pointer",
+                      isSelected && "bg-accent text-accent-foreground"
+                    )}
                   >
                     {option.icon && (
                       <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />

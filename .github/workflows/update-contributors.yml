@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Get PR author
         run: |
@@ -127,6 +128,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          git pull --rebase origin dev
           git add README.md
           if ! git diff-index --quiet HEAD; then
             git commit -m "Update contributors list in README.md"

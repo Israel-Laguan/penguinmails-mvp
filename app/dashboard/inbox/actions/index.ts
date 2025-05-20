@@ -1,4 +1,6 @@
+"use server";
 import { mockEmails } from "../mockEmails";
+//import { prisma } from "@/lib/prisma";
 
 interface Query {
   email?: string[];
@@ -67,7 +69,7 @@ export const getAllMessages = async (
   };
 };
 
-export const getUniqueFilters = () => {
+export const getUniqueFilters = async () => {
   const emailsSet = new Set<string>();
   const namesSet = new Set<string>();
   const campaignsSet = new Set<string>();

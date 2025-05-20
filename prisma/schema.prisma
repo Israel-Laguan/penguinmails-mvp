@@ -102,9 +102,11 @@ model Client {
   companyId   Int
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
+
   campaigns   CampaignClient[]
   company     Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
   emailEvents EmailEvent[]
+  emails      EmailMessage[]
 
   @@unique([companyId, email])
   @@index([companyId])
@@ -190,11 +192,13 @@ model Campaign {
   timezone      String           @default("UTC")
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
+
   company       Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
   createdBy     User?            @relation(fields: [createdById], references: [id])
   clients       CampaignClient[]
   steps         CampaignStep[]   @relation("CampaignSteps")
   emailEvents   EmailEvent[]
+  emails EmailMessage[]
 
   @@index([companyId])
   @@index([createdById])
@@ -315,6 +319,25 @@ model Domain {
   @@index([createdById])
 }
 
+model EmailMessage {
+  id          Int       @id @default(autoincrement())
+  campaignId  Int?
+  clientId    Int?
+  subject     String
+  body        String    @db.Text
+  sentAt      DateTime  @default(now())
+  starred     Boolean   @default(false)
+  read        Boolean      @default(false)
+  status      EmailStatus  @default(SENT)
+
+  campaign    Campaign? @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  client      Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+  @@index([clientId])
+}
+
+
 enum UserRole {
   ADMIN
   MEMBER
@@ -417,4 +440,10 @@ enum TemplateCategory {
   HR
   FINANCE
   HEALTHCARE
+}
+
+enum EmailStatus {
+  DRAFT
+  SENT
+  TRASHED
 }

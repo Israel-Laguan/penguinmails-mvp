@@ -1,12 +1,22 @@
-import { mockEmails } from "../../mockEmails";
+import { prisma } from "@/lib/prisma";
 
 export async function fetchEmailById(id: string) {
-    const email = mockEmails.find((email) => email.id === parseInt(id));
+  const parsedId = parseInt(id as unknown as string, 10);
+
+    const email = await prisma.emailMessage.findFirst({
+      where: {
+        id: parsedId,
+      },
+      include: {
+        campaign: true,
+        client: true,
+      },
+    });
     if (!email) {
       return null;
     }
     return {
       ...email,
-      htmlContent: email.message,
+      htmlContent: email.body,
     };
   }

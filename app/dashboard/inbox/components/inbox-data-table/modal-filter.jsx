@@ -37,7 +37,7 @@ export function ModalFilter({ table, campaigns, from, emails, filterValue, setFi
                   setFilterValue={setFilterValue}
                 />
               )}
-              {table.getColumn("from") && from.length > 0 && (
+              {table.getColumn("client") && from.length > 0 && (
                 <DataTableFacetedFilter
                   column={table.getColumn("from")}
                   title="From"
@@ -46,7 +46,7 @@ export function ModalFilter({ table, campaigns, from, emails, filterValue, setFi
                   setFilterValue={setFilterValue}
                 />
               )}
-              {table.getColumn("email") && emails.length > 0 && (
+              {table.getColumn("client") && emails.length > 0 && (
                 <DataTableFacetedFilter
                   column={table.getColumn("email")}
                   title="Email"

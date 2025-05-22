@@ -1,6 +1,6 @@
 "use server";
 import { mockEmails } from "../mockEmails";
-//import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 interface Query {
   email?: string[];
@@ -24,65 +24,133 @@ export const getAllMessages = async (
   const { email = [], from = [], campaign = [] } = query;
   const { page = 1, limit = 10 } = pagination;
 
-  const filteredEmails = mockEmails.filter((msg) => {
-    const matchesEmail =
-      email.length === 0 ||
-      email.some((e) => msg.email.toLowerCase().includes(e.toLowerCase()));
+  const filters: any = {
+    AND: [],
+  };
 
-    const matchesFrom =
-      from.length === 0 ||
-      from.some((f) => msg.from.toLowerCase().includes(f.toLowerCase()));
-
-    const matchesCampaign =
-      campaign.length === 0 ||
-      campaign.some((c) => msg.campaign.toLowerCase().includes(c.toLowerCase()));
-
-      const matchesSearch =
-      search === "" ||
-      [msg.from, msg.email, msg.subject, msg.preview, msg.campaign]
-        .some((field) =>
-          field.toLowerCase().includes(search.toLowerCase().trim())
-        );
-
-    return matchesEmail && matchesFrom && matchesCampaign && matchesSearch;
-  });
-
-  const unreadCount = filteredEmails.filter((email) => !email.isRead);
-
-  let emailsToReturn = filteredEmails;
-
-  if (type === "unread") {
-    emailsToReturn = filteredEmails.filter((email) => !email.isRead);
-  } else if (type === "starred") {
-    emailsToReturn = filteredEmails.filter((email) => email.isStarred);
+  if (email.length > 0) {
+    filters.AND.push({
+      toUser: {
+        email: {
+          in: email.map((e) => e.toLowerCase()),
+          mode: "insensitive",
+        },
+      },
+    });
   }
 
-  const startIndex = (page - 1) * limit;
-  const paginatedEmails = emailsToReturn.slice(startIndex, startIndex + limit);
+  if (from.length > 0) {
+    filters.AND.push({
+      fromUser: {
+        email: {
+          in: from.map((f) => f.toLowerCase()),
+          mode: "insensitive",
+        },
+      },
+    });
+  }
+
+  if (campaign.length > 0) {
+    filters.AND.push({
+      campaign: {
+        name: {
+          in: campaign.map((c) => c.toLowerCase()),
+          mode: "insensitive",
+        },
+      },
+    });
+  }
+
+  if (search.trim()) {
+    filters.AND.push({
+      OR: [
+        { subject: { contains: search, mode: "insensitive" } },
+        { body: { contains: search, mode: "insensitive" } },
+        { fromUser: { email: { contains: search, mode: "insensitive" } } },
+        { toUser: { email: { contains: search, mode: "insensitive" } } },
+      ],
+    });
+  }
+
+  if (type === "unread") {
+    filters.AND.push({ read: false });
+  } else if (type === "starred") {
+    filters.AND.push({ starred: true });
+  }
+
+  const skip = (page - 1) * limit;
+
+  const [emails, total, unread] = await Promise.all([
+    prisma.emailMessage.findMany({
+      where: filters,
+      include: {
+        client: true,
+        campaign: true,
+      },
+      skip,
+      take: limit,
+    }),
+    prisma.emailMessage.count({ where: filters }),
+    prisma.emailMessage.count({ where: { ...filters, read: false } }),
+  ]);
 
   return {
-    emails: paginatedEmails,
-    unread: unreadCount.length,
-    total: filteredEmails.length,
-    totalPages: Math.ceil(filteredEmails.length / limit),
+    emails,
+    unread,
+    total,
+    totalPages: Math.ceil(total / limit),
     currentPage: page,
   };
 };
 
 export const getUniqueFilters = async () => {
-  const emailsSet = new Set<string>();
-  const namesSet = new Set<string>();
-  const campaignsSet = new Set<string>();
+  const [emails, froms, campaigns] = await Promise.all([
+    prisma.emailMessage.findMany({
+      select: {
+        client: {
+          select: {
+            email: true,
+          },
+        },
+      },
+      distinct: ['id'],
+    }),
 
-  for (const msg of mockEmails) {
-    emailsSet.add(msg.email);
-    namesSet.add(msg.from);
-    campaignsSet.add(msg.campaign);
-  }
+    prisma.emailMessage.findMany({
+      select: {
+        client: {
+          select: {
+            email: true,
+          },
+        },
+      },
+      distinct: ['id'],
+    }),
+
+    prisma.emailMessage.findMany({
+      select: {
+        campaign: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      where: {
+        campaign: {
+          isNot: null,
+        },
+      },
+      distinct: ['campaignId'],
+    }),
+  ]);
+
+  const email = emails.map(e => e.client?.email).filter(Boolean);
+  const from = froms.map(f => f.client?.email).filter(Boolean);
+  const campaign = campaigns.map(c => c.campaign?.name).filter(Boolean);
 
   return {
-    email: [...emailsSet],
-    from: [...namesSet],
-    campaign: [...campaignsSet],
+    email,
+    from,
+    campaign,
   };
 };

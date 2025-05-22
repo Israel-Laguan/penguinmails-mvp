@@ -40,14 +40,14 @@ export default async function EmailDetailPage({ params }: Props) {
       <div className="text-gray-800 text-sm border-b pb-4">
         <div className="flex justify-between items-center">
           <span>
-            <strong>{email.from}</strong> &lt;{email.email}&gt;
+            <strong>{`${email.client?.firstName} ${email.client?.lastName}`}</strong> &lt;{email?.client?.email}&gt;
           </span>
           <div>
-            <span>{email.date}</span>
+            <span>{email.createdAt.toString()}</span>
             <Button variant="ghost" size="icon" className="h-6 w-6">
               <Star
                 className={`h-4 w-4 ${
-                  email.isStarred
+                  email.starred
                     ? "fill-yellow-400 text-yellow-400"
                     : "text-muted-foreground"
                 }`}
@@ -74,7 +74,7 @@ export default async function EmailDetailPage({ params }: Props) {
               className="rounded-full"
             />
             <span>
-              {email.from} &lt;{email.email}&gt;
+              {email.client?.firstName} {email.client?.lastName} &lt;{email?.client?.email}&gt;
             </span>
           </div>
         </div>

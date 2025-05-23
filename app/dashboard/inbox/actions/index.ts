@@ -39,15 +39,25 @@ export const getAllMessages = async (
   }
 
   if (from.length > 0) {
-    filters.AND.push({
-      fromUser: {
-        email: {
-          in: from.map((f) => f.toLowerCase()),
-          mode: "insensitive",
-        },
-      },
-    });
+    const fromConditions = from
+      .map(fullName => {
+        const [firstName, ...lastNameParts] = fullName.trim().split(" ");
+        const lastName = lastNameParts.join(" ");
+        if (!firstName || !lastName) return null;
+        return {
+          AND: [
+            { client: { firstName: { equals: firstName, mode: "insensitive" } } },
+            { client: { lastName: { equals: lastName, mode: "insensitive" } } },
+          ],
+        };
+      })
+      .filter(Boolean);
+  
+    if (fromConditions.length > 0) {
+      filters.AND.push({ OR: fromConditions });
+    }
   }
+  
 
   if (campaign.length > 0) {
     filters.AND.push({
@@ -113,18 +123,19 @@ export const getUniqueFilters = async () => {
           },
         },
       },
-      distinct: ['id'],
+      distinct: ['clientId'],
     }),
 
     prisma.emailMessage.findMany({
       select: {
         client: {
           select: {
-            email: true,
+            firstName: true,
+            lastName: true,
           },
         },
       },
-      distinct: ['id'],
+      distinct: ['clientId'], // Asegura que sea único por cliente
     }),
 
     prisma.emailMessage.findMany({
@@ -144,9 +155,25 @@ export const getUniqueFilters = async () => {
     }),
   ]);
 
-  const email = emails.map(e => e.client?.email).filter(Boolean);
-  const from = froms.map(f => f.client?.email).filter(Boolean);
-  const campaign = campaigns.map(c => c.campaign?.name).filter(Boolean);
+  const email = emails
+    .map(e => e.client?.email)
+    .filter(Boolean);
+
+  const fromSet = new Set(
+    froms
+      .map(f => {
+        const first = f.client?.firstName;
+        const last = f.client?.lastName;
+        return first && last ? `${first} ${last}` : null;
+      })
+      .filter(Boolean)
+  );
+
+  const from = Array.from(fromSet);
+
+  const campaign = campaigns
+    .map(c => c.campaign?.name)
+    .filter(Boolean);
 
   return {
     email,
@@ -154,6 +181,7 @@ export const getUniqueFilters = async () => {
     campaign,
   };
 };
+
 
 export async function fetchEmailById(id: string) {
   const parsedId = parseInt(id as unknown as string, 10);

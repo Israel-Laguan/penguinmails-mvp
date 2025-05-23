@@ -8,6 +8,7 @@ export default function EmailTableSkeleton() {
         <div>From</div>
         <div>Email</div>
         <div>Subject</div>
+        <div>Preview</div>
         <div>Date</div>
       </div>
 

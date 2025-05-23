@@ -174,5 +174,5 @@ export async function fetchEmailById(id: string) {
       ...email,
       htmlContent: email.body,
     };
-  }
+};
 

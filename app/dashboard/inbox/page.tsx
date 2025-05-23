@@ -20,20 +20,26 @@ export default function InboxPage() {
   const [totalPages, setTotalPages] = React.useState<number>(0);
   const [type, setType] = React.useState<"all" | "unread" | "starred">("all");
   const [search, setSearch] = React.useState<string>("");
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const fetchAllMessages = async () => {
-    setType(type);
-    const messages = await getAllMessages(filterValue, type, {
-      page,
-      limit: pageSize,
-    }, search);
-    setEmails(messages.emails);
-    setUnreadCount(messages?.unread || 0);
-
-    if (messages?.emails) {
-      setTotalPages(messages.totalPages);
+    try {
+      setIsLoading(true);
+      setType(type);
+      const messages = await getAllMessages(filterValue, type, {
+        page,
+        limit: pageSize,
+      }, search);
+      setEmails(messages.emails);
+      setUnreadCount(messages?.unread || 0);
+  
+      if (messages?.emails) {
+        setTotalPages(messages.totalPages);
+      }
+      return messages.emails; 
+    } finally {
+      setIsLoading(false);
     }
-    return messages.emails;
   };
 
   React.useEffect(() => {
@@ -100,6 +106,7 @@ export default function InboxPage() {
                 setFilterValue={setFilterValue}
                 fetchAllMessages={fetchAllMessages}
                 setSearch={setSearch}
+                isLoading={isLoading}
               />
               <DatatablePagination
                 page={page}

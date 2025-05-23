@@ -7,11 +7,11 @@ export const CampaignSchema = z.object({
   fromName: z.string(),
   fromEmail: z.string().email(),
   companyId: z.number(),
-  createdById: z.string().nullable(),
+  createdById: z.string().optional(),
   metrics: z.any().optional(),
   sendDays: z.array(z.number().int().min(0).max(6)),
-  sendTimeStart: z.string().regex(/^\d{2}:\d{2}$/).nullable(),
-  sendTimeEnd: z.string().regex(/^\d{2}:\d{2}$/).nullable(),
+  sendTimeStart: z.string().regex(/^\d{2}:\d{2}$/).optional(),
+  sendTimeEnd: z.string().regex(/^\d{2}:\d{2}$/).optional(),
   emailsPerDay: z.number().int().positive().optional(),
   timezone: z.string(),
   createdAt: z.string(),
@@ -23,20 +23,19 @@ export const ClientSchema = z.object({
   email: z.string().email(),
   firstName: z.string(),
   lastName: z.string(),
-  notes: z.string().nullable(),
+  notes: z.string().optional(),
   maskPII: z.boolean(),
   companyId: z.number(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
-});
+}).optional();
 
 export const EmailSchema = z.object({
   id: z.number(),
   subject: z.string(),
-  preview: z.string(),
-  date: z.string(),
   starred: z.boolean(),
   read: z.boolean(),
+  createdAt: z.coerce.date(),
   campaign: CampaignSchema,
   client: ClientSchema, 
 });
@@ -45,11 +44,10 @@ export const EmailSchema = z.object({
 
 export const EmailsTypeSchema = z
 .object({
-  emails: z.array(EmailSchema).nullable(),
+  emails: z.array(EmailSchema).optional(),
   unread: z.number().optional(),
 })
 .optional()
-.nullable();
 
 export type EmailsType = z.infer<typeof EmailsTypeSchema>;
 export type Email = z.infer<typeof EmailSchema>;

@@ -27,7 +27,7 @@ export const inboxColumns: ColumnDef<Email>[] = [
       const from: Client = row.getValue("client");
       return (
         <div className="flex items-center justify-center">
-          <span className="text-blue-500">{`${from.firstName} ${from.lastName}`}</span>
+          <span className="text-blue-500">{`${from?.firstName} ${from?.lastName}`}</span>
         </div>
       );
     }
@@ -39,7 +39,7 @@ export const inboxColumns: ColumnDef<Email>[] = [
       const from: Client = row.getValue("client");
       return (
         <div className="flex items-center justify-center">
-          <span className="text-blue-500">{from.email}</span>
+          <span className="text-blue-500">{from?.email}</span>
         </div>
       );
     }

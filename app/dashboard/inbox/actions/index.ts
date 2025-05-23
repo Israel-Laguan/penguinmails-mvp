@@ -1,5 +1,4 @@
 "use server";
-import { mockEmails } from "../mockEmails";
 import { prisma } from "@/lib/prisma";
 
 interface Query {
@@ -66,8 +65,9 @@ export const getAllMessages = async (
       OR: [
         { subject: { contains: search, mode: "insensitive" } },
         { body: { contains: search, mode: "insensitive" } },
-        { fromUser: { email: { contains: search, mode: "insensitive" } } },
-        { toUser: { email: { contains: search, mode: "insensitive" } } },
+        { campaign: { name: { contains: search, mode: "insensitive" } } },
+        { client: { firstName: { contains: search, mode: "insensitive" } } },
+        { client: { lastName: { contains: search, mode: "insensitive" } } },
       ],
     });
   }
@@ -154,3 +154,25 @@ export const getUniqueFilters = async () => {
     campaign,
   };
 };
+
+export async function fetchEmailById(id: string) {
+  const parsedId = parseInt(id as unknown as string, 10);
+
+    const email = await prisma.emailMessage.findFirst({
+      where: {
+        id: parsedId,
+      },
+      include: {
+        campaign: true,
+        client: true,
+      },
+    });
+    if (!email) {
+      return null;
+    }
+    return {
+      ...email,
+      htmlContent: email.body,
+    };
+  }
+

@@ -3,8 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Star, EllipsisVertical, CornerUpLeft, OctagonAlert, Trash2 } from "lucide-react";
 import Image from "next/image";
-import { fetchEmailById } from "./actions";
 import { Button } from "@/components/ui/button";
+import { fetchEmailById } from "../actions";
 
 type Props = {
   params: {

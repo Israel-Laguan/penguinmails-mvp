@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, RefreshCcw } from "lucide-react";
 import { getAllMessages } from "./actions";
-import { EmailsType } from "./schemas/schemas";
+import { Email } from "./schemas/schemas";
 import { inboxColumns } from "./components/inbox-columns";
 import { InboxDataTable } from "@/app/dashboard/inbox/components/inbox-data-table/data-table";
 import DatatablePagination from "@/app/dashboard/inbox/components/inbox-data-table/data-table-pagination";
 
 export default function InboxPage() {
-  const [emails, setEmails] = React.useState<EmailsType>(null);
+  const [emails, setEmails] = React.useState<Email[]>([]);
   const [unreadCount, setUnreadCount] = React.useState<number>(0);
   const [filterValue, setFilterValue] = React.useState<{
     [key: string]: string[] | undefined;
@@ -20,18 +20,25 @@ export default function InboxPage() {
   const [totalPages, setTotalPages] = React.useState<number>(0);
   const [type, setType] = React.useState<"all" | "unread" | "starred">("all");
   const [search, setSearch] = React.useState<string>("");
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const fetchAllMessages = async () => {
-    setType(type);
-    const messages: EmailsType = await getAllMessages(filterValue, type, {
-      page,
-      limit: pageSize,
-    }, search);
-    setEmails(messages);
-    setUnreadCount(messages?.unread || 0);
-
-    if (messages?.emails) {
-      setTotalPages(messages.totalPages);
+    try {
+      setIsLoading(true);
+      setType(type);
+      const messages = await getAllMessages(filterValue, type, {
+        page,
+        limit: pageSize,
+      }, search);
+      setEmails(messages.emails);
+      setUnreadCount(messages?.unread || 0);
+  
+      if (messages?.emails) {
+        setTotalPages(messages.totalPages);
+      }
+      return messages.emails; 
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -39,7 +46,7 @@ export default function InboxPage() {
     fetchAllMessages();
   }, [page, pageSize, type]);
 
-  const currentEmails = emails?.emails || [];
+  const currentEmails = emails || [];
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -99,6 +106,7 @@ export default function InboxPage() {
                 setFilterValue={setFilterValue}
                 fetchAllMessages={fetchAllMessages}
                 setSearch={setSearch}
+                isLoading={isLoading}
               />
               <DatatablePagination
                 page={page}

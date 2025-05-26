@@ -325,10 +325,11 @@ model EmailMessage {
   clientId    Int?
   subject     String
   body        String    @db.Text
-  sentAt      DateTime  @default(now())
   starred     Boolean   @default(false)
   read        Boolean      @default(false)
   status      EmailStatus  @default(SENT)
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
 
   campaign    Campaign? @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   client      Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)

@@ -116,6 +116,91 @@ async function main() {
     ],
   });
 
+  const campaignCurrent = await prisma.campaign.findFirst();
+  const client = await prisma.client.findFirst();
+
+  if (!campaignCurrent || !client) {
+    throw new Error('No campaign or client found. Please create them first.');
+  }
+
+  const emailMessages = await prisma.emailMessage.createMany({
+    data: [
+      {
+        subject: 'Welcome to Acme!',
+        body: 'Thanks for joining us. This is the first step of a great journey.',
+        status: 'DRAFT',
+        read: false,
+        starred: false,
+        campaignId: campaignCurrent.id,
+        clientId: client.id,
+      },
+      {
+        subject: 'How can we help you?',
+        body: 'We’re here to help you get started. Reply to this email if you have any questions.',
+        status: 'DRAFT',
+        read: true,
+        starred: true,
+        campaignId: campaignCurrent.id,
+        clientId: client.id,
+      },
+      {
+        subject: 'Tips to make the most of Acme',
+        body: 'Today we’re sharing some tips to help you get the most out of our platform.',
+        status: 'DRAFT',
+        read: false,
+        starred: false,
+        campaignId: campaignCurrent.id,
+        clientId: client.id,
+      },
+      {
+        subject: 'Meet our team',
+        body: 'We want to introduce you to the people behind Acme. We’re here to support you!',
+        status: 'DRAFT',
+        read: false,
+        starred: false,
+        campaignId: campaignCurrent.id,
+        clientId: client.id,
+      },
+      {
+        subject: 'Did you know…?',
+        body: 'There are hidden features that can boost your productivity. Find out what they are.',
+        status: 'DRAFT',
+        read: true,
+        starred: false,
+        campaignId: campaignCurrent.id,
+        clientId: client.id,
+      },
+      {
+        subject: 'Let’s stay in touch',
+        body: 'We just wanted to check in. How’s everything going with Acme?',
+        status: 'DRAFT',
+        read: false,
+        starred: false,
+        campaignId: campaignCurrent.id,
+        clientId: client.id,
+      },
+      {
+        subject: 'Your opinion matters',
+        body: 'Tell us what you think about Acme so far. We’d love to hear from you.',
+        status: 'DRAFT',
+        read: true,
+        starred: false,
+        campaignId: campaignCurrent.id,
+        clientId: client.id,
+      },
+      {
+        subject: 'Final steps of your onboarding',
+        body: 'You’re almost done with the process. You’ve got this!',
+        status: 'DRAFT',
+        read: false,
+        starred: false,
+        campaignId: campaignCurrent.id,
+        clientId: client.id,
+      },
+    ],
+  });
+  
+
   console.log("🌱 Seeded successfully!");
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ColumnDef,
   flexRender,
@@ -21,12 +21,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTableToolbar } from "./datatable-toolbar";
+import EmailTableSkeleton from "../EmailTableSkeleton";
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData, any>[];
   data?: TData[];
-  disabled: boolean;
-  onDelete: (rows: Row<TData>[]) => void;
+  disabled?: boolean;
+  onDelete?: (rows: Row<TData>[]) => void;
   filterValue: {
     [key: string]: string[] | undefined;
   };
@@ -37,6 +38,7 @@ interface DataTableProps<TData> {
   >;
   fetchAllMessages: () => void;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
+  isLoading: boolean;
 }
 
 function highlightMatch(text: string, query: string) {
@@ -60,14 +62,15 @@ export function InboxDataTable<TData>({
   filterValue,
   setFilterValue,
   fetchAllMessages,
-  setSearch
+  setSearch,
+  isLoading
 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [filtering, setFiltering] = useState("");
   const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
-    data,
+    data: data,
     columns,
     state: { sorting, globalFilter: filtering, rowSelection },
     onSortingChange: setSorting,
@@ -108,7 +111,7 @@ export function InboxDataTable<TData>({
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
                 className={
-                  (row.original as any).isRead
+                  (row.original as any).read
                     ? "bg-white text-gray-500"
                     : "bg-blue-50 text-black font-semibold"
                 }
@@ -153,7 +156,7 @@ export function InboxDataTable<TData>({
           setSearch={setSearch}
         />
       </div>
-      <div className="w-full">{renderTable()}</div>
+      <div className="w-full">{isLoading ? (<EmailTableSkeleton />): renderTable()}</div>
     </div>
   );
 }

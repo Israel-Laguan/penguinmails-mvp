@@ -1,7 +1,7 @@
 // src/lib/actions/campaignActions.ts
 "use server";
 
-import { mockCampaignEditDetail } from "@/components/campaigns/mock-data";
+import { mockCampaignEditDetail, sendingAccounts } from "@/components/campaigns/mock-data";
 
 // Define the structure for campaign data based on the screenshot
 export interface CampaignData {
@@ -136,3 +136,11 @@ export async function getCampaignMockAction(id: number) {
   // Simulate success
   return mockCampaignEditDetail;
 }
+
+export async function getCampaignSendingAccountsMockAction() {
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  // Simulate success
+  return sendingAccounts;
+}
+

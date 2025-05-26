@@ -18,6 +18,7 @@ import { timezones } from "./const-mock";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { campaignFormSchema } from "./schemaValidations";
 import { EmailSecuenceSettings } from "./EmailSecuenceSettings";
+import { getCampaignSendingAccountsMockAction } from "@/lib/actions/campaignActions";
 
 export function CampaignForm({
   initialData,
@@ -39,6 +40,8 @@ export function CampaignForm({
       condition: CampaignEventContition.ALWAYS,
     }]
   );
+  const [sendingAccounts, setSendingAccounts] = useState<{ value: string; label: string }[]>([]);
+  const [loadingAccounts, setLoadingAccounts] = useState<boolean>(true);
   const [currentEditingStep, setCurrentEditingStep] = useState<number | null>(null);
   const [recipients, setRecipients] = useState<string>(initialData?.clients.join('\n') ?? '');
   const emailBodyRef = useRef<HTMLTextAreaElement>(null!);
@@ -64,6 +67,16 @@ export function CampaignForm({
   useEffect(() => {
     form.setValue("steps", steps, { shouldValidate: true });
   }, [steps, form]);
+
+  useEffect(() => {
+    const fetchSendingAccounts = async () => {
+      setLoadingAccounts(true);
+      const accounts = await getCampaignSendingAccountsMockAction();
+      setSendingAccounts(accounts);
+      setLoadingAccounts(false);
+    };
+    fetchSendingAccounts();
+  }, []);
 
   // Handle form submission
   const handleSubmit: SubmitHandler<CampaignFormValues> = async (data: CampaignFormValues) => {
@@ -185,8 +198,14 @@ export function CampaignForm({
               <CardTitle>{t.cardTitles.campaignDetails}</CardTitle>
             </CardHeader>
             <CardContent>
-              <CampaignDetails readOnly={readOnly} initialData={initialData} />
-              <CampaignDetailsForm form={form} readOnly={readOnly} />
+              {!loadingAccounts ?
+                (
+                  <>
+                    <CampaignDetails readOnly={readOnly} initialData={initialData} />
+                    <CampaignDetailsForm form={form} readOnly={readOnly} sendingAccounts={sendingAccounts} />
+                  </>
+                ) : 'Loading data...'
+              }
             </CardContent>
           </Card>
 

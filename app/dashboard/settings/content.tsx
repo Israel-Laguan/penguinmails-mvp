@@ -100,7 +100,10 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
   // For now, we just use the data passed down.
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
+      </div>
       <Tabs defaultValue={currentTab} className="w-full">
         <TabsList>
           <TabsTrigger value="account" onClick={() => setCurrentTab("account")}>

@@ -126,8 +126,8 @@ async function main() {
   const emailMessages = await prisma.emailMessage.createMany({
     data: [
       {
-        subject: '¡Bienvenido a Acme!',
-        body: 'Gracias por unirte a nosotros. Este es el primer paso de un gran viaje.',
+        subject: 'Welcome to Acme!',
+        body: 'Thanks for joining us. This is the first step of a great journey.',
         status: 'DRAFT',
         read: false,
         starred: false,
@@ -135,8 +135,8 @@ async function main() {
         clientId: client.id,
       },
       {
-        subject: '¿Cómo podemos ayudarte?',
-        body: 'Estamos aquí para ayudarte a empezar. Respondé a este correo si tenés dudas.',
+        subject: 'How can we help you?',
+        body: 'We’re here to help you get started. Reply to this email if you have any questions.',
         status: 'DRAFT',
         read: true,
         starred: true,
@@ -144,8 +144,8 @@ async function main() {
         clientId: client.id,
       },
       {
-        subject: 'Consejos para aprovechar al máximo Acme',
-        body: 'Hoy te compartimos algunos tips para sacarle el jugo a nuestra plataforma.',
+        subject: 'Tips to make the most of Acme',
+        body: 'Today we’re sharing some tips to help you get the most out of our platform.',
         status: 'DRAFT',
         read: false,
         starred: false,
@@ -153,8 +153,8 @@ async function main() {
         clientId: client.id,
       },
       {
-        subject: 'Conocé a nuestro equipo',
-        body: 'Queremos presentarte a quienes están detrás de Acme. ¡Estamos para ayudarte!',
+        subject: 'Meet our team',
+        body: 'We want to introduce you to the people behind Acme. We’re here to support you!',
         status: 'DRAFT',
         read: false,
         starred: false,
@@ -162,8 +162,8 @@ async function main() {
         clientId: client.id,
       },
       {
-        subject: '¿Sabías que…?',
-        body: 'Hay funciones ocultas que pueden mejorar tu productividad. Descubrí cuáles son.',
+        subject: 'Did you know…?',
+        body: 'There are hidden features that can boost your productivity. Find out what they are.',
         status: 'DRAFT',
         read: true,
         starred: false,
@@ -171,8 +171,8 @@ async function main() {
         clientId: client.id,
       },
       {
-        subject: 'Seguimos en contacto',
-        body: 'Solo queríamos saber cómo vas hasta ahora. ¿Todo bien con Acme?',
+        subject: 'Let’s stay in touch',
+        body: 'We just wanted to check in. How’s everything going with Acme?',
         status: 'DRAFT',
         read: false,
         starred: false,
@@ -180,8 +180,8 @@ async function main() {
         clientId: client.id,
       },
       {
-        subject: 'Tu opinión importa',
-        body: 'Contanos qué te parece Acme hasta ahora. Nos encantaría escucharte.',
+        subject: 'Your opinion matters',
+        body: 'Tell us what you think about Acme so far. We’d love to hear from you.',
         status: 'DRAFT',
         read: true,
         starred: false,
@@ -189,8 +189,8 @@ async function main() {
         clientId: client.id,
       },
       {
-        subject: 'Últimos pasos de tu onboarding',
-        body: 'Ya casi terminás el proceso. ¡Vamos que se puede!',
+        subject: 'Final steps of your onboarding',
+        body: 'You’re almost done with the process. You’ve got this!',
         status: 'DRAFT',
         read: false,
         starred: false,
@@ -199,6 +199,7 @@ async function main() {
       },
     ],
   });
+  
 
   console.log("🌱 Seeded successfully!");
 }

@@ -135,7 +135,7 @@ export const getUniqueFilters = async () => {
           },
         },
       },
-      distinct: ['clientId'], // Asegura que sea único por cliente
+      distinct: ['clientId'],
     }),
 
     prisma.emailMessage.findMany({

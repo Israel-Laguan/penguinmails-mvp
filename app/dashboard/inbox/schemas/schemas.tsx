@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const CampaignSchema = z.object({
   id: z.number(),
   name: z.string(),
-  status: z.enum(["DRAFT", "SCHEDULED", "RUNNING", "PAUSED", "COMPLETED", "CANCELLED"]), // ajustá los valores según tu enum real
+  status: z.enum(["DRAFT", "SCHEDULED", "RUNNING", "PAUSED", "COMPLETED", "CANCELLED"]),
   fromName: z.string(),
   fromEmail: z.string().email(),
   companyId: z.number(),

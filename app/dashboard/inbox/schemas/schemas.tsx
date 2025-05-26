@@ -35,6 +35,7 @@ export const EmailSchema = z.object({
   subject: z.string(),
   starred: z.boolean(),
   read: z.boolean(),
+  body: z.string(),
   createdAt: z.coerce.date(),
   campaign: CampaignSchema,
   client: ClientSchema, 

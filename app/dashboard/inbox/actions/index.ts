@@ -204,3 +204,24 @@ export async function fetchEmailById(id: string) {
     };
 };
 
+export async function markEmailAsRead(id: number) {
+  const parsedId = parseInt(id as unknown as string, 10);
+
+  const email = await prisma.emailMessage.update({
+    where: { id: parsedId },
+    data: { read: true },
+  });
+
+  return email;
+}
+
+export async function markEmailAsStarred(id: number, starred: boolean) {
+  const parsedId = parseInt(id as unknown as string, 10);
+
+  const email = await prisma.emailMessage.update({
+    where: { id: parsedId },
+    data: { starred },
+  });
+
+  return email;
+}

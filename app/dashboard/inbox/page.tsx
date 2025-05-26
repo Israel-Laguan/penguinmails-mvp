@@ -22,6 +22,21 @@ export default function InboxPage() {
   const [search, setSearch] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
 
+  const fetchAllMessagesStarted = async () => {
+      setType(type);
+      const messages = await getAllMessages(filterValue, type, {
+        page,
+        limit: pageSize,
+      }, search);
+      setEmails(messages.emails);
+      setUnreadCount(messages?.unread || 0);
+  
+      if (messages?.emails) {
+        setTotalPages(messages.totalPages);
+      }
+      return messages.emails; 
+  };
+
   const fetchAllMessages = async () => {
     try {
       setIsLoading(true);
@@ -100,7 +115,7 @@ export default function InboxPage() {
             </div>
             <div className="mt-4">
               <InboxDataTable
-                columns={inboxColumns}
+                columns={inboxColumns(fetchAllMessagesStarted)}
                 data={currentEmails}
                 filterValue={filterValue}
                 setFilterValue={setFilterValue}

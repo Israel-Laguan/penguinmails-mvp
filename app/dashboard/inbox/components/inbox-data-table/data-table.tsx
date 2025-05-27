@@ -88,9 +88,9 @@ export function InboxDataTable<TData>({
         <TableHeader>
           {table.getHeaderGroups().map((group) => (
             <TableRow key={group.id}>
-              {group.headers.map((header) => (
+              {group.headers.map((header, headerIndex) => (
                 <TableHead
-                  key={header.id}
+                  key={header.id + headerIndex}
                   className="font-semibold sticky top-0"
                 >
                   {header.isPlaceholder
@@ -116,12 +116,12 @@ export function InboxDataTable<TData>({
                     : "bg-blue-50 text-black font-semibold"
                 }
               >
-                {row.getVisibleCells().map((cell) => {
+                {row.getVisibleCells().map((cell, cellIndex) => {
                   const value = cell.getValue();
                   const query = table.getState().globalFilter;
 
                   return (
-                    <TableCell key={cell.id}>
+                    <TableCell key={`${row.id}_${cellIndex}`}>
                       {typeof value === "string"
                         ? highlightMatch(value, query)
                         : flexRender(

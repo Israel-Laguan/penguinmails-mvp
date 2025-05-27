@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { DataTableFacetedFilter } from "./datatable-faceted-filter";
-import { Filter, X } from "lucide-react";
+import { Check, Filter, RotateCcw, RotateCw, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function ModalFilter({
@@ -12,6 +12,12 @@ export function ModalFilter({
   setFilterValue,
   fetchAllMessages,
 }) {
+  const clearFilters = () => {
+    table.resetColumnFilters();
+    table.setGlobalFilter("");
+    setFilterValue({});
+  };
+
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
@@ -63,20 +69,32 @@ export function ModalFilter({
                 setFilterValue={setFilterValue}
               />
             )}
-            <Dialog.Close asChild>
+            <div className="flex gap-2 mt-4">
               <Button
                 variant="outline"
                 size="sm"
+                className="w-1/2 p-5"
                 onClick={() => {
-                  table.resetColumnFilters();
-                  table.setGlobalFilter("");
-                  fetchAllMessages();
+                  clearFilters();
                 }}
-                className="w-full"
               >
-                Apply Filters
+                <RotateCcw className="mr-2 size-4" />
+                Clear All
               </Button>
-            </Dialog.Close>
+
+              <Dialog.Close asChild>
+                <Button
+                  size="sm"
+                  className="bg-black text-white hover:bg-black/90 w-1/2 p-5"
+                  onClick={() => {
+                    fetchAllMessages();
+                  }}
+                >
+                  <Check className="mr-2 size-4" />
+                  Apply Filters
+                </Button>
+              </Dialog.Close>
+            </div>
           </div>
         </Dialog.Content>
       </Dialog.Portal>

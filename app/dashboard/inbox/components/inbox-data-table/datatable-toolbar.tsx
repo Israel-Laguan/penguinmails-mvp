@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail, Search, User, X } from "lucide-react";
 import { DataTableViewOptions } from "./datatable-view-options";
-import { getUniqueFilters } from "../../actions";
+import { getUniqueFiltersAction } from "../../actions";
 import { ModalFilter } from "./modal-filter";
 
 interface DataTableToolbarProps<TData> {
@@ -40,7 +40,7 @@ export function DataTableToolbar<TData>({
 
   React.useEffect(() => {
     const fetchFilters = async () => {
-      const filters = await getUniqueFilters();
+      const filters = await getUniqueFiltersAction();
       setFilterOptions(filters);
     };
 

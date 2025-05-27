@@ -29,6 +29,9 @@ model User {
   EmailAccount  EmailAccount[]
   Domain        Domain[]
 
+  hiddenEmails  EmailMessage[] @relation("HiddenByUser")
+  deletedEmails EmailMessage[] @relation("DeletedByUser")
+
   @@index([email])
   @@index([companyId])
 }
@@ -93,15 +96,15 @@ model Company {
 }
 
 model Client {
-  id          Int              @id @default(autoincrement())
-  email       String
-  firstName   String?
-  lastName    String?
-  notes       String?
-  maskPII     Boolean          @default(false)
-  companyId   Int
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id        Int      @id @default(autoincrement())
+  email     String
+  firstName String?
+  lastName  String?
+  notes     String?
+  maskPII   Boolean  @default(false)
+  companyId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   campaigns   CampaignClient[]
   company     Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
@@ -175,9 +178,9 @@ model Template {
 }
 
 model Campaign {
-  id            Int              @id @default(autoincrement())
+  id            Int            @id @default(autoincrement())
   name          String
-  status        CampaignStatus   @default(DRAFT)
+  status        CampaignStatus @default(DRAFT)
   fromName      String
   fromEmail     String
   companyId     Int
@@ -189,16 +192,16 @@ model Campaign {
   sendTimeStart String? // HH:mm format
   sendTimeEnd   String? // HH:mm format
   emailsPerDay  Int?
-  timezone      String           @default("UTC")
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  timezone      String         @default("UTC")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
-  company       Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdBy     User?            @relation(fields: [createdById], references: [id])
-  clients       CampaignClient[]
-  steps         CampaignStep[]   @relation("CampaignSteps")
-  emailEvents   EmailEvent[]
-  emails EmailMessage[]
+  company     Company          @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdBy   User?            @relation(fields: [createdById], references: [id])
+  clients     CampaignClient[]
+  steps       CampaignStep[]   @relation("CampaignSteps")
+  emailEvents EmailEvent[]
+  emails      EmailMessage[]
 
   @@index([companyId])
   @@index([createdById])
@@ -320,24 +323,33 @@ model Domain {
 }
 
 model EmailMessage {
-  id          Int       @id @default(autoincrement())
-  campaignId  Int?
-  clientId    Int?
-  subject     String
-  body        String    @db.Text
-  starred     Boolean   @default(false)
-  read        Boolean      @default(false)
-  status      EmailStatus  @default(SENT)
-  createdAt     DateTime               @default(now())
-  updatedAt     DateTime               @updatedAt
+  id         Int         @id @default(autoincrement())
+  campaignId Int?
+  clientId   Int?
+  subject    String
+  body       String      @db.Text
+  starred    Boolean     @default(false)
+  read       Boolean     @default(false)
+  status     EmailStatus @default(SENT)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
-  campaign    Campaign? @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  client      Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  hideAt   DateTime?
+  hideBy   User?     @relation("HiddenByUser", fields: [hideById], references: [id])
+  hideById String?
+
+  deletedAt   DateTime?
+  deletedBy   User?     @relation("DeletedByUser", fields: [deletedById], references: [id])
+  deletedById String?
+
+  campaign Campaign? @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  client   Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   @@index([campaignId])
   @@index([clientId])
+  @@index([hideById])
+  @@index([deletedById])
 }
-
 
 enum UserRole {
   ADMIN

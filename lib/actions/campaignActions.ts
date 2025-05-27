@@ -1,7 +1,9 @@
 // src/lib/actions/campaignActions.ts
 "use server";
 
-import { mockCampaignEditDetail, sendingAccounts } from "@/components/campaigns/mock-data";
+import { mockCampaignEditDetail, sendingAccounts, timezones } from "@/components/campaigns/mock-data";
+import { CampaignFormValues } from "@/components/campaigns/types";
+import { prisma } from "@/lib/prisma";
 
 // Define the structure for campaign data based on the screenshot
 export interface CampaignData {
@@ -119,8 +121,21 @@ export async function getCampaignsDataAction(companyId: string) {
 }
 
 // Mock action for creating a campaign (Phase 4)
-export async function createCampaignMockAction(formData: any) {
+export async function createCampaignMockAction(formData: CampaignFormValues) {
   console.log("Simulating campaign creation with data:", formData);
+  const createdCampaign = await prisma.campaign.create({
+    data: {
+      fromEmail: formData.fromEmail,
+      fromName: formData.fromName,
+      status: formData.status,
+      name: formData.name,
+      sendDays: formData.sendDays,
+      sendTimeEnd: formData.sendTimeEnd,
+      sendTimeStart: formData.sendTimeStart,
+      timezone: formData.timezone,
+      companyId: 1,
+    },
+  });
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   // Simulate success
@@ -129,8 +144,74 @@ export async function createCampaignMockAction(formData: any) {
   // return { success: false, message: "Failed to create campaign (simulation)." };
 }
 
-export async function getCampaignMockAction(id: number) {
+export async function updateCampaignAction(id: number, formData: CampaignFormValues) {
+
+  try {
+    const oldSteps = formData.steps.filter((step) => step.id);
+    const newSteps = formData.steps.filter((step) => !step.id);
+    const updatedCampaign = await prisma.campaign.update({
+      where: {
+        id,
+      },
+      data: {
+        fromEmail: formData.fromEmail,
+        fromName: formData.fromName,
+        status: formData.status,
+        name: formData.name,
+        sendDays: formData.sendDays,
+        sendTimeEnd: formData.sendTimeEnd,
+        sendTimeStart: formData.sendTimeStart,
+        timezone: formData.timezone,
+        companyId: 1,
+        steps: {
+          create: [...newSteps.map(({ id, campaignId, ...resStepInfo }) => (
+            {
+              condition: resStepInfo.condition,
+              delayDays: resStepInfo.delayDays,
+              delayHours: resStepInfo.delayHours,
+              emailBody: resStepInfo.emailBody,
+              emailSubject: resStepInfo.emailSubject,
+              sequenceOrder: resStepInfo.sequenceOrder,
+              templateId: 1
+            })
+          )],
+          update: [
+            ...oldSteps.map(({ id, templateId, campaignId, ...resStepInfo }) => (
+              {
+                where: { id },
+                data: {
+                  ...resStepInfo,
+                }
+              })
+            )]
+        }
+      },
+    });
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    return { success: true, message: "Campaign updated successfully." };
+
+  } catch (error) {
+    return { success: false, message: "Error trying update a campaign." };
+  }
+}
+
+export async function getCampaignAction(id: number) {
   console.log("Simulating campaign fetching:", id);
+  const campaign = await prisma.campaign.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      clients: {
+        select: {
+          client: true,
+        }
+      },
+      steps: true,
+    },
+  });
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   // Simulate success
@@ -144,3 +225,9 @@ export async function getCampaignSendingAccountsMockAction() {
   return sendingAccounts;
 }
 
+export async function getTimezonesMockAction() {
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 10000));
+  // Simulate success
+  return timezones;
+}

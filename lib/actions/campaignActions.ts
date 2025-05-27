@@ -1,9 +1,10 @@
 // src/lib/actions/campaignActions.ts
 "use server";
 
-import { mockCampaignEditDetail, sendingAccounts, timezones } from "@/components/campaigns/mock-data";
+import { mockCampaignEditDetail, timezones } from "@/components/campaigns/mock-data";
 import { CampaignFormValues } from "@/components/campaigns/types";
 import { prisma } from "@/lib/prisma";
+import { auth } from "../auth";
 
 // Define the structure for campaign data based on the screenshot
 export interface CampaignData {
@@ -121,7 +122,7 @@ export async function getCampaignsDataAction(companyId: string) {
 }
 
 // Mock action for creating a campaign (Phase 4)
-export async function createCampaignMockAction(formData: CampaignFormValues) {
+export async function createCampaignAction(formData: CampaignFormValues) {
   console.log("Simulating campaign creation with data:", formData);
   const createdCampaign = await prisma.campaign.create({
     data: {
@@ -218,11 +219,18 @@ export async function getCampaignAction(id: number) {
   return mockCampaignEditDetail;
 }
 
-export async function getCampaignSendingAccountsMockAction() {
+export async function getCampaignSendingAccountsAction(companyId: number) {
+  console.log({ user: (await auth())?.user })
+  const emailAccounts = await prisma.emailAccount.findMany({
+    where: {
+      id: companyId,
+    },
+  });
+  const mappedEmailAccount = emailAccounts.map(account => ({ value: account.email, label: account.email }))
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 1000));
-  // Simulate success
-  return sendingAccounts;
+
+  return mappedEmailAccount;
 }
 
 export async function getTimezonesMockAction() {

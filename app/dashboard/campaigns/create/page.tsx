@@ -4,7 +4,7 @@ import { redirect, useRouter } from "next/navigation";
 import { CampaignForm } from "@/components/campaigns/CampaignForm";
 import { copyText as t } from "@/components/campaigns/copy";
 import { CampaignFormValues } from "@/components/campaigns/types";
-import { createCampaignMockAction } from "@/lib/actions/campaignActions";
+import { createCampaignAction } from "@/lib/actions/campaignActions";
 import { defaultSteps } from "@/components/campaigns/const-mock";
 import { toast } from "sonner";
 
@@ -25,7 +25,7 @@ export default function CampaignCreatePage() {
   const router = useRouter();
 
   const handleSubmit = async (data: CampaignFormValues) => {
-    const result = await createCampaignMockAction(data);
+    const result = await createCampaignAction(data);
 
     if (!result.success) {
       toast.error('Error in campaign creation', {

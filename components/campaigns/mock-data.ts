@@ -212,12 +212,6 @@ export const mockSettings = {
   emailsPerDay: "Up to 500 emails",
 };
 
-export const sendingAccounts = [
-  { value: "john@example.com", label: "john@example.com" },
-  { value: "sales@example.com", label: "sales@example.com" },
-  { value: "marketing@example.com", label: "marketing@example.com" },
-];
-
 // TODO: Potentially fetch timezone list dynamically
 export const timezones = [
   "(GMT-12:00) International Date Line West",

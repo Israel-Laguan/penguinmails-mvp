@@ -250,10 +250,10 @@ export async function softDeleteEmailAction(emailId: number | string | undefined
       throw new Error("Email ID is required for soft delete.");
     }
     const session = await getServerSession();
-    const userId = session?.user?.id || "cmazo9djf0001l8ql0st224xj";
-    if (!userId) {
-      throw new Error("User ID is required for soft delete.");
-    }
+    const userId = session?.user?.id;
+    //if (!userId) {
+    //  throw new Error("User ID is required for soft delete.");
+    //}
     const updatedEmail = await prisma.emailMessage.update({
       where: { id: parsedEmailId },
       data: {
@@ -277,10 +277,10 @@ export async function hideEmailAction(emailId: number | string | undefined) {
   try {
     const parsedEmailId = parseInt(emailId as unknown as string, 10);
     const session = await getServerSession();
-    const userId = session?.user?.id || "cmazo9djf0001l8ql0st224xj";
-    if (!userId) {
-      throw new Error("User ID is required for soft delete.");
-    }
+    const userId = session?.user?.id;
+    //if (!userId) {
+    //  throw new Error("User ID is required for soft delete.");
+    //}
     if (!parsedEmailId) {
       throw new Error("Email ID is required to hide the email.");
     }

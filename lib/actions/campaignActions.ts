@@ -4,7 +4,6 @@
 import { mockCampaignEditDetail, timezones } from "@/components/campaigns/mock-data";
 import { CampaignFormValues } from "@/components/campaigns/types";
 import { prisma } from "@/lib/prisma";
-import { auth } from "../auth";
 
 // Define the structure for campaign data based on the screenshot
 export interface CampaignData {
@@ -141,8 +140,6 @@ export async function createCampaignAction(formData: CampaignFormValues) {
   await new Promise(resolve => setTimeout(resolve, 1000));
   // Simulate success
   return { success: true, message: "Campaign created successfully (simulation)." };
-  // Simulate error
-  // return { success: false, message: "Failed to create campaign (simulation)." };
 }
 
 export async function updateCampaignAction(id: number, formData: CampaignFormValues) {
@@ -220,7 +217,6 @@ export async function getCampaignAction(id: number) {
 }
 
 export async function getCampaignSendingAccountsAction(companyId: number) {
-  console.log({ user: (await auth())?.user })
   const emailAccounts = await prisma.emailAccount.findMany({
     where: {
       id: companyId,

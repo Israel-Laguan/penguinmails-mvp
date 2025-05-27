@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, RefreshCcw } from "lucide-react";
-import { getAllMessages } from "./actions";
+import { getAllMessagesAction } from "./actions";
 import { Email } from "./schemas/schemas";
 import { inboxColumns } from "./components/inbox-columns";
 import { InboxDataTable } from "@/app/dashboard/inbox/components/inbox-data-table/data-table";
@@ -24,7 +24,7 @@ export default function InboxPage() {
 
   const fetchAllMessagesStarted = async () => {
       setType(type);
-      const messages = await getAllMessages(filterValue, type, {
+      const messages = await getAllMessagesAction(filterValue, type, {
         page,
         limit: pageSize,
       }, search);
@@ -41,7 +41,7 @@ export default function InboxPage() {
     try {
       setIsLoading(true);
       setType(type);
-      const messages = await getAllMessages(filterValue, type, {
+      const messages = await getAllMessagesAction(filterValue, type, {
         page,
         limit: pageSize,
       }, search);

@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
 
 interface Query {
   email?: string[];
@@ -14,7 +15,7 @@ interface PaginationOptions {
   limit?: number;
 }
 
-export const getAllMessages = async (
+export const getAllMessagesAction = async (
   query: Query = {},
   type: Type = "all",
   pagination: PaginationOptions = {},
@@ -24,7 +25,10 @@ export const getAllMessages = async (
   const { page = 1, limit = 10 } = pagination;
 
   const filters: any = {
-    AND: [],
+    AND: [
+      { deletedAt: null },
+      { hideAt: null },
+    ],
   };
 
   if (email.length > 0) {
@@ -113,7 +117,7 @@ export const getAllMessages = async (
   };
 };
 
-export const getUniqueFilters = async () => {
+export const getUniqueFiltersAction = async () => {
   const [emails, froms, campaigns] = await Promise.all([
     prisma.emailMessage.findMany({
       select: {
@@ -183,12 +187,20 @@ export const getUniqueFilters = async () => {
 };
 
 
-export async function fetchEmailById(id: string) {
+export async function fetchEmailByIdAction(id: string) {
   const parsedId = parseInt(id as unknown as string, 10);
+
+  const filters: any = {
+    AND: [
+      { deletedAt: null },
+      { hideAt: null },
+    ],
+  };
 
     const email = await prisma.emailMessage.findFirst({
       where: {
         id: parsedId,
+        ...filters,
       },
       include: {
         campaign: true,
@@ -204,7 +216,7 @@ export async function fetchEmailById(id: string) {
     };
 };
 
-export async function markEmailAsRead(id: number) {
+export async function markEmailAsReadAction(id: number | string | undefined) {
   const parsedId = parseInt(id as unknown as string, 10);
 
   const email = await prisma.emailMessage.update({
@@ -215,7 +227,7 @@ export async function markEmailAsRead(id: number) {
   return email;
 }
 
-export async function markEmailAsStarred(id: number, starred: boolean) {
+export async function markEmailAsStarredAction(id: number | string, starred: boolean) {
   const parsedId = parseInt(id as unknown as string, 10);
 
   const email = await prisma.emailMessage.update({
@@ -224,4 +236,64 @@ export async function markEmailAsStarred(id: number, starred: boolean) {
   });
 
   return email;
+}
+
+/**
+ * Soft delete an email message.
+ * @param emailId - ID of the email to delete.
+ * @param userId - ID of the user performing the deletion.
+ */
+export async function softDeleteEmailAction(emailId: number | string | undefined) {
+  try {
+    const parsedEmailId = parseInt(emailId as unknown as string, 10);
+    if (!parsedEmailId) {
+      throw new Error("Email ID is required for soft delete.");
+    }
+    const session = await getServerSession();
+    const userId = session?.user?.id || "cmazo9djf0001l8ql0st224xj";
+    if (!userId) {
+      throw new Error("User ID is required for soft delete.");
+    }
+    const updatedEmail = await prisma.emailMessage.update({
+      where: { id: parsedEmailId },
+      data: {
+        deletedAt: new Date(),
+        deletedById: userId,
+      },
+    });
+    return updatedEmail;
+  } catch (error) {
+    console.error("Error performing soft delete:", error);
+    throw new Error("Failed to soft delete the email.");
+  }
+}
+
+/**
+ * Hide an email message.
+ * @param emailId - ID of the email to hide.
+ * @param userId - ID of the user performing the hide action.
+ */
+export async function hideEmailAction(emailId: number | string | undefined) {
+  try {
+    const parsedEmailId = parseInt(emailId as unknown as string, 10);
+    const session = await getServerSession();
+    const userId = session?.user?.id || "cmazo9djf0001l8ql0st224xj";
+    if (!userId) {
+      throw new Error("User ID is required for soft delete.");
+    }
+    if (!parsedEmailId) {
+      throw new Error("Email ID is required to hide the email.");
+    }
+    const updatedEmail = await prisma.emailMessage.update({
+      where: { id: parsedEmailId },
+      data: {
+        hideAt: new Date(),
+        hideById: userId,
+      },
+    });
+    return updatedEmail;
+  } catch (error) {
+    console.error("Error performing hide action:", error);
+    throw new Error("Failed to hide the email.");
+  }
 }

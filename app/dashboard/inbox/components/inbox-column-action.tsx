@@ -4,21 +4,24 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { Button } from "@/components/ui/button";
 import { Eye, EyeClosed, MailOpen, MoreVertical, SquareArrowDown, Trash2Icon } from "lucide-react";
 import { showCustomToast } from "@/components/ui/custom-toast";
-import { markEmailAsRead } from "../actions";
+import { hideEmailAction, markEmailAsReadAction, softDeleteEmailAction } from "../actions";
+import { redirect } from "next/navigation";
 
+type IdType = string | number | undefined;
 export function InboxColumnAction({
   refetch,
   row,
+  id
 }: {
   refetch: () => void;
-  row: Row<Email>;
+  row?: Row<Email>;
+  id?: string | number;
 }) {
-  const emailId = row.original.id;
+  const emailId = row?.original?.id || id;
 
-  const markAsReadMutation = async (id: number) => {
+  const markAsReadMutation = async (id: IdType) => {
     try {
-      // Simulate marking email as read
-      await markEmailAsRead(id);
+      await markEmailAsReadAction(id);
 
       showCustomToast({ title: "Email marked as read", description: `Email ${id} has been marked as read`, icon: <MailOpen className="text-black" /> });
       refetch();
@@ -27,9 +30,9 @@ export function InboxColumnAction({
       console.error("Error marking email as read:", error);
     }
   };
-  const deleteEmailMutation = async (id: number) => {
+  const deleteEmailMutation = async (id: IdType) => {
     try {
-      // Simulate deleting email
+      await softDeleteEmailAction(id);
       showCustomToast({ title: "Email deleted", description: `Email ${id} has been deleted`, icon: <Trash2Icon className="text-black" /> });
       refetch();
     } catch (error) {
@@ -37,19 +40,17 @@ export function InboxColumnAction({
       console.error("Error deleting email:", error);
     }
     };
-    const viewEmailMutation = async (id: number) => {
+    const viewEmailMutation = async (id: IdType) => {
     try {
-      // Simulate viewing email
-      showCustomToast({ title: "Viewing email", description: `Email ${id} is being viewed`, icon: <Eye className="text-black" /> });
-      refetch();
+      redirect(`/dashboard/inbox/${id}`)
     } catch (error) {
       showCustomToast({ title: "Error", description: `Failed to view email ${id}`, icon: <EyeClosed className="text-red-500" /> });
       console.error("Error viewing email:", error);
     }
     };
-    const hideEmailMutation = async (id: number) => {
+    const hideEmailMutation = async (id: IdType) => {
     try {
-      // Simulate hiding email
+      await hideEmailAction(id);
       showCustomToast({ title: "Email hidden", description: `Email ${id} has been hidden`, icon: <SquareArrowDown className="text-black" /> });
       refetch();
     } catch (error) {
@@ -71,15 +72,15 @@ export function InboxColumnAction({
             <MailOpen className="text-black" />
           Mark as read
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => showCustomToast({title:"Delete", description: "Email deleted" + ` ${emailId}`, icon: <Trash2Icon className="text-black" />})}>
+        <DropdownMenuItem onClick={() => deleteEmailMutation(emailId)}>
             <Trash2Icon className="text-black" />
           Delete
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => showCustomToast({title:"View", description: "Viewing email" + ` ${emailId}`, icon: <Eye className="text-black" />})}>
+        <DropdownMenuItem onClick={() => viewEmailMutation(emailId)}>
             <Eye className="text-black" />
           View
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => showCustomToast({title:"Hide", description: "Email hidden" + ` ${emailId}`, icon: <SquareArrowDown className="text-black" />})}>
+        <DropdownMenuItem onClick={() => hideEmailMutation(emailId)}>
             <SquareArrowDown className="text-black" />
           Hide
         </DropdownMenuItem>
@@ -87,4 +88,3 @@ export function InboxColumnAction({
     </DropdownMenu>
   );
 }
-

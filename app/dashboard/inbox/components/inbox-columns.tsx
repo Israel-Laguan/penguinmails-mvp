@@ -3,7 +3,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Client, Email } from "../schemas/schemas";
 import { Campaign } from "@/types/campaign";
 import { Button } from "@/components/ui/button";
-import { markEmailAsStarred } from "../actions";
+import { markEmailAsStarredAction } from "../actions";
 import { toast } from "sonner";
 import { InboxColumnAction } from "./inbox-column-action";
 import { showCustomToast } from "@/components/ui/custom-toast";
@@ -11,7 +11,7 @@ import { redirect } from 'next/navigation';
 
 const markEmailAsStarredMutarion = async (id: number, starred: boolean) => {
   try {
-    const response = await markEmailAsStarred(id, starred);
+    const response = await markEmailAsStarredAction(id, starred);
     if (!response) {
       throw new Error("Failed to update email starred status");
     }

@@ -12,7 +12,7 @@ import { ScheduleSettings } from "./ScheduleSettings";
 import { RecipientsSettings } from "./RecipientsSettings";
 import { copyText as t } from "./copy";
 import { CampaignEventContition } from "@/app/api/generated/prisma";
-import { getCampaignSendingAccountsMockAction, getTimezonesMockAction } from "@/lib/actions/campaignActions";
+import { getCampaignSendingAccountsAction, getTimezonesMockAction } from "@/lib/actions/campaignActions";
 import { CampaignFormProps, CampaignFormValues, CampaignSteps, PartialCampaignStep } from "./types";
 import { CampaignDetails } from "./CampaignDetails";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -45,7 +45,7 @@ export function CampaignForm({
     mode: "onChange",
   }) as unknown as UseFormReturn<CampaignFormValues>;
 
-  const { timezone = '', sendDays = [0, 1, 2, 3, 4] } = form.getValues();
+  const { timezone = 'UTC', sendDays = [0, 1, 2, 3, 4] } = form.getValues();
 
   // Update form state when steps change
   useEffect(() => {
@@ -55,7 +55,8 @@ export function CampaignForm({
   useEffect(() => {
     const fetchSendingAccounts = async () => {
       setLoadingAccounts(true);
-      const accounts = await getCampaignSendingAccountsMockAction();
+      const companyMockId = 1;
+      const accounts = await getCampaignSendingAccountsAction(companyMockId);
       setSendingAccounts(accounts);
       setLoadingAccounts(false);
     };

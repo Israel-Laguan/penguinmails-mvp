@@ -3,7 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Settings, RefreshCcw } from "lucide-react";
-import { getAllMessages } from "./actions";
+import { getAllMessagesAction } from "./actions";
 import { Email } from "./schemas/schemas";
 import { inboxColumns } from "./components/inbox-columns";
 import { InboxDataTable } from "@/app/dashboard/inbox/components/inbox-data-table/data-table";
@@ -22,11 +22,26 @@ export default function InboxPage() {
   const [search, setSearch] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
 
+  const fetchAllMessagesStarted = async () => {
+      setType(type);
+      const messages = await getAllMessagesAction(filterValue, type, {
+        page,
+        limit: pageSize,
+      }, search);
+      setEmails(messages.emails);
+      setUnreadCount(messages?.unread || 0);
+  
+      if (messages?.emails) {
+        setTotalPages(messages.totalPages);
+      }
+      return messages.emails; 
+  };
+
   const fetchAllMessages = async () => {
     try {
       setIsLoading(true);
       setType(type);
-      const messages = await getAllMessages(filterValue, type, {
+      const messages = await getAllMessagesAction(filterValue, type, {
         page,
         limit: pageSize,
       }, search);
@@ -100,7 +115,7 @@ export default function InboxPage() {
             </div>
             <div className="mt-4">
               <InboxDataTable
-                columns={inboxColumns}
+                columns={inboxColumns(fetchAllMessagesStarted)}
                 data={currentEmails}
                 filterValue={filterValue}
                 setFilterValue={setFilterValue}

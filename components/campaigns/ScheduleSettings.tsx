@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/select";
 import { Button } from "../ui/button";
 import { copyText as t } from "./copy";
-import { timezones } from "./const-mock";
 import { ScheduleSettingsProps } from "./types";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 
@@ -27,7 +26,7 @@ const daysOfWeek = [
   { id: 6, label: t.schedule.days.sun },
 ];
 
-export function ScheduleSettings({ control, timezone, selectedSendDays, register, handleDayChange }: ScheduleSettingsProps) {
+export function ScheduleSettings({ control, timezones, selectedTimezone, selectedSendDays, register, handleDayChange }: ScheduleSettingsProps) {
 
   return (
     <Card>
@@ -86,22 +85,30 @@ export function ScheduleSettings({ control, timezone, selectedSendDays, register
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="timezone">{t.schedule.timezone}</Label>
-          <Select
-            {...register('timezone')}
-            defaultValue={timezone}
-          >
-            <SelectTrigger id="timezone">
-              <SelectValue placeholder={t.schedule.selectTimezone} />
-            </SelectTrigger>
-            <SelectContent className="max-h-60">
-              {timezones.map((tz) => (
-                <SelectItem key={tz} value={tz}>
-                  {tz}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <FormField
+            control={control}
+            name="timezone"
+            render={({ field }) => (
+              <FormItem>
+                <Label htmlFor="timezone">{t.schedule.timezone}</Label>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger id="timezone">
+                      <SelectValue placeholder={t.schedule.selectTimezone} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {timezones.map((tz) => (
+                      <SelectItem key={tz} value={tz}>
+                        {tz}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         {/* Optional: Add options for throttling, etc. */}

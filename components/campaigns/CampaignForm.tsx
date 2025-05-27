@@ -12,13 +12,13 @@ import { ScheduleSettings } from "./ScheduleSettings";
 import { RecipientsSettings } from "./RecipientsSettings";
 import { copyText as t } from "./copy";
 import { CampaignEventContition } from "@/app/api/generated/prisma";
+import { getCampaignSendingAccountsMockAction, getTimezonesMockAction } from "@/lib/actions/campaignActions";
 import { CampaignFormProps, CampaignFormValues, CampaignSteps, PartialCampaignStep } from "./types";
 import { CampaignDetails } from "./CampaignDetails";
-import { timezones } from "./const-mock";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { campaignFormSchema } from "./schemaValidations";
 import { EmailSecuenceSettings } from "./EmailSecuenceSettings";
-import { getCampaignSendingAccountsMockAction } from "@/lib/actions/campaignActions";
+import { defaultSteps } from "./const-mock";
 
 export function CampaignForm({
   initialData,
@@ -29,39 +29,22 @@ export function CampaignForm({
   readOnly = false,
 }: CampaignFormProps) {
   const [steps, setSteps] = useState<CampaignSteps>(
-    initialData?.steps || [{
-      sequenceOrder: 0,
-      delayDays: 0,
-      delayHours: 0,
-      templateId: 0,
-      campaignId: 0,
-      emailSubject: "",
-      emailBody: "",
-      condition: CampaignEventContition.ALWAYS,
-    }]
+    initialData?.steps || defaultSteps,
   );
   const [sendingAccounts, setSendingAccounts] = useState<{ value: string; label: string }[]>([]);
+  const [timezones, setTimezones] = useState<string[]>([]);
   const [loadingAccounts, setLoadingAccounts] = useState<boolean>(true);
+  const [loadingTimezones, setLoadingTimezones] = useState<boolean>(true);
   const [currentEditingStep, setCurrentEditingStep] = useState<number | null>(null);
   const [recipients, setRecipients] = useState<string>(initialData?.clients.join('\n') ?? '');
   const emailBodyRef = useRef<HTMLTextAreaElement>(null!);
 
   const form = useForm<CampaignFormValues>({
-    defaultValues: initialData || {
-      name: "",
-      fromName: "",
-      fromEmail: "",
-      status: "DRAFT",
-      steps: steps,
-      timezone: timezones[7],
-      sendTimeStart: '09:00',
-      sendTimeEnd: '17:00',
-      sendDays: [0, 1, 2, 3, 4]
-    },
+    defaultValues: initialData,
     mode: "onChange",
   }) as unknown as UseFormReturn<CampaignFormValues>;
 
-  const { timezone = timezones[7], sendDays = [0, 1, 2, 3, 4] } = form.getValues();
+  const { timezone = '', sendDays = [0, 1, 2, 3, 4] } = form.getValues();
 
   // Update form state when steps change
   useEffect(() => {
@@ -76,6 +59,16 @@ export function CampaignForm({
       setLoadingAccounts(false);
     };
     fetchSendingAccounts();
+  }, []);
+
+  useEffect(() => {
+    const fetchTimezones = async () => {
+      setLoadingTimezones(true);
+      const fetchedTimezones = await getTimezonesMockAction();
+      setTimezones(fetchedTimezones);
+      setLoadingTimezones(false);
+    };
+    fetchTimezones();
   }, []);
 
   // Handle form submission
@@ -252,7 +245,7 @@ export function CampaignForm({
 
             <TabsContent value="schedule" className="mt-4">
               {/* Pass form control/register if schedule is part of the main form */}
-              <ScheduleSettings control={form.control} register={form.register} selectedSendDays={sendDays} timezone={timezone} handleDayChange={handleDayChange} />
+              <ScheduleSettings timezones={timezones} selectedTimezone={timezone} control={form.control} register={form.register} selectedSendDays={sendDays} handleDayChange={handleDayChange} />
             </TabsContent>
 
             <TabsContent value="recipients" className="mt-4">

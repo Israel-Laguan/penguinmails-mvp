@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { MouseEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Mail, Clock, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 import { copyText as t } from "./copy";
@@ -25,6 +25,11 @@ export function StepHeader({
   canRemove
 }: StepHeaderProps) {
 
+  const handleAction = (evt: MouseEvent<HTMLButtonElement>, handleAction: () => void) => {
+    evt.preventDefault()
+    handleAction();
+  };
+
   return (
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-2">
@@ -36,7 +41,7 @@ export function StepHeader({
         <Button
           variant="ghost"
           size="icon"
-          onClick={onMoveUp}
+          onClick={(evt) => handleAction(evt, onMoveUp)}
           disabled={isFirst}
           className="h-8 w-8 disabled:opacity-30"
         >
@@ -46,7 +51,7 @@ export function StepHeader({
         <Button
           variant="ghost"
           size="icon"
-          onClick={onMoveDown}
+          onClick={(evt) => handleAction(evt, onMoveDown)}
           disabled={isLast}
           className="h-8 w-8 disabled:opacity-30"
         >
@@ -56,7 +61,7 @@ export function StepHeader({
         <Button
           variant="ghost"
           size="icon"
-          onClick={onRemove}
+          onClick={(evt) => handleAction(evt, onRemove)}
           disabled={!canRemove}
           className="h-8 w-8 text-destructive hover:text-destructive disabled:opacity-30"
         >

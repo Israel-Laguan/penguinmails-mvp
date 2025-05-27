@@ -5,8 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import { CampaignForm } from "@/components/campaigns/CampaignForm";
 import { copyText as t } from "@/components/campaigns/copy";
 import { CampaignFormValues } from "@/components/campaigns/types";
-import { createCampaignMockAction, getCampaignMockAction } from "@/lib/actions/campaignActions";
+import { getCampaignAction, updateCampaignAction } from "@/lib/actions/campaignActions";
 import { ParamValue } from "next/dist/server/request/params";
+import { toast } from "sonner";
 
 export default function CampaignCreatePage() {
   const router = useRouter();
@@ -16,8 +17,17 @@ export default function CampaignCreatePage() {
 
   const handleSubmit = async (data: CampaignFormValues) => {
     console.log("Form Submitted:", data);
-    // TODO: Implement campaign creation
-    await createCampaignMockAction(data);
+    const result = await updateCampaignAction(Number(campaignId), data);
+    if (!result.success) {
+      toast.error('Error in campaign update', {
+        description: 'An error has occurred while trying to updated a campaign.',
+      });
+      return;
+    }
+
+    toast.success('Campaign updated', {
+      description: 'Has been updated into your campaigns.',
+    });
   };
 
   const handleCancel = () => {
@@ -29,7 +39,7 @@ export default function CampaignCreatePage() {
       if (!campaignId) return;
       if (loading) setLoading(true);
 
-      const campaign: CampaignFormValues = await getCampaignMockAction(Number(campaignId));
+      const campaign: CampaignFormValues = await getCampaignAction(Number(campaignId));
       setCampaign(campaign);
       setLoading(false);
     };

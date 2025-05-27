@@ -149,7 +149,7 @@ export async function updateCampaignAction(id: number, formData: CampaignFormVal
   try {
     const oldSteps = formData.steps.filter((step) => step.id);
     const newSteps = formData.steps.filter((step) => !step.id);
-    const updatedCampaign = await prisma.campaign.update({
+    await prisma.campaign.update({
       where: {
         id,
       },

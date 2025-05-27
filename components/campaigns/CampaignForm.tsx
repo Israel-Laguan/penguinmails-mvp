@@ -19,6 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { campaignFormSchema } from "./schemaValidations";
 import { EmailSecuenceSettings } from "./EmailSecuenceSettings";
 import { defaultSteps } from "./const-mock";
+import Loader from "./loader";
 
 export function CampaignForm({
   initialData,
@@ -182,89 +183,92 @@ export function CampaignForm({
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleSubmit)}
-          className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t.cardTitles.campaignDetails}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {!loadingAccounts ?
-                (
-                  <>
-                    <CampaignDetails readOnly={readOnly} initialData={initialData} />
-                    <CampaignDetailsForm form={form} readOnly={readOnly} sendingAccounts={sendingAccounts} />
-                  </>
-                ) : 'Loading data...'
-              }
-            </CardContent>
-          </Card>
+      {loadingAccounts && <Loader />}
+      {!loadingAccounts &&
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t.cardTitles.campaignDetails}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {!loadingAccounts ?
+                  (
+                    <>
+                      <CampaignDetails readOnly={readOnly} initialData={initialData} />
+                      <CampaignDetailsForm form={form} readOnly={readOnly} sendingAccounts={sendingAccounts} />
+                    </>
+                  ) : 'Loading data...'
+                }
+              </CardContent>
+            </Card>
 
-          <Tabs defaultValue="sequence" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="sequence">
-                <FileText className="mr-2 h-4 w-4" />
-                {t.tabs.sequence}
-              </TabsTrigger>
-              <TabsTrigger value="schedule">
-                <Clock className="mr-2 h-4 w-4" />
-                {t.tabs.schedule}
-              </TabsTrigger>
-              <TabsTrigger value="recipients">
-                <Users className="mr-2 h-4 w-4" />
-                {t.tabs.recipients}
-              </TabsTrigger>
-            </TabsList>
+            <Tabs defaultValue="sequence" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="sequence">
+                  <FileText className="mr-2 h-4 w-4" />
+                  {t.tabs.sequence}
+                </TabsTrigger>
+                <TabsTrigger value="schedule">
+                  <Clock className="mr-2 h-4 w-4" />
+                  {t.tabs.schedule}
+                </TabsTrigger>
+                <TabsTrigger value="recipients">
+                  <Users className="mr-2 h-4 w-4" />
+                  {t.tabs.recipients}
+                </TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="sequence" className="mt-4">
-              <EmailSecuenceSettings
-                steps={steps}
-                currentEditingStep={currentEditingStep}
-                emailBodyRef={emailBodyRef}
-                stepErrors={form.formState.errors.steps}
-                templates={[]}
-                actions={{
-                  onMoveStepUp: moveStepUp,
-                  onMoveStepDown: moveStepDown,
-                  onRemoveStep: removeStep,
-                  onUpdateStep: updateStep,
-                  onInsertTag: handleInsertTag,
-                  onSetCurrentEditingStep: (index) => setCurrentEditingStep(index),
-                  handleAddEmailStep: addEmailStep,
-                  onSelectTemplate: (index, templateId) => {
-                    const newSteps = [...steps];
-                    newSteps[index].templateId = templateId;
-                    setSteps(newSteps);
-                    form.setValue(`steps.${index}.templateId`, templateId);
-                  },
-                }}
-              />
-            </TabsContent>
+              <TabsContent value="sequence" className="mt-4">
+                <EmailSecuenceSettings
+                  steps={steps}
+                  currentEditingStep={currentEditingStep}
+                  emailBodyRef={emailBodyRef}
+                  stepErrors={form.formState.errors.steps}
+                  templates={[]}
+                  actions={{
+                    onMoveStepUp: moveStepUp,
+                    onMoveStepDown: moveStepDown,
+                    onRemoveStep: removeStep,
+                    onUpdateStep: updateStep,
+                    onInsertTag: handleInsertTag,
+                    onSetCurrentEditingStep: (index) => setCurrentEditingStep(index),
+                    handleAddEmailStep: addEmailStep,
+                    onSelectTemplate: (index, templateId) => {
+                      const newSteps = [...steps];
+                      newSteps[index].templateId = templateId;
+                      setSteps(newSteps);
+                      form.setValue(`steps.${index}.templateId`, templateId);
+                    },
+                  }}
+                />
+              </TabsContent>
 
-            <TabsContent value="schedule" className="mt-4">
-              {/* Pass form control/register if schedule is part of the main form */}
-              <ScheduleSettings timezones={timezones} selectedTimezone={timezone} control={form.control} register={form.register} selectedSendDays={sendDays} handleDayChange={handleDayChange} />
-            </TabsContent>
+              <TabsContent value="schedule" className="mt-4">
+                {/* Pass form control/register if schedule is part of the main form */}
+                <ScheduleSettings timezones={timezones} selectedTimezone={timezone} control={form.control} register={form.register} selectedSendDays={sendDays} handleDayChange={handleDayChange} />
+              </TabsContent>
 
-            <TabsContent value="recipients" className="mt-4">
-              {/* Pass form control/register if recipients are part of the main form */}
-              <RecipientsSettings recipients={recipients} handleChangeRecipients={updateRecipients} />
-            </TabsContent>
-          </Tabs>
-          <div className="flex justify-end space-x-2 pt-4">
-            {onCancel && (
-              <Button variant="outline" type="button" onClick={onCancel}>
-                {t.buttons.cancel}
+              <TabsContent value="recipients" className="mt-4">
+                {/* Pass form control/register if recipients are part of the main form */}
+                <RecipientsSettings recipients={recipients} handleChangeRecipients={updateRecipients} />
+              </TabsContent>
+            </Tabs>
+            <div className="flex justify-end space-x-2 pt-4">
+              {onCancel && (
+                <Button variant="outline" type="button" onClick={onCancel}>
+                  {t.buttons.cancel}
+                </Button>
+              )}
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? submitLoadingLabel : submitLabel}
               </Button>
-            )}
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? submitLoadingLabel : submitLabel}
-            </Button>
-          </div>
-        </form>
-      </Form>
+            </div>
+          </form>
+        </Form>
+      }
     </div>
   );
 }

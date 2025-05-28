@@ -144,21 +144,40 @@ export async function getCampaignsStatisticsAction(companyId: number) {
   }
 }
 
-export async function getCampaignsDataAction(companyId: number) {
-  const campaigns = await prisma.campaign.findMany({
-    where: { companyId },
-    include: {
-      clients: true,
-      emailEvents: {
-        select: {
-          type: true,
-          timestamp: true
-        }
-      }
-    }
-  });
+export async function getCampaignsDataAction({ companyId, page = 1, pageSize = 10 }: { companyId: number, page: number, pageSize: number }) {
+  const skip = (page - 1) * pageSize;
 
-  return campaigns;
+  const [campaigns, totalCampaigns] = await Promise.all([
+    await prisma.campaign.findMany({
+      where: { companyId },
+      include: {
+        clients: true,
+        emailEvents: {
+          select: {
+            type: true,
+            timestamp: true
+          }
+        }
+      },
+      take: pageSize,
+      skip,
+      orderBy: {
+        createdAt: 'asc'
+      }
+    }),
+    prisma.campaign.count({
+      where: { companyId },
+    }),
+  ]
+  );
+
+  return {
+    campaigns,
+    totalCampaigns,
+    currentPage: page,
+    pageSize,
+    totalPages: Math.ceil(totalCampaigns / pageSize),
+  };
 }
 
 // Mock action for creating a campaign (Phase 4)

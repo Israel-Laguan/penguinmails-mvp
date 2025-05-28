@@ -277,7 +277,7 @@ export async function getCampaignAction(id: number) {
 export async function getCampaignSendingAccountsAction(companyId: number) {
   const emailAccounts = await prisma.emailAccount.findMany({
     where: {
-      id: companyId,
+      companyId,
     },
   });
   const mappedEmailAccount = emailAccounts.map(account => ({ value: account.email, label: account.email }))

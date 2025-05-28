@@ -254,6 +254,7 @@ async function main() {
 
   const emailAccount = await prisma.emailAccount.createMany({
     data: [
+      { companyId: company.id, email: "alice@acme.com", provider: 'Google Workspace', createdById: user1.id, status: 'ACTIVE', dayLimit: 20 },
       { companyId: company.id, email: "john@example.com", provider: 'Google Workspace', createdById: user2.id, lastSync: new Date(Date.now() - 15 * 60 * 1000).toISOString(), status: 'ACTIVE' },
       { companyId: company.id, email: "sales@example.com", provider: 'Google Workspace', createdById: user2.id, status: 'ACTIVE', sent24h: 5 },
       { companyId: company.id, email: "marketing@example.com", provider: 'Google Workspace', createdById: user2.id, status: 'ACTIVE', dayLimit: 5 },

@@ -3,17 +3,16 @@
 import React from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/use-auth';
-import { useIsMobile } from '@/hooks/use-mobile'; 
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { LogIn, LogOut, Settings, LayoutDashboard, UserPlus, Menu } from 'lucide-react';
 import Image from 'next/image';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function Navbar() {
   const { isAuthenticated, logout, loading } = useAuth();
-  const isMobile = useIsMobile(); // Get mobile status from the hook
+  const isMobile = useIsMobile();
 
-  // Common Logo component
   const Logo = () => (
     <Link href="/" className="flex items-center space-x-2" aria-label="Penguin Mails Home">
       {loading ? (

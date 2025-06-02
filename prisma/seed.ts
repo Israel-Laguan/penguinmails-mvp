@@ -3,6 +3,16 @@ import { PrismaClient } from "../app/api/generated/prisma";
 const prisma = new PrismaClient();
 
 async function main() {
+
+  const existingCompany = await prisma.company.findFirst({
+    where: { name: "Acme Inc." },
+  });
+
+  if (existingCompany) {
+    console.log("🚫 Seed already executed.");
+    return;
+  }
+
   const company = await prisma.company.create({
     data: {
       name: "Acme Inc.",

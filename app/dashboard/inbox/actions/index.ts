@@ -20,6 +20,7 @@ export const getAllMessagesAction = async (
   type: Type = "all",
   pagination: PaginationOptions = {},
   search = "",
+  hidden = false
 ) => {
   const { email = [], from = [], campaign = [] } = query;
   const { page = 1, limit = 10 } = pagination;
@@ -27,7 +28,7 @@ export const getAllMessagesAction = async (
   const filters: any = {
     AND: [
       { deletedAt: null },
-      { hideAt: null },
+      ...(hidden ? [] : [{ hideAt: null }]),
     ],
   };
 

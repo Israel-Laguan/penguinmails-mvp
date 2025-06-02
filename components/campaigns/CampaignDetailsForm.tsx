@@ -17,16 +17,10 @@ import { CampaignFormValues } from "./types";
 interface CampaignDetailsFormProps {
   form: UseFormReturn<CampaignFormValues>;
   readOnly?: boolean;
+  sendingAccounts: { value: string; label: string }[];
 }
 
-// TODO: Fetch available sending accounts dynamically
-const sendingAccounts = [
-  { value: "john@example.com", label: "john@example.com" },
-  { value: "sales@example.com", label: "sales@example.com" },
-  { value: "marketing@example.com", label: "marketing@example.com" },
-];
-
-export function CampaignDetailsForm({ form, readOnly = false }: CampaignDetailsFormProps) {
+export function CampaignDetailsForm({ form, readOnly = false, sendingAccounts }: CampaignDetailsFormProps) {
   return (
     <div className="space-y-4">
       <FormField

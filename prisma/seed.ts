@@ -80,17 +80,69 @@ async function main() {
     },
   });
 
-  const campaign = await prisma.campaign.create({
-    data: {
-      name: "Onboarding Campaign",
-      fromName: "Alice",
-      fromEmail: "alice@acme.com",
-      companyId: company.id,
-      createdById: user1.id,
-      status: "DRAFT",
-      sendDays: [1, 3, 5],
-      timezone: "UTC",
-    },
+  const campaign = await prisma.campaign.createManyAndReturn({
+    data: [
+      {
+        name: "Onboarding Campaign",
+        fromName: "Alice",
+        fromEmail: "alice@acme.com",
+        companyId: company.id,
+        createdById: user1.id,
+        status: "DRAFT",
+        sendDays: [1, 3, 5],
+        timezone: "UTC",
+      },
+      {
+        name: "Software CEOs Outreach",
+        fromName: "Ana Morales",
+        fromEmail: "ana.morales@domain.com",
+        companyId: company.id,
+        createdById: user1.id,
+        status: "ACTIVE",
+        sendDays: [1, 2],
+        timezone: "(GMT+02:00) Athens, Bucharest, Istanbul",
+      },
+      {
+        name: "Marketing Directors Follow-up",
+        fromName: "David González",
+        fromEmail: "david.gonzalez@service.io",
+        companyId: company.id,
+        createdById: user1.id,
+        status: "PAUSED",
+        sendDays: [1, 3, 5, 6],
+        timezone: "(GMT-03:00) Buenos Aires, Georgetown",
+      },
+      {
+        name: "Startup Founders Introduction",
+        fromName: "Ana Morales",
+        fromEmail: "ana.morales@domain.com",
+        companyId: company.id,
+        createdById: user1.id,
+        status: "DRAFT",
+        sendDays: [1, 2, 4, 5],
+        timezone: "(GMT+02:00) Athens, Bucharest, Istanbul",
+      },
+      {
+        name: "SaaS Decision Makers",
+        fromName: "Carlos Flores",
+        fromEmail: "carlos.flower@meail.org",
+        companyId: company.id,
+        createdById: user1.id,
+        status: "ACTIVE",
+        sendDays: [0, 6],
+        timezone: "(GMT-04:00) Atlantic Time (Canada)",
+      },
+      {
+        name: "Enterprise IT Directors",
+        fromName: "David González",
+        fromEmail: "david.gonzalez@service.io",
+        companyId: company.id,
+        createdById: user1.id,
+        status: "COMPLETED",
+        sendDays: [0, 2, 6],
+        timezone: "(GMT-03:00) Buenos Aires, Georgetown",
+      },
+    ]
   });
 
   await prisma.campaignStep.create({
@@ -99,18 +151,18 @@ async function main() {
       emailSubject: "Getting Started {First Name}",
       emailBody: "Let’s start your journey!",
       templateId: template.id,
-      campaignId: campaign.id,
+      campaignId: campaign[0].id,
     },
   });
 
   await prisma.campaignClient.createMany({
     data: [
       {
-        campaignId: campaign.id,
+        campaignId: campaign[0].id,
         clientId: client1.id,
       },
       {
-        campaignId: campaign.id,
+        campaignId: campaign[0].id,
         clientId: client2.id,
       },
     ],
@@ -199,7 +251,18 @@ async function main() {
       },
     ],
   });
-  
+
+  const emailAccount = await prisma.emailAccount.createMany({
+    data: [
+      { companyId: company.id, email: "alice@acme.com", provider: 'Google Workspace', createdById: user1.id, status: 'ACTIVE', dayLimit: 20 },
+      { companyId: company.id, email: "john@example.com", provider: 'Google Workspace', createdById: user2.id, lastSync: new Date(Date.now() - 15 * 60 * 1000).toISOString(), status: 'ACTIVE' },
+      { companyId: company.id, email: "sales@example.com", provider: 'Google Workspace', createdById: user2.id, status: 'ACTIVE', sent24h: 5 },
+      { companyId: company.id, email: "marketing@example.com", provider: 'Google Workspace', createdById: user2.id, status: 'ACTIVE', dayLimit: 5 },
+      { companyId: company.id, email: "ana.morales@domain.com", provider: 'Google Workspace', createdById: user1.id, status: 'ACTIVE', dayLimit: 10 },
+      { companyId: company.id, email: "david.gonzalez@service.io", provider: 'Google Workspace', createdById: user1.id, status: 'ACTIVE', dayLimit: 11 },
+      { companyId: company.id, email: "carlos.flower@meail.org", provider: 'Google Workspace', createdById: user1.id, status: 'ACTIVE', dayLimit: 20 },
+    ],
+  });
 
   console.log("🌱 Seeded successfully!");
 }

@@ -1,7 +1,10 @@
 // src/lib/actions/campaignActions.ts
 "use server";
 
-import { mockCampaignEditDetail } from "@/components/campaigns/mock-data";
+import { CampaignStatus, EmailEventType } from "@/app/api/generated/prisma";
+import { mockCampaignEditDetail, timezones } from "@/components/campaigns/mock-data";
+import { CampaignFormValues } from "@/components/campaigns/types";
+import { prisma } from "@/lib/prisma";
 
 // Define the structure for campaign data based on the screenshot
 export interface CampaignData {
@@ -93,46 +96,198 @@ const mockCampaigns: CampaignData[] = [
   },
 ];
 
-// Server action to fetch campaign data (using mock data)
-export async function getCampaignsDataAction(companyId: string) {
-  // Simulate fetching data based on companyId (though not used in mock)
-  console.log(`Fetching MOCK campaign list data for company: ${companyId}`);
+export async function getCampaignsStatisticsAction(companyId: number) {
+  try {
+    const [totalCampaigns, activeCampaigns, emailsSent, totalReplies] = await Promise.all([
+      prisma.campaign.count({
+        where: { companyId }
+      }),
+      prisma.campaign.count({
+        where: {
+          companyId,
+          status: CampaignStatus.ACTIVE,
+        },
+      }),
+      prisma.emailEvent.count({
+        where: {
+          type: EmailEventType.SENT
+        },
+      }),
+      prisma.emailEvent.count({
+        where: {
+          type: EmailEventType.REPLIED
+        },
+      }),
+    ]);
 
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 500));
+    return {
+      success: true,
+      message: "",
+      summary: {
+        totalCampaigns,
+        activeCampaigns,
+        emailsSent,
+        totalReplies,
+      }
+    };
 
-  // Calculate summary data from mock campaigns
-  const totalCampaigns = mockCampaigns.length;
-  const activeCampaigns = mockCampaigns.filter(c => c.status === "Running").length;
-  const emailsSent = mockCampaigns.reduce((sum, c) => sum + c.progressTotal, 0);
-  const totalReplies = mockCampaigns.reduce((sum, c) => sum + c.replies, 0);
+  } catch (error) {
+    return {
+      success: false, message: "Error trying to fetch summary.",
+      summary: {
+        totalCampaigns: 0,
+        activeCampaigns: 0,
+        emailsSent: 0,
+        totalReplies: 0,
+      }
+    };
+  }
+}
+
+export async function getCampaignsDataAction({ companyId, page = 1, pageSize = 10 }: { companyId: number, page: number, pageSize: number }) {
+  const skip = (page - 1) * pageSize;
+
+  const [campaigns, totalCampaigns] = await Promise.all([
+    await prisma.campaign.findMany({
+      where: { companyId },
+      include: {
+        clients: true,
+        emailEvents: {
+          select: {
+            type: true,
+            timestamp: true
+          }
+        }
+      },
+      take: pageSize,
+      skip,
+      orderBy: {
+        createdAt: 'asc'
+      }
+    }),
+    prisma.campaign.count({
+      where: { companyId },
+    }),
+  ]
+  );
 
   return {
-    summary: {
-      totalCampaigns,
-      activeCampaigns,
-      emailsSent,
-      totalReplies,
-    },
-    campaigns: mockCampaigns,
+    campaigns,
+    totalCampaigns,
+    currentPage: page,
+    pageSize,
+    totalPages: Math.ceil(totalCampaigns / pageSize),
   };
 }
 
 // Mock action for creating a campaign (Phase 4)
-export async function createCampaignMockAction(formData: any) {
-  console.log("Simulating campaign creation with data:", formData);
+export async function createCampaignAction(formData: CampaignFormValues) {
+  const createdCampaign = await prisma.campaign.create({
+    data: {
+      fromEmail: formData.fromEmail,
+      fromName: formData.fromName,
+      status: formData.status,
+      name: formData.name,
+      sendDays: formData.sendDays,
+      sendTimeEnd: formData.sendTimeEnd,
+      sendTimeStart: formData.sendTimeStart,
+      timezone: formData.timezone,
+      companyId: 1,
+    },
+  });
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   // Simulate success
   return { success: true, message: "Campaign created successfully (simulation)." };
-  // Simulate error
-  // return { success: false, message: "Failed to create campaign (simulation)." };
 }
 
-export async function getCampaignMockAction(id: number) {
-  console.log("Simulating campaign fetching:", id);
+export async function updateCampaignAction(id: number, formData: CampaignFormValues) {
+
+  try {
+    const oldSteps = formData.steps.filter((step) => step.id);
+    const newSteps = formData.steps.filter((step) => !step.id);
+    await prisma.campaign.update({
+      where: {
+        id,
+      },
+      data: {
+        fromEmail: formData.fromEmail,
+        fromName: formData.fromName,
+        status: formData.status,
+        name: formData.name,
+        sendDays: formData.sendDays,
+        sendTimeEnd: formData.sendTimeEnd,
+        sendTimeStart: formData.sendTimeStart,
+        timezone: formData.timezone,
+        companyId: 1,
+        steps: {
+          create: [...newSteps.map(({ id, campaignId, ...resStepInfo }) => (
+            {
+              condition: resStepInfo.condition,
+              delayDays: resStepInfo.delayDays,
+              delayHours: resStepInfo.delayHours,
+              emailBody: resStepInfo.emailBody,
+              emailSubject: resStepInfo.emailSubject,
+              sequenceOrder: resStepInfo.sequenceOrder,
+              templateId: 1
+            })
+          )],
+          update: [
+            ...oldSteps.map(({ id, templateId, campaignId, ...resStepInfo }) => (
+              {
+                where: { id },
+                data: {
+                  ...resStepInfo,
+                }
+              })
+            )]
+        }
+      },
+    });
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    return { success: true, message: "Campaign updated successfully." };
+
+  } catch (error) {
+    return { success: false, message: "Error trying update a campaign." };
+  }
+}
+
+export async function getCampaignAction(id: number) {
+  const campaign = await prisma.campaign.findFirst({
+    where: {
+      id,
+    },
+    include: {
+      clients: {
+        select: {
+          client: true,
+        }
+      },
+      steps: true,
+    },
+  });
   // Simulate network delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   // Simulate success
   return mockCampaignEditDetail;
+}
+
+export async function getCampaignSendingAccountsAction(companyId: number) {
+  const emailAccounts = await prisma.emailAccount.findMany({
+    where: {
+      companyId,
+    },
+  });
+  const mappedEmailAccount = emailAccounts.map(account => ({ value: account.email, label: account.email }))
+
+  return mappedEmailAccount;
+}
+
+export async function getTimezonesMockAction() {
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 10000));
+  // Simulate success
+  return timezones;
 }

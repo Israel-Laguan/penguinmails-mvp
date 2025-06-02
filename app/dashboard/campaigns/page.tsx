@@ -1,55 +1,23 @@
 import CampaignsContent from "./content";
-import { mockCampaigns } from "@/components/campaigns/mock-data";
-// import { prisma } from "@/lib/prisma";
-// import { notFound } from "next/navigation";
-// import { EmailEventType } from "@/app/api/generated/prisma";
+import { getCampaignsStatisticsAction, getCampaignsDataAction } from "@/lib/actions/campaignActions";
 
-const mockData = {
-  summary: {
-    totalCampaigns: mockCampaigns.length,
-    activeCampaigns: mockCampaigns.filter(c => c.status === 'ACTIVE').length,
-    emailsSent: mockCampaigns.reduce((acc, c) => 
-      acc + c.emailEvents.filter(e => e.type === 'SENT').length, 0),
-    totalReplies: mockCampaigns.reduce((acc, c) => 
-      acc + c.emailEvents.filter(e => e.type === 'REPLIED').length, 0),
-  },
-  campaigns: mockCampaigns
-};
+const companyId = 1;
+interface CampaignsPageProps {
+  searchParams: Promise<{
+    page?: string;
+    pageSize?: string;
+  }>;
+}
 
-// async function getCampaignsData() {
-//   const campaigns = await prisma.campaign.findMany({
-//     include: {
-//       clients: true,
-//       emailEvents: {
-//         select: {
-//           type: true,
-//           timestamp: true
-//         }
-//       }
-//     }
-//   });
+export default async function CampaignsPage({ searchParams }: CampaignsPageProps) {
+  const { page: pageParam, pageSize: pageSizeParam } = await searchParams;
+  const page = parseInt(pageParam || '1', 10);
+  const pageSize = parseInt(pageSizeParam || '10', 10);
+  const currentPage = Math.max(1, page);
+  const currentPageSize = Math.max(1, Math.min(pageSize, 100));
 
-//   if (!campaigns) {
-//     notFound();
-//   }
+  const { summary } = await getCampaignsStatisticsAction(companyId);
+  const { totalCampaigns, campaigns } = await getCampaignsDataAction({ companyId, page: currentPage, pageSize: currentPageSize });
 
-//   // Calculate summary statistics
-//   const summary = {
-//     totalCampaigns: campaigns.length,
-//     activeCampaigns: campaigns.filter(c => c.status === 'ACTIVE').length,
-//     emailsSent: campaigns.reduce((acc, c) => 
-//       acc + c.emailEvents.filter(e => e.type === EmailEventType.SENT).length, 0),
-//     totalReplies: campaigns.reduce((acc, c) => 
-//       acc + c.emailEvents.filter(e => e.type === EmailEventType.REPLIED).length, 0),
-//   };
-
-//   return {
-//     summary,
-//     campaigns
-//   };
-// }
-
-export default function CampaignsPage() {
-  // const data = await getCampaignsData();
-  return <CampaignsContent campaignsData={mockData} />;
+  return <CampaignsContent campaignsData={{ campaigns, summary, totalCampaigns, page, pageSize }} />;
 }

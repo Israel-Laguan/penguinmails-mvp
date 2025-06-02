@@ -65,7 +65,8 @@ export interface SequenceStepProps {
 
 // ScheduleSettings Types
 export interface ScheduleSettingsProps {
-  timezone: string;
+  selectedTimezone: string;
+  timezones: string[];
   selectedSendDays: number[];
   control: Control<CampaignFormValues>;
   register: UseFormRegister<CampaignFormValues>;

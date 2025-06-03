@@ -1,3 +1,4 @@
+"use client"
 import { Row } from "@tanstack/react-table";
 import { Email } from "../schemas/schemas";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -40,14 +41,6 @@ export function InboxColumnAction({
       console.error("Error deleting email:", error);
     }
     };
-    const viewEmailMutation = async (id: IdType) => {
-    try {
-      redirect(`/dashboard/inbox/${id}`)
-    } catch (error) {
-      showCustomToast({ title: "Error", description: `Failed to view email ${id}`, icon: <EyeClosed className="text-red-500" /> });
-      console.error("Error viewing email:", error);
-    }
-    };
     const hideEmailMutation = async (id: IdType) => {
     try {
       await hideEmailAction(id);
@@ -76,7 +69,7 @@ export function InboxColumnAction({
             <Trash2Icon className="text-black" />
           Delete
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => viewEmailMutation(emailId)}>
+        <DropdownMenuItem onClick={() => redirect(`/dashboard/inbox/${emailId}`)}>
             <Eye className="text-black" />
           View
         </DropdownMenuItem>

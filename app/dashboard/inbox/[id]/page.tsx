@@ -1,7 +1,7 @@
 "use client";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Star, CornerUpLeft, OctagonAlert, Trash2 } from "lucide-react";
+import { ArrowLeft, Star, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { fetchEmailByIdAction, markEmailAsReadAction, markEmailAsStarredAction, softDeleteEmailAction } from "../actions";

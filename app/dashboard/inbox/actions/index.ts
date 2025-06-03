@@ -28,7 +28,7 @@ export const getAllMessagesAction = async (
   const filters: any = {
     AND: [
       { deletedAt: null },
-      ...(hidden ? [] : [{ hideAt: null }]),
+      ...(hidden ? [{ hideAt: { not: null } }] : [{ hideAt: null }]),
     ],
   };
 
@@ -95,7 +95,7 @@ export const getAllMessagesAction = async (
 
   const skip = (page - 1) * limit;
 
-  const [emails, total, unread] = await Promise.all([
+  const [emails, total = 0, unread= 0] = await Promise.all([
     prisma.emailMessage.findMany({
       where: filters,
       include: {

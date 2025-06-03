@@ -95,7 +95,7 @@ export const getAllMessagesAction = async (
 
   const skip = (page - 1) * limit;
 
-  const [emails, total = 0, unread= 0] = await Promise.all([
+  const [emails, total, unread] = await Promise.all([
     prisma.emailMessage.findMany({
       where: filters,
       include: {

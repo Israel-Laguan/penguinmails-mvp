@@ -6,7 +6,7 @@ async function findOrCreate(model: any, where: object, data: object) {
   if (!model || !where || !data) return console.log("Necesary fields");
   const found = await model.findFirst({ where });
   if (found) {
-    console.log("Already created: ", found);   
+    console.log("Already created: ", found);
     return found;
   }
   return model.create({ data });

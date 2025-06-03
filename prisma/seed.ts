@@ -175,7 +175,7 @@ async function main() {
     });
   }
 
-  const campaign = await prisma.campaign.findFirst({ where: { companyId: company.id } });
+  const campaign = existingCampaigns[0]
 
   if (!campaign) throw new Error("No campaign found after creation.");
 

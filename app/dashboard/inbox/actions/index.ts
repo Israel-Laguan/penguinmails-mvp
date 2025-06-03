@@ -28,7 +28,7 @@ export const getAllMessagesAction = async (
   const filters: any = {
     AND: [
       { deletedAt: null },
-      ...(hidden ? [{ hideAt: { not: null } }] : [{ hideAt: null }]),
+      { hideAt: hidden ? { not: null } : null }
     ],
   };
 

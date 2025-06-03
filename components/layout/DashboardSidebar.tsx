@@ -1,20 +1,22 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   BarChart3,
-  Mail,
   Settings,
   Inbox,
   Layers,
   FileText,
   Zap,
-  Menu
+  Menu,
+  Send,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type NavItem = {
   title: string;
@@ -28,7 +30,7 @@ type NavItem = {
 
 const mainNavItems: NavItem[] = [
   { title: "Dashboard", href: "/dashboard", icon: BarChart3 },
-  { title: "Campaigns", href: "/dashboard/campaigns", icon: Mail },
+  { title: "Campaigns", href: "/dashboard/campaigns", icon: Send },
   { title: "Templates", href: "/dashboard/templates", icon: FileText },
   { title: "Inbox", href: "/dashboard/inbox", icon: Inbox, badge: { text: "8", variant: "default" } },
   { title: "Domains", href: "/dashboard/domains", icon: Zap },
@@ -37,26 +39,25 @@ const mainNavItems: NavItem[] = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  return (
-    <div
-      className={cn(
-        "hidden md:flex h-full bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex-col transition-all duration-300",
-        collapsed ? "w-20" : "w-64"
-      )}
-    >
+  const content = (
+    <>
       {/* Collapse Button */}
-      <div className="flex justify-end p-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setCollapsed(!collapsed)}
-          className="rounded-full"
-        >
-          {collapsed ? <Menu className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </Button>
-      </div>
+      {!isMobile && (
+        <div className="flex justify-end p-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setCollapsed(!collapsed)}
+            className="rounded-full"
+          >
+            <Menu className="w-5 h-5" />
+          </Button>
+        </div>
+      )}
 
       {/* Logo */}
       <div className="flex h-16 items-center border-b border-gray-200 dark:border-gray-800 px-6">
@@ -84,13 +85,9 @@ export function DashboardSidebar() {
                   ? "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium"
                   : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100"
               )}
+              onClick={() => isMobile && setMobileOpen(false)}
             >
-              <item.icon
-                className={cn(
-                  "transition-all",
-                  collapsed ? "w-6 h-6 p-1" : "h-4 w-4"
-                )}
-              />
+              <item.icon className={cn("transition-all", collapsed ? "w-6 h-6 p-1" : "h-4 w-4")} />
               {!collapsed && <span>{item.title}</span>}
               {!collapsed && item.badge && (
                 <span
@@ -123,6 +120,50 @@ export function DashboardSidebar() {
           )}
         </div>
       </div>
-    </div>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Hamburger Button */}
+      {isMobile && (
+        <div className="md:hidden p-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobileOpen(true)}
+            className="rounded-full"
+          >
+            <Menu className="w-5 h-5" />
+          </Button>
+        </div>
+      )}
+
+      {/* Desktop Sidebar */}
+      <div
+        className={cn(
+          "hidden md:flex h-full bg-gray-100 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex-col transition-all duration-300",
+          collapsed ? "w-20" : "w-64"
+        )}
+      >
+        {content}
+      </div>
+
+      {/* Mobile Sidebar */}
+      {isMobile && mobileOpen && (
+        <div className="fixed inset-0 z-50 flex">
+          <div className="w-64 bg-gray-100 dark:bg-gray-900 h-full flex flex-col shadow-lg border-r border-gray-200 dark:border-gray-800">
+            <div className="flex justify-end p-2">
+              <Button variant="ghost" size="icon" onClick={() => setMobileOpen(false)}>
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            {content}
+          </div>
+          {/* overlay black background */}
+          <div className="flex-1 bg-black/50" onClick={() => setMobileOpen(false)} />
+        </div>
+      )}
+    </>
   );
 }

@@ -6,6 +6,7 @@ interface Query {
   email?: string[];
   from?: string[];
   campaign?: string[];
+  hidden?: boolean
 }
 
 type Type = "all" | "unread" | "starred";
@@ -21,13 +22,13 @@ export const getAllMessagesAction = async (
   pagination: PaginationOptions = {},
   search = "",
 ) => {
-  const { email = [], from = [], campaign = [] } = query;
+  const { email = [], from = [], campaign = [], hidden = false } = query;
   const { page = 1, limit = 10 } = pagination;
 
   const filters: any = {
     AND: [
       { deletedAt: null },
-      { hideAt: null },
+      { hideAt: hidden ? { not: null } : null }
     ],
   };
 

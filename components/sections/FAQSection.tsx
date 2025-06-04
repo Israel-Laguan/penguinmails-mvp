@@ -20,7 +20,7 @@ export function FAQSection() {
         <div className="mx-auto max-w-3xl">
           <Accordion type="single" collapsible className="w-full">
             {content.faq.questions.map((faq, index) => (
-              <AccordionItem key={index} value={`item-${index + 1}`}>
+              <AccordionItem key={`faq-item-${index}`} value={`item-${index + 1}`}>
                 <AccordionTrigger>
                   <span className="flex items-center">
                     <HelpCircle className="mr-2 h-4 w-4" />

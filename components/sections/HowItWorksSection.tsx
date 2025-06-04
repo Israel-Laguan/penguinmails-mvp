@@ -20,7 +20,7 @@ export function HowItWorksSection() {
         </div>
         <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-2 md:gap-12 lg:grid-cols-3">
           {content.howItWorks.steps.map((step, index) => (
-            <div key={index} className="grid gap-1 text-center">
+            <div key={`home-steps-${index}`} className="grid gap-1 text-center">
               <h3 className="text-lg font-bold">{step.title}</h3>
               <p className="text-sm text-muted-foreground">{step.description}</p>
             </div>

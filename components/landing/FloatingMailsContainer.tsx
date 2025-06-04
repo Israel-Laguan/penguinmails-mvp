@@ -52,7 +52,7 @@ export const FloatingMailsContainer: React.FC = () => {
     <>
       {mails.map((mail) => (
         <FloatingMail
-          key={mail.id}
+          key={`home-mails-${mail.id}`}
           id={mail.id}
           topPercent={mail.topPercent}
           leftPercent={mail.leftPercent}

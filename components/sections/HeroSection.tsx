@@ -11,9 +11,7 @@ export const HeroSection: React.FC = () => {
     <section className="relative w-full min-h-screen bg-gradient-to-b from-[#0f172a] to-[#1e293b] text-white overflow-hidden">
       <FloatingMailsContainer />
 
-      <div className="relative z-20 w-full px-4 md:px-8 flex flex-col items-center h-full">
-        <div className="h-16" />
-
+      <div className="relative z-20 w-full px-4 md:px-8 pt-16 flex flex-col items-center h-full">
         <div className="w-full max-w-3xl text-center py-12 space-y-6">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight">
             {content.hero.title},&nbsp;
@@ -28,7 +26,12 @@ export const HeroSection: React.FC = () => {
               </Link>
             </Button>
 
-            <Button variant="outline" size="lg" asChild className="group text-white border-blue-500 hover:bg-blue-500/10 hover:text-blue-400 transition-colors">
+            <Button
+              variant="outline"
+              size="lg"
+              asChild
+              className="group text-white border-blue-500 hover:bg-blue-500/10 hover:text-blue-400 transition-colors"
+            >
               <Link
                 href="#how-it-works"
                 className="flex items-center text-white bg-transparent border border-blue-500 hover:bg-blue-500/10 transition-colors duration-200"

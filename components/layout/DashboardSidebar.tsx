@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { signOut } from "firebase/auth";
+import { authClient } from "@/lib/firebase/firebase-client";
 
 type NavItem = {
   title: string;
@@ -104,6 +106,20 @@ export function DashboardSidebar() {
             </Link>
           ))}
         </nav>
+        <Button
+      variant="ghost"
+      className="mt-4 w-full justify-start text-sm text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900"
+      onClick={async () => {
+        try {
+          await signOut(authClient);
+          window.location.href = "/login";
+        } catch (error) {
+          console.error("Error signing out:", error);
+        }
+      }}
+    >
+      Logout
+    </Button>
       </div>
 
       {/* User Info */}

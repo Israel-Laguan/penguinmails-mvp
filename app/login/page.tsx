@@ -1,7 +1,6 @@
-"use client"; // Uses client state
-
+"use client";
 import React, { useState } from "react";
-import Link from "next/link"; // Import Link
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,57 +13,60 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, LogIn } from "lucide-react"; // Icons
+import { Terminal, LogIn } from "lucide-react";
 import { LandingLayout } from "@/components/layout/landing";
 import { loginContent } from "./content";
-// import { useAuth } from '@/hooks/useAuth'; // Import your actual auth hook if login logic resides there
+import { getIdToken, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithFirebase } from "@/actions/auth/singin";
+import { authClient } from "@/lib/firebase/firebase-client";
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  // const { login } = useAuth(); // Get login function from your auth context/hook if needed
+    const router = useRouter();
 
-  const handleLogin = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setIsLoading(true);
-    setError(null);
+ async function getClientToken() {
+    const user = authClient.currentUser;
+  
+    if (!user) throw new Error("Usuario no autenticado");
+  
+    const idToken = await getIdToken(user, true); // true force refresh claims
 
-    // --- Placeholder for actual login logic ---
-    console.log("Login attempt:", { email /* Don't log password */ });
-
-    try {
-      // Simulate API call to your backend
-      await new Promise((resolve, reject) =>
-        setTimeout(() => {
-          // Simulate success/failure
-          if (email === "test@email.com" && password === "Test#1234") {
-            // Example credentials
-            resolve("Success");
-            // In a real app, you'd get a token/session, update auth state
-            // login(); // Call your auth hook's login function
-          } else if (email === "test@email.com") {
-            reject(new Error(loginContent.errors.incorrectPassword));
-          } else {
-            reject(new Error(loginContent.errors.userNotFound));
-          }
-        }, 1500)
-      );
-
-      console.log("Login successful (simulated)");
-      // Redirect on success (e.g., to dashboard)
-      // router.push('/dashboard'); // Use Next.js router
-      alert(
-        "Login successful! (Simulated) You would be redirected to the dashboard."
-      );
-    } catch (err) {
-      console.error("Login failed (simulated):", err);
-      setError(err instanceof Error ? err.message : loginContent.errors.generic);
-    } finally {
-      setIsLoading(false);
+    const response = signInWithFirebase(user.id)
+  
+    if (!response) {
+      throw new Error("Error al obtener el token del cliente");
     }
-    // --- End placeholder ---
+  
+    return await response;
+  }
+  
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError(null);
+  
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      signInWithFirebase(user.uid)
+  
+       // force refresh claims
+      await user.getIdToken(true);
+  
+      // Token claims
+      const tokenResult = await user.getIdTokenResult();
+  
+      // Continue flow
+      await getClientToken();
+      router.push("/dashboard");
+    } catch (err) {
+      console.error(err);
+      setError(err?.message || "Error al iniciar sesión");
+    }
   };
 
   return (

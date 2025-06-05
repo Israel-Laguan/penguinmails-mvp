@@ -20,14 +20,17 @@ import { Terminal, UserPlus, Building, KeyRound } from "lucide-react"; // Icons
 import { LandingLayout } from "@/components/layout/landing";
 import { signupContent } from "./content";
 import { PlanType } from "../api/generated/prisma";
+import { registerUserAction } from "@/actions/auth/signup";
+import { PlanSelect } from "./PlanSelect";
+
 
 // Separate component for handling search params
 function SearchParamsProvider({ children }: { 
-  children: (props: { selectedPlan: string | null }) => React.ReactNode 
+  children: (props: { selectedPlanParams: string | null }) => React.ReactNode 
 }) {
   const searchParams = useSearchParams();
-  const selectedPlan = searchParams.get("plan");
-  return children({ selectedPlan });
+  const selectedPlanParams = searchParams.get("plan");
+  return children({ selectedPlanParams });
 }
 
 export default function SignUpPage() {
@@ -36,8 +39,8 @@ export default function SignUpPage() {
       <div className="flex-grow flex items-center justify-center py-12 px-4">
         <Suspense fallback={null}>
           <SearchParamsProvider>
-            {({ selectedPlan }) => (
-              <SignUpForm selectedPlan={selectedPlan} />
+            {({ selectedPlanParams }) => (
+              <SignUpForm selectedPlanParams={selectedPlanParams} />
             )}
           </SearchParamsProvider>
         </Suspense>
@@ -46,10 +49,11 @@ export default function SignUpPage() {
   );
 }
 
-function SignUpForm({ selectedPlan }: { selectedPlan: string | null }) {
+function SignUpForm({ selectedPlanParams }: { selectedPlanParams: string | null }) {
   const [signupType, setSignupType] = useState<"new" | "existing">("new");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedPlan , setSelectedPlan] = useState(selectedPlanParams || "FREE")
 
   // Form state
   const [email, setEmail] = useState("");
@@ -84,12 +88,7 @@ function SignUpForm({ selectedPlan }: { selectedPlan: string | null }) {
 
     alert("Stripe integration is not implemented yet. Please proceed with the signup.");
     try {
-      const response = await fetch('/api/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await registerUserAction({
           email,
           password,
           name: `${firstName} ${lastName}`.trim(),
@@ -97,16 +96,18 @@ function SignUpForm({ selectedPlan }: { selectedPlan: string | null }) {
           PlanType: signupType === 'new' ? selectedPlan : undefined,
           businessId: signupType === 'existing' ? businessId : undefined,
           referralCode: signupType === 'existing' ? referralCode : undefined,
-        }),
-      });
+        })
+        
+        if (!response) {
+          const data = await response;
+          throw new Error(data || 'Signup failed');
+        }
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Signup failed');
-      }
-
-      // Redirect to login on success
-      window.location.href = '/login';
+        console.log("login");
+        
+        
+        // Redirect to login on success
+        window.location.href = '/login';
     } catch (err: any) {
       console.error("Signup failed:", err);
       setError(err.message || signupContent.alerts.error.generic);
@@ -308,6 +309,7 @@ function SignUpForm({ selectedPlan }: { selectedPlan: string | null }) {
               </AlertDescription>
             </Alert>
           )}
+          <PlanSelect setSelectedPlan={setSelectedPlan} />
 
           {/* Error Message */}
           {error && (

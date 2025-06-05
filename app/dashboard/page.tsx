@@ -21,8 +21,6 @@ export default async function DashboardPage() {
   const dashboardData = await getDashboardMockDataAction('companyId');
 
   return (
-    <ProtectedRoute>
       <DashboardContent dashboardData={dashboardData} />
-    </ProtectedRoute>
   )
 }

@@ -49,7 +49,7 @@ export default function LoginPage() {
     setError(null);
   
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(authClient, email, password);
       const user = userCredential.user;
 
       signInWithFirebase(user.uid)
@@ -59,6 +59,9 @@ export default function LoginPage() {
   
       // Token claims
       const tokenResult = await user.getIdTokenResult();
+
+      console.log(tokenResult.claims);
+      
   
       // Continue flow
       await getClientToken();

@@ -1,10 +1,16 @@
 export const content = {
   hero: {
-    title: "Warm Up Your Domains, Automate Outreach, Maximize Delivery",
-    description: "Penguin Mails ensures your emails land in the inbox, not spam. Automate personalized campaigns with powerful analytics and domain warming.",
+    title: "Cold Email That Lands in Inboxes",
+    highlight: "Not Spam",
+    description: "A powerful cold email tool made for startups and agencies. Better deliverability, smarter automation, and no contact limits.",
     buttons: {
       getStarted: "Get Started",
-      viewPricing: "View Pricing"
+      seeHowItWorks: "See How It Works"
+    },
+    mockup: {
+      image: "/img/dashboard.jpeg",
+      alt: "Mockup Dashboard",
+      link: "https://app.penguinmails.com/dashboard"
     }
   },
   howItWorks: {

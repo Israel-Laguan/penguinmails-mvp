@@ -179,8 +179,41 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
   }
+}
+
+@keyframes floatDiagonal {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  90% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(var(--driftX), var(--driftY));
+    opacity: 0;
+  }
+}
+
+.floatingMail {
+  position: absolute;
+  animation-name: floatDiagonal;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
 }

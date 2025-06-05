@@ -30,7 +30,7 @@ export async function registerUserAction(data: RegisterUserData) {
       },
     });
 
-    return { ok: true, user };
+    return { ok: true };
   } catch (error: any) {
     console.error("Error registering user:", error);
     return { ok: false, error: error.message };

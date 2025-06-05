@@ -35,7 +35,7 @@ export default function LoginPage() {
   
     const idToken = await getIdToken(user, true); // true force refresh claims
 
-    const response = signInWithFirebase(user.id)
+    const response = signInWithFirebase(user.uid)
   
     if (!response) {
       throw new Error("Error al obtener el token del cliente");
@@ -61,7 +61,6 @@ export default function LoginPage() {
       const tokenResult = await user.getIdTokenResult();
 
       console.log(tokenResult.claims);
-      
   
       // Continue flow
       await getClientToken();

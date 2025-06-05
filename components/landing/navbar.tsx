@@ -2,16 +2,19 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { LogIn, LogOut, Settings, LayoutDashboard, UserPlus, Menu } from 'lucide-react';
 import Image from 'next/image';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar() {
-  const { isAuthenticated, logout, loading } = useAuth();
   const isMobile = useIsMobile();
+    const { user, loading, claims } = useAuth();
+
+    console.log(user);
+    console.log(claims);
 
   const Logo = () => (
     <Link href="/" className="flex items-center space-x-2" aria-label="Penguin Mails Home">
@@ -36,7 +39,7 @@ export default function Navbar() {
 
     return (
       <>
-        {!isAuthenticated ? (
+        {!user ? (
           <>
             <LinkWrapper>
                <Button variant={isMobileMenu ? "ghost" : "ghost"} size="sm" asChild className={isMobileMenu ? "w-full justify-start" : ""}>
@@ -55,7 +58,7 @@ export default function Navbar() {
                </Button>
             </LinkWrapper>
             {/* Logout is an action */}
-            <Button variant={isMobileMenu ? "outline" : "outline"} size="sm" onClick={logout} className={isMobileMenu ? "w-full justify-start" : ""}>
+            <Button variant={isMobileMenu ? "outline" : "outline"} size="sm" onClick={()=>{}} className={isMobileMenu ? "w-full justify-start" : ""}>
               <LogOut className="mr-2 h-4 w-4" />
               Logout
             </Button>

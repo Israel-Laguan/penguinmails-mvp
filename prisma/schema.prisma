@@ -20,7 +20,7 @@ model User {
   role          UserRole        @default(MEMBER)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  firebaseUid  String
+  firebaseUid   String
   accounts      Account[]
   campaigns     Campaign[]
   sessions      Session[]

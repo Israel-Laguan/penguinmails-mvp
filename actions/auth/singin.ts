@@ -7,14 +7,19 @@ export async function signInWithFirebase(uid: string) {
     
     const user = await prisma.user.findFirst({where: {
       firebaseUid: uid
-    }})
+    },
+    select: {
+      name: true,
+      role: true,
+      companyId: true
+    }
+  })
 
     console.log(user);
     const customClaims = {
       name: user?.name,
       role: user?.role,
       companyId: user?.companyId
-      
     }  
 
     await admin.auth().setCustomUserClaims(uid, customClaims);

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -14,11 +14,14 @@ import {
   Menu,
   Send,
   X,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { signOut } from "firebase/auth";
 import { authClient } from "@/lib/firebase/firebase-client";
+import { useAuth } from "@/context/AuthContext";
+import Image from "next/image";
 
 type NavItem = {
   title: string;
@@ -36,7 +39,6 @@ const mainNavItems: NavItem[] = [
   { title: "Templates", href: "/dashboard/templates", icon: FileText },
   { title: "Inbox", href: "/dashboard/inbox", icon: Inbox, badge: { text: "8", variant: "default" } },
   { title: "Domains", href: "/dashboard/domains", icon: Zap },
-  { title: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 export function DashboardSidebar() {
@@ -44,12 +46,13 @@ export function DashboardSidebar() {
   const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const {user, claims} = useAuth()
 
   const content = (
     <>
       {/* Collapse Button */}
       {!isMobile && (
-        <div className="flex justify-end p-2">
+        <div className="flex justify-start p-2">
           <Button
             variant="ghost"
             size="icon"
@@ -106,36 +109,67 @@ export function DashboardSidebar() {
             </Link>
           ))}
         </nav>
-        <Button
-      variant="ghost"
-      className="mt-4 w-full justify-start text-sm text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900"
-      onClick={async () => {
-        try {
-          await signOut(authClient);
-          window.location.href = "/login";
-        } catch (error) {
-          console.error("Error signing out:", error);
-        }
-      }}
-    >
-      Logout
-    </Button>
       </div>
 
-      {/* User Info */}
-      <div className="mt-auto p-4 border-t border-gray-200 dark:border-gray-800">
-        <div className="flex items-center gap-3 rounded-md p-2">
-          <div className="h-8 w-8 rounded-full bg-primary grid place-items-center text-primary-foreground font-semibold">
-            JD
-          </div>
-          {!collapsed && (
-            <div className="text-sm">
-              <div className="font-medium text-gray-900 dark:text-gray-100">John Doe</div>
-              <div className="text-xs text-gray-500 dark:text-gray-400">Pro Account</div>
+        {/* User Info */}
+        <div className="mt-auto p-4 border-t border-gray-200 dark:border-gray-800">
+        <div
+          className={`flex items-start md:items-center justify-between rounded-md p-2 ${
+            collapsed ? "flex-col" : "flex-row"
+          }`}
+        >
+            <div className="flex items-center">
+            <div className="h-8 w-8 rounded-full overflow-hidden relative">
+            {user?.photoURL ? (
+              <Image
+                src={user.photoURL}
+                alt="User Avatar"
+                width={32}
+                height={32}
+                className="rounded-full"
+              />
+            ) : (
+              <div className="h-8 w-8 rounded-full bg-primary grid place-items-center text-primary-foreground font-semibold">
+                {user?.displayName?.slice(0, 2).toUpperCase() || "??"}
+              </div>
+            )}
             </div>
-          )}
+              {!collapsed && (
+                <div className="text-sm">
+                  <div className="font-medium text-gray-900 dark:text-gray-100">
+                    {user?.displayName} {claims?.role}
+                  </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">Free Account</div>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center">
+              <div>
+
+              <Link href="/dashboard/settings">
+                <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-primary">
+                  <Settings className="h-5 w-3" />
+                </Button>
+              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-red-600 hover:text-red-800"
+                onClick={async () => {
+                  try {
+                    await signOut(authClient);
+                    window.location.href = "/login";
+                  } catch (error) {
+                    console.error("Error signing out:", error);
+                  }
+                }}
+              >
+                <LogOut className="h-5 w-3" />
+              </Button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
     </>
   );
 

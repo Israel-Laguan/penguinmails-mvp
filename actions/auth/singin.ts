@@ -4,7 +4,6 @@ import { prisma } from "@/lib/prisma";
 
 export async function signInWithFirebase(uid: string) {
   try {
-    
     const user = await prisma.user.findFirst({where: {
       firebaseUid: uid
     },
@@ -13,9 +12,8 @@ export async function signInWithFirebase(uid: string) {
       role: true,
       companyId: true
     }
-  })
+    })
 
-    console.log(user);
     const customClaims = {
       name: user?.name,
       role: user?.role,

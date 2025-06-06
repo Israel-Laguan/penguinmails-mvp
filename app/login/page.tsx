@@ -26,24 +26,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-    const router = useRouter();
+  const router = useRouter();
 
- async function getClientToken() {
-    const user = authClient.currentUser;
-  
-    if (!user) throw new Error("Usuario no autenticado");
-  
-    const idToken = await getIdToken(user, true); // true force refresh claims
-
-    const response = signInWithFirebase(user.uid)
-  
-    if (!response) {
-      throw new Error("Error al obtener el token del cliente");
-    }
-  
-    return await response;
-  }
-  
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
@@ -52,7 +36,7 @@ export default function LoginPage() {
       const userCredential = await signInWithEmailAndPassword(authClient, email, password);
       const user = userCredential.user;
 
-      signInWithFirebase(user.uid)
+      signInWithFirebase(user?.uid)
   
        // force refresh claims
       await user.getIdToken(true);
@@ -60,10 +44,6 @@ export default function LoginPage() {
       // Token claims
       const tokenResult = await user.getIdTokenResult();
 
-      console.log(tokenResult.claims);
-  
-      // Continue flow
-      await getClientToken();
       router.push("/dashboard");
     } catch (err) {
       console.error(err);

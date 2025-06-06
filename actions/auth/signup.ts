@@ -7,7 +7,7 @@ type RegisterUserData = {
   password: string;
   name: string;
   companyName: string;
-  PlanType?: string;
+  planType?: string;
   businessId?: string;
   referralCode?: string;
 };

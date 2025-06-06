@@ -4,9 +4,17 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { onAuthStateChanged, getIdTokenResult, User } from "firebase/auth";
 import { authClient } from "@/lib/firebase/firebase-client";
 
+type Claims = {
+  name: string;
+  role: string;
+  companyId: string;
+  companyName: string;
+  plan: string;
+} | null
+
 type AuthContextType = {
   user: User | null;
-  claims: any;
+  claims: Claims;
   loading: boolean;
 };
 

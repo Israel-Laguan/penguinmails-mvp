@@ -16,7 +16,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal, LogIn } from "lucide-react";
 import { LandingLayout } from "@/components/layout/landing";
 import { loginContent } from "./content";
-import { getIdToken, signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { signInWithFirebase } from "@/actions/auth/singin";
 import { authClient } from "@/lib/firebase/firebase-client";
 import { useRouter } from 'next/navigation';

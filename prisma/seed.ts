@@ -30,6 +30,7 @@ async function main() {
       email: "alice@acme.com",
       username: "alice",
       passwordHash: "hashedpassword1",
+      firebaseUid: "12312312323",
       role: "ADMIN",
       companyId: company.id,
     }
@@ -43,6 +44,7 @@ async function main() {
       email: "bob@acme.com",
       username: "bob",
       passwordHash: "hashedpassword2",
+      firebaseUid: "12312312234",
       role: "MEMBER",
       companyId: company.id,
     }

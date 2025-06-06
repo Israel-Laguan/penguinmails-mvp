@@ -6,7 +6,6 @@ import DashboardContent from "./DashboardContent";
 
 export default async function DashboardPage() {
   // const session = await getServerSession(authOptions);
-  
   // if (!session || !session.user) {
   //   return <div>Unauthorized</div>;
   // }
@@ -17,7 +16,7 @@ export default async function DashboardPage() {
   //   return null;
   // }
 
-  const dashboardData = await getDashboardMockDataAction('companyId');
+  const dashboardData = await getDashboardMockDataAction("companyId");
 
   return <DashboardContent dashboardData={dashboardData} />;
 }

@@ -1,22 +1,40 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet';
-import { LogIn, LogOut, Settings, LayoutDashboard, UserPlus, Menu, LogOutIcon } from 'lucide-react';
-import Image from 'next/image';
-import { useIsMobile } from '@/hooks/use-mobile';
-import { useAuth } from '@/context/AuthContext';
-import { signOut } from 'firebase/auth';
-import { authClient } from '@/lib/firebase/firebase-client';
+import React from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import {
+  LogIn,
+  LogOut,
+  Settings,
+  LayoutDashboard,
+  UserPlus,
+  Menu,
+  LogOutIcon,
+} from "lucide-react";
+import Image from "next/image";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/context/AuthContext";
+import { signOut } from "firebase/auth";
+import { authClient } from "@/lib/firebase/firebase-client";
 
 export default function Navbar() {
   const isMobile = useIsMobile();
   const { user, loading } = useAuth();
 
   const Logo = () => (
-    <Link href="/" className="flex items-center space-x-2" aria-label="Penguin Mails Home">
+    <Link
+      href="/"
+      className="flex items-center space-x-2"
+      aria-label="Penguin Mails Home"
+    >
       {loading ? (
         <>
           <div className="h-6 w-6 bg-muted animate-pulse rounded-md" />

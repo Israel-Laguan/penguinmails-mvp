@@ -19,7 +19,7 @@ import { loginContent } from "./content";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { signInWithFirebase } from "@/actions/auth/singin";
 import { authClient } from "@/lib/firebase/firebase-client";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -31,23 +31,29 @@ export default function LoginPage() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
-  
+
     try {
-      const userCredential = await signInWithEmailAndPassword(authClient, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        authClient,
+        email,
+        password
+      );
       const user = userCredential.user;
 
-      signInWithFirebase(user?.uid)
-  
-       // force refresh claims
+      signInWithFirebase(user?.uid);
+
+      // force refresh claims
       await user.getIdToken(true);
-  
+
       // Token claims
-      const tokenResult = await user.getIdTokenResult();
+      await user.getIdTokenResult();
 
       router.push("/dashboard");
     } catch (err) {
-      console.error(err);
-      setError(err?.message || "Error al iniciar sesión");
+      console.error("Login failed (simulated):", err);
+      setError(
+        err instanceof Error ? err.message : loginContent.errors.generic
+      );
     }
   };
 
@@ -76,7 +82,9 @@ export default function LoginPage() {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">{loginContent.password.label}</Label>
+                  <Label htmlFor="password">
+                    {loginContent.password.label}
+                  </Label>
                   <Link
                     href="/forgot-password"
                     className="text-sm font-medium text-primary hover:underline underline-offset-4"
@@ -104,7 +112,9 @@ export default function LoginPage() {
               )}
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? loginContent.loginButton.loading : loginContent.loginButton.default}
+                {isLoading
+                  ? loginContent.loginButton.loading
+                  : loginContent.loginButton.default}
               </Button>
             </form>
           </CardContent>

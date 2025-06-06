@@ -3,11 +3,9 @@
 import { getDashboardMockDataAction } from "@/lib/actions/dashboardActions";
 // import { signOut } from "next-auth/react";
 import DashboardContent from "./DashboardContent";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 export default async function DashboardPage() {
   // const session = await getServerSession(authOptions);
-  
   // if (!session || !session.user) {
   //   return <div>Unauthorized</div>;
   // }
@@ -18,9 +16,7 @@ export default async function DashboardPage() {
   //   return null;
   // }
 
-  const dashboardData = await getDashboardMockDataAction('companyId');
+  const dashboardData = await getDashboardMockDataAction("companyId");
 
-  return (
-      <DashboardContent dashboardData={dashboardData} />
-  )
+  return <DashboardContent dashboardData={dashboardData} />;
 }

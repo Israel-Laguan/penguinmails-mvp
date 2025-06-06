@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link"; // Import Link
-import { useSearchParams } from "next/navigation"; // To read query params like ?plan=business
+import { useRouter, useSearchParams } from "next/navigation"; // To read query params like ?plan=business
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -23,10 +23,11 @@ import { PlanType } from "../api/generated/prisma";
 import { registerUserAction } from "@/actions/auth/signup";
 import { PlanSelect } from "./PlanSelect";
 
-
 // Separate component for handling search params
-function SearchParamsProvider({ children }: { 
-  children: (props: { selectedPlanParams: string | null }) => React.ReactNode 
+function SearchParamsProvider({
+  children,
+}: {
+  children: (props: { selectedPlanParams: string | null }) => React.ReactNode;
 }) {
   const searchParams = useSearchParams();
   const selectedPlanParams = searchParams.get("plan");
@@ -49,11 +50,18 @@ export default function SignUpPage() {
   );
 }
 
-function SignUpForm({ selectedPlanParams }: { selectedPlanParams: string | null }) {
+function SignUpForm({
+  selectedPlanParams,
+}: {
+  selectedPlanParams: string | null;
+}) {
   const [signupType, setSignupType] = useState<"new" | "existing">("new");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedPlan , setSelectedPlan] = useState(selectedPlanParams || "FREE")
+  const [selectedPlan, setSelectedPlan] = useState(
+    selectedPlanParams || "FREE"
+  );
+  const router = useRouter();
 
   // Form state
   const [email, setEmail] = useState("");
@@ -86,28 +94,29 @@ function SignUpForm({ selectedPlanParams }: { selectedPlanParams: string | null 
       return;
     }
 
-    alert("Stripe integration is not implemented yet. Please proceed with the signup.");
+    alert(
+      "Stripe integration is not implemented yet. Please proceed with the signup."
+    );
     try {
       const response = await registerUserAction({
-          email,
-          password,
-          name: `${firstName} ${lastName}`.trim(),
-          companyName: signupType === 'new' ? businessName : undefined,
-          PlanType: signupType === 'new' ? selectedPlan : undefined,
-          businessId: signupType === 'existing' ? businessId : undefined,
-          referralCode: signupType === 'existing' ? referralCode : undefined,
-        })
-        
-        if (!response) {
-          const data = await response;
-          throw new Error(data || 'Signup failed');
-        }
+        email,
+        password,
+        name: `${firstName} ${lastName}`.trim(),
+        companyName:
+          signupType === "new"
+            ? businessName
+            : `${firstName} ${lastName} Company`.trim(),
+        planType: signupType === "new" ? selectedPlan : "FREE",
+        businessId: signupType === "existing" ? businessId : undefined,
+        referralCode: signupType === "existing" ? referralCode : undefined,
+      });
 
-        console.log("login");
-        
-        
-        // Redirect to login on success
-        window.location.href = '/login';
+      if (!response) {
+        const data = await response;
+        throw new Error(data || "Signup failed");
+      }
+
+      router.push("/login");
     } catch (err: any) {
       console.error("Signup failed:", err);
       setError(err.message || signupContent.alerts.error.generic);
@@ -119,33 +128,21 @@ function SignUpForm({ selectedPlanParams }: { selectedPlanParams: string | null 
   return (
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">
-          {signupContent.header.title}
-        </CardTitle>
-        <CardDescription>
-          {signupContent.header.description}
-        </CardDescription>
+        <CardTitle className="text-2xl">{signupContent.header.title}</CardTitle>
+        <CardDescription>{signupContent.header.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Choose Signup Type */}
         <div>
-          <Label>
-            {signupContent.form.typeLabel}
-          </Label>
+          <Label>{signupContent.form.typeLabel}</Label>
           <RadioGroup
             defaultValue="new"
             className="grid grid-cols-2 gap-4 mt-2"
             value={signupType}
-            onValueChange={(value: "new" | "existing") =>
-              setSignupType(value)
-            }
+            onValueChange={(value: "new" | "existing") => setSignupType(value)}
           >
             <div>
-              <RadioGroupItem
-                value="new"
-                id="new"
-                className="peer sr-only"
-              />
+              <RadioGroupItem value="new" id="new" className="peer sr-only" />
               <Label
                 htmlFor="new"
                 className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer" // Added cursor-pointer
@@ -176,7 +173,9 @@ function SignUpForm({ selectedPlanParams }: { selectedPlanParams: string | null 
           {/* Common Fields */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">{signupContent.form.labels.firstName}</Label>
+              <Label htmlFor="firstName">
+                {signupContent.form.labels.firstName}
+              </Label>
               <Input
                 id="firstName"
                 placeholder={signupContent.form.placeholders.firstName}
@@ -187,7 +186,9 @@ function SignUpForm({ selectedPlanParams }: { selectedPlanParams: string | null 
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">{signupContent.form.labels.lastName}</Label>
+              <Label htmlFor="lastName">
+                {signupContent.form.labels.lastName}
+              </Label>
               <Input
                 id="lastName"
                 placeholder={signupContent.form.placeholders.lastName}
@@ -199,9 +200,11 @@ function SignUpForm({ selectedPlanParams }: { selectedPlanParams: string | null 
             </div>
           </div>
 
-          {signupType === 'new' && (
+          {signupType === "new" && (
             <div className="space-y-2">
-              <Label htmlFor="businessName">{signupContent.form.labels.businessName}</Label>
+              <Label htmlFor="businessName">
+                {signupContent.form.labels.businessName}
+              </Label>
               <Input
                 id="businessName"
                 placeholder={signupContent.form.placeholders.businessName}
@@ -226,7 +229,9 @@ function SignUpForm({ selectedPlanParams }: { selectedPlanParams: string | null 
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">{signupContent.form.labels.password}</Label>
+            <Label htmlFor="password">
+              {signupContent.form.labels.password}
+            </Label>
             <Input
               id="password"
               type="password"
@@ -237,7 +242,9 @@ function SignUpForm({ selectedPlanParams }: { selectedPlanParams: string | null 
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="confirm-password">{signupContent.form.labels.confirmPassword}</Label>
+            <Label htmlFor="confirm-password">
+              {signupContent.form.labels.confirmPassword}
+            </Label>
             <Input
               id="confirm-password"
               type="password"
@@ -252,7 +259,9 @@ function SignUpForm({ selectedPlanParams }: { selectedPlanParams: string | null 
           {signupType === "existing" && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="businessId">{signupContent.form.labels.businessId}</Label>
+                <Label htmlFor="businessId">
+                  {signupContent.form.labels.businessId}
+                </Label>
                 <Input
                   id="businessId"
                   placeholder="Enter the ID provided by your team"
@@ -263,7 +272,9 @@ function SignUpForm({ selectedPlanParams }: { selectedPlanParams: string | null 
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="referralCode">{signupContent.form.labels.referralCode}</Label>
+                <Label htmlFor="referralCode">
+                  {signupContent.form.labels.referralCode}
+                </Label>
                 <Input
                   id="referralCode"
                   placeholder="Enter the code provided by your team"
@@ -336,10 +347,7 @@ function SignUpForm({ selectedPlanParams }: { selectedPlanParams: string | null 
       <CardFooter className="flex flex-col items-center space-y-2">
         <p className="text-xs text-muted-foreground">
           {signupContent.footer.haveAccount} {/* Use Link */}
-          <Link
-            href="/login"
-            className="underline font-medium text-primary"
-          >
+          <Link href="/login" className="underline font-medium text-primary">
             {signupContent.footer.login}
           </Link>
         </p>

@@ -15,7 +15,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }, [loading, user]);
 
   if (loading || !user) {
-    return <div className="p-4">Cargando...</div>;
+    return <div className="p-4">Loading...</div>;
   }
 
   return <>{children}</>;

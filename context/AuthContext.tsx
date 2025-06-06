@@ -10,7 +10,7 @@ type Claims = {
   companyId: string;
   companyName: string;
   plan: string;
-} | null
+} | null;
 
 type AuthContextType = {
   user: User | null;

@@ -31,31 +31,39 @@ export default function LoginPage() {
   const handleLogin = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setError(null);
-
+  
     try {
       const userCredential = await signInWithEmailAndPassword(
         authClient,
         email,
         password
       );
+  
       const user = userCredential.user;
-
-      signInWithFirebase(user?.uid);
-
-      // force refresh claims
+  
+      if (!user?.uid) {
+        throw new Error("User UID not found");
+      }
+  
+      const response = await signInWithFirebase(user.uid);
+  
+      if (response?.error) {
+        throw new Error(response.error);
+      }
+  
+      // Force refresh of ID token and claims
       await user.getIdToken(true);
-
-      // Token claims
       await user.getIdTokenResult();
-
+  
       router.push("/dashboard");
     } catch (err) {
-      console.error("Login failed (simulated):", err);
+      console.error("Login failed:", err);
       setError(
         err instanceof Error ? err.message : loginContent.errors.generic
       );
     }
   };
+  
 
   return (
     <LandingLayout>

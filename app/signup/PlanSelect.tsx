@@ -37,7 +37,7 @@ export function PlanSelect({ setSelectedPlan }: PlanSelectProps) {
         <ToggleGroupItem
           key={type}
           value={type}
-          aria-label={`Seleccionar plan ${type}`}
+          aria-label={`Select plan ${type}`}
           className="capitalize"
         >
           {type}

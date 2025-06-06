@@ -1,32 +1,41 @@
 import React from "react";
 import content from "@/app/content";
+import { Mail, Layout, BarChart } from "lucide-react";
+import { StepCard } from "./StepCard";
 
-export function HowItWorksSection() {
+export const HowItWorksSection: React.FC = () => {
+  const steps = content.howItWorks.steps;
+
   return (
-    <section id="how-it-works" className="w-full py-12 md:py-24 lg:py-32 bg-background">
-      <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center mb-12">
-          <div className="space-y-2">
-            <div className="inline-block rounded-lg bg-muted px-3 py-1 text-sm">
-              {content.howItWorks.badge}
-            </div>
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-              {content.howItWorks.title}
-            </h2>
-            <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              {content.howItWorks.description}
-            </p>
-          </div>
-        </div>
-        <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-2 md:gap-12 lg:grid-cols-3">
-          {content.howItWorks.steps.map((step, index) => (
-            <div key={`home-steps-${index}`} className="grid gap-1 text-center">
-              <h3 className="text-lg font-bold">{step.title}</h3>
-              <p className="text-sm text-muted-foreground">{step.description}</p>
-            </div>
-          ))}
-        </div>
+    <section className="bg-[#0f172a] text-white py-20 px-4 md:px-8">
+      <div className="text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold">
+          {content.howItWorks.badge}{" "}
+          <span className="text-blue-400">
+            {content.howItWorks.badgeHighlight}
+          </span>{" "}
+          {content.howItWorks.badgeDescription}
+        </h2>
+        <p className="text-gray-300 mt-4 max-w-2xl mx-auto">
+          {content.howItWorks.title}
+        </p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-3 max-w-7xl mx-auto">
+        {steps.map((step, index) => {
+          const IconComp = [Mail, Layout, BarChart][index];
+          return (
+            <StepCard
+              key={index}
+              number={index + 1}
+              title={step.title}
+              description={step.description}
+              IconComponent={IconComp}
+              isLast={index === steps.length - 1}
+            />
+          );
+        })}
       </div>
     </section>
   );
-}
+};

@@ -14,21 +14,23 @@ export const content = {
     }
   },
   howItWorks: {
-    badge: "How Penguin Mails Works",
-    title: "Streamline Your Email Outreach",
+    badge: "How",
+    badgeHighlight: "PenguinMails",
+    badgeDescription: "Works",
+    title: "Our 3-step process makes cold emailing straightforward and effective",
     description: "From warming up new domains to running complex, automated campaigns, we provide the tools for successful email marketing.",
     steps: [
       {
-        title: "Domain Warm-up",
-        description: "Add your new domains and let our bots automatically send and receive emails, building a positive sender reputation to avoid spam filters."
+        title: "Connect Your Email",
+        description: "Link your email account securely. PenguinMails works with Gmail, Outlook, and custom SMTP."
       },
       {
-        title: "Campaign Automation",
-        description: "Import contacts, create email templates (with Handlebars support), and build automated sequences with delays and conditional logic (IF/ELSE)."
+        title: "Build Your Campaign",
+        description: "Create personalized email sequences with our drag-and-drop builder and AI assistant."
       },
       {
-        title: "Track & Analyze",
-        description: "Monitor email delivery, open rates, bounce rates, and more. Get AI-powered insights into campaign performance and potential issues."
+        title: "Track results",
+        description: "Create personalized email sequences with our drag-and-drop builder and AI assistant."
       }
     ]
   },

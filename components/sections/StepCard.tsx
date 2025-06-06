@@ -1,4 +1,3 @@
-// components/sections/StepCard.tsx
 import React from "react";
 
 interface StepCardProps {
@@ -29,7 +28,6 @@ export const StepCard: React.FC<StepCardProps> = ({
     </div>
     <p className="text-gray-400">{description}</p>
 
-    {/* Solo dibuja la línea si NO es el último paso */}
     {!isLast && (
       <div className="hidden md:block absolute top-1/2 right-[-25px] w-15 h-0.5 bg-blue-500/50 z-10" />
     )}

@@ -1,7 +1,12 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, getIdTokenResult, User } from "firebase/auth";
+import {
+  onAuthStateChanged,
+  getIdTokenResult,
+  IdTokenResult,
+  User as FirebaseUser,
+} from "firebase/auth";
 import { authClient } from "@/lib/firebase/firebase-client";
 
 type Claims = {
@@ -10,30 +15,34 @@ type Claims = {
   companyId: string;
   companyName: string;
   plan: string;
-} | null;
+};
+
+type User = FirebaseUser & {
+  token: string;
+  claims: Claims;
+};
 
 type AuthContextType = {
   user: User | null;
-  claims: Claims;
   loading: boolean;
 };
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  claims: null,
   loading: true,
 });
 
 const MAX_POLLING_ATTEMPTS = 10;
 const POLLING_INTERVAL_MS = 1000;
 
-async function fetchClaimsWithPolling(user: User) {
+async function fetchTokenResultWithPolling(
+  user: FirebaseUser
+): Promise<IdTokenResult | null> {
   for (let i = 0; i < MAX_POLLING_ATTEMPTS; i++) {
     const tokenResult = await getIdTokenResult(user, true);
-    const claims = tokenResult.claims;
 
-    if (claims && claims.role) {
-      return claims;
+    if (tokenResult.claims?.role) {
+      return tokenResult;
     }
 
     await new Promise((resolve) => setTimeout(resolve, POLLING_INTERVAL_MS));
@@ -44,19 +53,25 @@ async function fetchClaimsWithPolling(user: User) {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [claims, setClaims] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(authClient, async (firebaseUser) => {
       if (firebaseUser) {
-        const customClaims = await fetchClaimsWithPolling(firebaseUser);
-        setUser(firebaseUser);
-        setClaims(customClaims);
+        const tokenResult = await fetchTokenResultWithPolling(firebaseUser);
+        if (tokenResult) {
+          const enrichedUser = Object.assign(firebaseUser, {
+            token: tokenResult.token,
+            claims: tokenResult.claims as Claims,
+          });
+          setUser(enrichedUser);
+        } else {
+          setUser(null);
+        }
       } else {
         setUser(null);
-        setClaims(null);
       }
+
       setLoading(false);
     });
 
@@ -64,7 +79,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, claims, loading }}>
+    <AuthContext.Provider value={{ user, loading }}>
       {children}
     </AuthContext.Provider>
   );

@@ -8,6 +8,7 @@ import { Email } from "./schemas/schemas";
 import { inboxColumns } from "./components/inbox-columns";
 import { InboxDataTable } from "@/app/dashboard/inbox/components/inbox-data-table/data-table";
 import DatatablePagination from "@/app/dashboard/inbox/components/inbox-data-table/data-table-pagination";
+import { useAuth } from "@/context/AuthContext";
 
 export default function InboxPage() {
   const [emails, setEmails] = React.useState<Email[]>([]);
@@ -21,37 +22,51 @@ export default function InboxPage() {
   const [type, setType] = React.useState<"all" | "unread" | "starred">("all");
   const [search, setSearch] = React.useState<string>("");
   const [isLoading, setIsLoading] = React.useState(false);
+  const { user } = useAuth();
 
   const fetchAllMessagesStarted = async () => {
-      setType(type);
-      const messages = await getAllMessagesAction(filterValue, type, {
+    setType(type);
+
+    const messages = await getAllMessagesAction(
+      filterValue,
+      type,
+      {
         page,
         limit: pageSize,
-      }, search);
-      setEmails(messages.emails);
-      setUnreadCount(messages?.unread || 0);
-  
-      if (messages?.emails) {
-        setTotalPages(messages.totalPages);
-      }
-      return messages.emails; 
+      },
+      search,
+      user?.token
+    );
+    setEmails(messages.emails);
+    setUnreadCount(messages?.unread || 0);
+
+    if (messages?.emails) {
+      setTotalPages(messages.totalPages);
+    }
+    return messages.emails;
   };
 
   const fetchAllMessages = async () => {
     try {
       setIsLoading(true);
       setType(type);
-      const messages = await getAllMessagesAction(filterValue, type, {
-        page,
-        limit: pageSize,
-      }, search);
+      const messages = await getAllMessagesAction(
+        filterValue,
+        type,
+        {
+          page,
+          limit: pageSize,
+        },
+        search,
+        user?.token
+      );
       setEmails(messages.emails);
       setUnreadCount(messages?.unread || 0);
-  
+
       if (messages?.emails) {
         setTotalPages(messages.totalPages);
       }
-      return messages.emails; 
+      return messages.emails;
     } finally {
       setIsLoading(false);
     }
@@ -90,32 +105,23 @@ export default function InboxPage() {
           <Tabs defaultValue="all" className="w-full">
             <div className="flex justify-between items-center w-full px-1">
               <TabsList className="flex">
-                <TabsTrigger
-                  value="all"
-                  onClick={() => setType("all")}
-                >
+                <TabsTrigger value="all" onClick={() => setType("all")}>
                   All
                 </TabsTrigger>
-                <TabsTrigger
-                  value="unread"
-                  onClick={() => setType("unread")}
-                >
+                <TabsTrigger value="unread" onClick={() => setType("unread")}>
                   Unread
                   <span className="ml-1 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-600">
                     {unreadCount}
                   </span>
                 </TabsTrigger>
-                <TabsTrigger
-                  value="starred"
-                  onClick={() => setType("starred")}
-                >
+                <TabsTrigger value="starred" onClick={() => setType("starred")}>
                   Starred
                 </TabsTrigger>
               </TabsList>
             </div>
             <div className="mt-4">
               <InboxDataTable
-                columns={inboxColumns(fetchAllMessagesStarted)}
+                columns={inboxColumns(fetchAllMessagesStarted, user)}
                 data={currentEmails}
                 filterValue={filterValue}
                 setFilterValue={setFilterValue}

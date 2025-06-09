@@ -1,5 +1,8 @@
 "use server";
+import admin from "@/lib/firebase/firebase-server";
+import { verifyFirebaseTokenOrThrow } from "@/lib/firebase/verifyFirebaseTokenOrThrow";
 import { prisma } from "@/lib/prisma";
+import { User } from "firebase/auth";
 import { getServerSession } from "next-auth";
 
 interface Query {
@@ -21,10 +24,15 @@ export const getAllMessagesAction = async (
   type: Type = "all",
   pagination: PaginationOptions = {},
   search = "",
+  idToken?: string
 ) => {
   const { email = [], from = [], campaign = [], hidden = false } = query;
   const { page = 1, limit = 10 } = pagination;
 
+  const verified = await verifyFirebaseTokenOrThrow(idToken);
+
+  if (verified?.error) throw new Error(verified.message);
+  
   const filters: any = {
     AND: [
       { deletedAt: null },
@@ -118,7 +126,11 @@ export const getAllMessagesAction = async (
   };
 };
 
-export const getUniqueFiltersAction = async () => {
+export const getUniqueFiltersAction = async (idToken?: string) => {
+  const verified = await verifyFirebaseTokenOrThrow(idToken);
+
+  if (verified?.error) throw new Error(verified.message);
+
   const [emails, froms, campaigns] = await Promise.all([
     prisma.emailMessage.findMany({
       select: {
@@ -188,9 +200,13 @@ export const getUniqueFiltersAction = async () => {
 };
 
 
-export async function fetchEmailByIdAction(id: string) {
+export async function fetchEmailByIdAction(id: string, idToken?: string) {
+  
+  const verified = await verifyFirebaseTokenOrThrow(idToken);
+  
+  if (verified?.error) throw new Error(verified.message);
+  
   const parsedId = parseInt(id as unknown as string, 10);
-
   const filters: any = {
     AND: [
       { deletedAt: null },
@@ -217,9 +233,13 @@ export async function fetchEmailByIdAction(id: string) {
     };
 };
 
-export async function markEmailAsReadAction(id: number | string | undefined) {
+export async function markEmailAsReadAction(id: number | string | undefined, idToken?: string) {
+  
+  const verified = await verifyFirebaseTokenOrThrow(idToken);
+  
+  if (verified?.error) throw new Error(verified.message);
+  
   const parsedId = parseInt(id as unknown as string, 10);
-
   const email = await prisma.emailMessage.update({
     where: { id: parsedId },
     data: { read: true },
@@ -228,9 +248,13 @@ export async function markEmailAsReadAction(id: number | string | undefined) {
   return email;
 }
 
-export async function markEmailAsStarredAction(id: number | string, starred: boolean) {
+export async function markEmailAsStarredAction(id: number | string, starred: boolean, idToken?: string) {
+  
+  const verified = await verifyFirebaseTokenOrThrow(idToken);
+  
+  if (verified?.error) throw new Error(verified.message);
+  
   const parsedId = parseInt(id as unknown as string, 10);
-
   const email = await prisma.emailMessage.update({
     where: { id: parsedId },
     data: { starred },
@@ -244,7 +268,11 @@ export async function markEmailAsStarredAction(id: number | string, starred: boo
  * @param emailId - ID of the email to delete.
  * @param userId - ID of the user performing the deletion.
  */
-export async function softDeleteEmailAction(emailId: number | string | undefined) {
+export async function softDeleteEmailAction(emailId: number | string | undefined, idToken?: string) {
+  const verified = await verifyFirebaseTokenOrThrow(idToken);
+
+  if (verified?.error) throw new Error(verified.message);
+
   try {
     const parsedEmailId = parseInt(emailId as unknown as string, 10);
     if (!parsedEmailId) {
@@ -274,8 +302,12 @@ export async function softDeleteEmailAction(emailId: number | string | undefined
  * @param emailId - ID of the email to hide.
  * @param userId - ID of the user performing the hide action.
  */
-export async function hideEmailAction(emailId: number | string | undefined) {
+export async function hideEmailAction(emailId: number | string | undefined, idToken?: string) {
   try {
+    const verified = await verifyFirebaseTokenOrThrow(idToken);
+    
+    if (verified?.error) throw new Error(verified.message);
+    
     const parsedEmailId = parseInt(emailId as unknown as string, 10);
     const session = await getServerSession();
     const userId = session?.user?.id;

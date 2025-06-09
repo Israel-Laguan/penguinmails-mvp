@@ -6,7 +6,6 @@ export const FrustrationSection: React.FC = () => {
   return (
     <section className="bg-[#F9FAFB] text-white py-20 px-4 md:px-8">
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-        {/* Left column - Text */}
         <div>
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-black font-['Labora_Rounded']">
             {content.frustration.title}
@@ -20,8 +19,6 @@ export const FrustrationSection: React.FC = () => {
             ))}
           </ul>
         </div>
-
-        {/* Right column - Image */}
         <div className="flex justify-center">
           <Image
             src="/img/sad-penguin.png"

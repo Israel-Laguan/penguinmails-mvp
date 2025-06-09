@@ -44,14 +44,14 @@ export function InboxColumnAction({
 
       showCustomToast({
         title: "Email marked as read",
-        description: `Email ${id} has been marked as read`,
+        description: `Email has been marked as read`,
         icon: <MailOpen className="text-black" />,
       });
       refetch();
     } catch (error) {
       showCustomToast({
         title: "Error",
-        description: `Failed to mark email ${id} as read`,
+        description: `Failed to mark email as read`,
         icon: <EyeClosed className="text-red-500" />,
       });
       console.error("Error marking email as read:", error);
@@ -62,14 +62,14 @@ export function InboxColumnAction({
       await softDeleteEmailAction(id, user?.token);
       showCustomToast({
         title: "Email deleted",
-        description: `Email ${id} has been deleted`,
+        description: `Email has been deleted`,
         icon: <Trash2Icon className="text-black" />,
       });
       refetch();
     } catch (error) {
       showCustomToast({
         title: "Error",
-        description: `Failed to delete email ${id}`,
+        description: `Failed to delete email`,
         icon: <Trash2Icon className="text-red-500" />,
       });
       console.error("Error deleting email:", error);
@@ -80,14 +80,14 @@ export function InboxColumnAction({
       await hideEmailAction(id, user?.token);
       showCustomToast({
         title: "Email hidden",
-        description: `Email ${id} has been hidden`,
+        description: `Email has been hidden`,
         icon: <SquareArrowDown className="text-black" />,
       });
       refetch();
     } catch (error) {
       showCustomToast({
         title: "Error",
-        description: `Failed to hide email ${id}`,
+        description: `Failed to hide email`,
         icon: <SquareArrowDown className="text-red-500" />,
       });
       console.error("Error hiding email:", error);

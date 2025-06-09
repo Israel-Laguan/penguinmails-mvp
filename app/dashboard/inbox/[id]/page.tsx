@@ -88,14 +88,14 @@ export default function EmailDetailPage({ params }: Props) {
       await softDeleteEmailAction(id, user?.token);
       showCustomToast({
         title: "Email deleted",
-        description: `Email ${id} has been deleted`,
+        description: `Email has been deleted`,
         icon: <Trash2 className="text-black" />,
       });
       redirect("/dashboard/inbox");
     } catch (error) {
       showCustomToast({
         title: "Error",
-        description: `Failed to delete email ${id}`,
+        description: `Failed to delete email`,
         icon: <Trash2 className="text-red-500" />,
       });
       console.error("Error deleting email:", error);

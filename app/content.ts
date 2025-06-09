@@ -54,7 +54,17 @@ export const content = {
         answer: "Handlebars is a simple templating language. It allows you to create dynamic email content by inserting variables (like {{firstName}} or {{companyName}}) into your email templates. When you send a campaign, Penguin Mails replaces these variables with the actual data from your contact list, personalizing each email. You can also use basic logic like conditional statements ({{#if}}) within your templates."
       }
     ]
-  }
+  },
+  frustration: {
+  title: "Other Cold Email Tools Are Holding You Back",
+  painPoints: [
+    "Emails land in spam despite warm-up",
+    "Overpriced for basic features",
+    "Limits on contacts and emails",
+    "Confusing dashboards and no real analytics"
+  ]
+}
+
 } as const;
 
 export type Content = typeof content;

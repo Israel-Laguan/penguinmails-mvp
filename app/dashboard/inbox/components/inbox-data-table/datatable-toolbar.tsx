@@ -5,10 +5,11 @@ import { Table } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail, Search, User, X } from "lucide-react";
+import { Mail, Search, User } from "lucide-react";
 import { DataTableViewOptions } from "./datatable-view-options";
 import { getUniqueFiltersAction } from "../../actions";
 import { ModalFilter } from "./modal-filter";
+import { useAuth } from "@/context/AuthContext";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -29,7 +30,7 @@ export function DataTableToolbar<TData>({
   filterValue,
   setFilterValue,
   fetchAllMessages,
-  setSearch
+  setSearch,
 }: DataTableToolbarProps<TData>) {
   const searchRef = React.useRef<HTMLInputElement>(null);
   const [filterOptions, setFilterOptions] = React.useState<{
@@ -37,10 +38,11 @@ export function DataTableToolbar<TData>({
     from: string[];
     campaign: string[];
   }>({ email: [], from: [], campaign: [] });
+  const { user } = useAuth();
 
   React.useEffect(() => {
     const fetchFilters = async () => {
-      const filters = await getUniqueFiltersAction();
+      const filters = await getUniqueFiltersAction(user?.token);
       setFilterOptions(filters);
     };
 
@@ -94,7 +96,15 @@ export function DataTableToolbar<TData>({
               Search
             </Button>
           </div>
-          <ModalFilter campaigns={campaigns} emails={emails} fetchAllMessages={fetchAllMessages} filterValue={filterValue} from={from} setFilterValue={setFilterValue} table={table} />
+          <ModalFilter
+            campaigns={campaigns}
+            emails={emails}
+            fetchAllMessages={fetchAllMessages}
+            filterValue={filterValue}
+            from={from}
+            setFilterValue={setFilterValue}
+            table={table}
+          />
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">

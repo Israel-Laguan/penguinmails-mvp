@@ -1,11 +1,14 @@
 "use server";
+import admin from "@/lib/firebase/firebase-server";
 import { prisma } from "@/lib/prisma";
+import { ERROR_CODES } from "@/lib/responses/errors";
 import { getServerSession } from "next-auth";
 
 interface Query {
   email?: string[];
   from?: string[];
   campaign?: string[];
+  hidden?: boolean;
 }
 
 type Type = "all" | "unread" | "starred";
@@ -20,182 +23,192 @@ export const getAllMessagesAction = async (
   type: Type = "all",
   pagination: PaginationOptions = {},
   search = "",
+  idToken = ""
 ) => {
-  const { email = [], from = [], campaign = [] } = query;
+  const { email = [], from = [], campaign = [], hidden = false } = query;
   const { page = 1, limit = 10 } = pagination;
 
-  const filters: any = {
-    AND: [
-      { deletedAt: null },
-      { hideAt: null },
-    ],
-  };
+  try {
+    await admin.auth().verifyIdToken(idToken);
 
-  if (email.length > 0) {
-    filters.AND.push({
-      toUser: {
-        email: {
-          in: email.map((e) => e.toLowerCase()),
-          mode: "insensitive",
+    const filters: any = {
+      AND: [{ deletedAt: null }, { hideAt: hidden ? { not: null } : null }],
+    };
+
+    if (email.length > 0) {
+      filters.AND.push({
+        toUser: {
+          email: {
+            in: email.map((e) => e.toLowerCase()),
+            mode: "insensitive",
+          },
         },
-      },
-    });
-  }
-
-  if (from.length > 0) {
-    const fromConditions = from
-      .map(fullName => {
-        const [firstName, ...lastNameParts] = fullName.trim().split(" ");
-        const lastName = lastNameParts.join(" ");
-        if (!firstName || !lastName) return null;
-        return {
-          AND: [
-            { client: { firstName: { equals: firstName, mode: "insensitive" } } },
-            { client: { lastName: { equals: lastName, mode: "insensitive" } } },
-          ],
-        };
-      })
-      .filter(Boolean);
-  
-    if (fromConditions.length > 0) {
-      filters.AND.push({ OR: fromConditions });
+      });
     }
-  }
-  
 
-  if (campaign.length > 0) {
-    filters.AND.push({
-      campaign: {
-        name: {
-          in: campaign.map((c) => c.toLowerCase()),
-          mode: "insensitive",
+    if (from.length > 0) {
+      const fromConditions = from
+        .map((fullName) => {
+          const [firstName, ...lastNameParts] = fullName.trim().split(" ");
+          const lastName = lastNameParts.join(" ");
+          if (!firstName || !lastName) return null;
+          return {
+            AND: [
+              {
+                client: {
+                  firstName: { equals: firstName, mode: "insensitive" },
+                },
+              },
+              {
+                client: { lastName: { equals: lastName, mode: "insensitive" } },
+              },
+            ],
+          };
+        })
+        .filter(Boolean);
+
+      if (fromConditions.length > 0) {
+        filters.AND.push({ OR: fromConditions });
+      }
+    }
+
+    if (campaign.length > 0) {
+      filters.AND.push({
+        campaign: {
+          name: {
+            in: campaign.map((c) => c.toLowerCase()),
+            mode: "insensitive",
+          },
         },
-      },
-    });
+      });
+    }
+
+    if (search.trim()) {
+      filters.AND.push({
+        OR: [
+          { subject: { contains: search, mode: "insensitive" } },
+          { body: { contains: search, mode: "insensitive" } },
+          { campaign: { name: { contains: search, mode: "insensitive" } } },
+          { client: { firstName: { contains: search, mode: "insensitive" } } },
+          { client: { lastName: { contains: search, mode: "insensitive" } } },
+        ],
+      });
+    }
+
+    if (type === "unread") {
+      filters.AND.push({ read: false });
+    } else if (type === "starred") {
+      filters.AND.push({ starred: true });
+    }
+
+    const skip = (page - 1) * limit;
+
+    const [emails, total, unread] = await Promise.all([
+      prisma.emailMessage.findMany({
+        where: filters,
+        include: {
+          client: true,
+          campaign: true,
+        },
+        skip,
+        take: limit,
+      }),
+      prisma.emailMessage.count({ where: filters }),
+      prisma.emailMessage.count({ where: { ...filters, read: false } }),
+    ]);
+
+    return {
+      emails,
+      unread,
+      total,
+      totalPages: Math.ceil(total / limit),
+      currentPage: page,
+    };
+  } catch (error) {
+    console.error("Error in getAllMessagesAction:", error);
+    throw new Error("Failed to get all messages.");
   }
-
-  if (search.trim()) {
-    filters.AND.push({
-      OR: [
-        { subject: { contains: search, mode: "insensitive" } },
-        { body: { contains: search, mode: "insensitive" } },
-        { campaign: { name: { contains: search, mode: "insensitive" } } },
-        { client: { firstName: { contains: search, mode: "insensitive" } } },
-        { client: { lastName: { contains: search, mode: "insensitive" } } },
-      ],
-    });
-  }
-
-  if (type === "unread") {
-    filters.AND.push({ read: false });
-  } else if (type === "starred") {
-    filters.AND.push({ starred: true });
-  }
-
-  const skip = (page - 1) * limit;
-
-  const [emails, total, unread] = await Promise.all([
-    prisma.emailMessage.findMany({
-      where: filters,
-      include: {
-        client: true,
-        campaign: true,
-      },
-      skip,
-      take: limit,
-    }),
-    prisma.emailMessage.count({ where: filters }),
-    prisma.emailMessage.count({ where: { ...filters, read: false } }),
-  ]);
-
-  return {
-    emails,
-    unread,
-    total,
-    totalPages: Math.ceil(total / limit),
-    currentPage: page,
-  };
 };
 
-export const getUniqueFiltersAction = async () => {
-  const [emails, froms, campaigns] = await Promise.all([
-    prisma.emailMessage.findMany({
-      select: {
-        client: {
-          select: {
-            email: true,
+export const getUniqueFiltersAction = async (idToken = "") => {
+  try {
+    await admin.auth().verifyIdToken(idToken);
+
+    const [emails, froms, campaigns] = await Promise.all([
+      prisma.emailMessage.findMany({
+        select: {
+          client: {
+            select: {
+              email: true,
+            },
           },
         },
-      },
-      distinct: ['clientId'],
-    }),
+        distinct: ["clientId"],
+      }),
 
-    prisma.emailMessage.findMany({
-      select: {
-        client: {
-          select: {
-            firstName: true,
-            lastName: true,
+      prisma.emailMessage.findMany({
+        select: {
+          client: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
           },
         },
-      },
-      distinct: ['clientId'],
-    }),
+        distinct: ["clientId"],
+      }),
 
-    prisma.emailMessage.findMany({
-      select: {
-        campaign: {
-          select: {
-            name: true,
+      prisma.emailMessage.findMany({
+        select: {
+          campaign: {
+            select: {
+              name: true,
+            },
           },
         },
-      },
-      where: {
-        campaign: {
-          isNot: null,
+        where: {
+          campaign: {
+            isNot: null,
+          },
         },
-      },
-      distinct: ['campaignId'],
-    }),
-  ]);
+        distinct: ["campaignId"],
+      }),
+    ]);
 
-  const email = emails
-    .map(e => e.client?.email)
-    .filter(Boolean);
+    const email = emails.map((e) => e.client?.email).filter(Boolean);
 
-  const fromSet = new Set(
-    froms
-      .map(f => {
-        const first = f.client?.firstName;
-        const last = f.client?.lastName;
-        return first && last ? `${first} ${last}` : null;
-      })
-      .filter(Boolean)
-  );
+    const fromSet = new Set(
+      froms
+        .map((f) => {
+          const first = f.client?.firstName;
+          const last = f.client?.lastName;
+          return first && last ? `${first} ${last}` : null;
+        })
+        .filter(Boolean)
+    );
 
-  const from = Array.from(fromSet);
+    const from = Array.from(fromSet);
 
-  const campaign = campaigns
-    .map(c => c.campaign?.name)
-    .filter(Boolean);
+    const campaign = campaigns.map((c) => c.campaign?.name).filter(Boolean);
 
-  return {
-    email,
-    from,
-    campaign,
-  };
+    return {
+      email,
+      from,
+      campaign,
+    };
+  } catch (error) {
+    console.error("Error in getUniqueFiltersAction:", error);
+    throw new Error("Failed to get filters.");
+  }
 };
 
-
-export async function fetchEmailByIdAction(id: string) {
-  const parsedId = parseInt(id as unknown as string, 10);
-
-  const filters: any = {
-    AND: [
-      { deletedAt: null },
-      { hideAt: null },
-    ],
-  };
+export async function fetchEmailByIdAction(id: string, idToken = "") {
+  try {
+    await admin.auth().verifyIdToken(idToken);
+    const parsedId = parseInt(id as unknown as string, 10);
+    const filters: any = {
+      AND: [{ deletedAt: null }, { hideAt: null }],
+    };
 
     const email = await prisma.emailMessage.findFirst({
       where: {
@@ -214,28 +227,50 @@ export async function fetchEmailByIdAction(id: string) {
       ...email,
       htmlContent: email.body,
     };
-};
-
-export async function markEmailAsReadAction(id: number | string | undefined) {
-  const parsedId = parseInt(id as unknown as string, 10);
-
-  const email = await prisma.emailMessage.update({
-    where: { id: parsedId },
-    data: { read: true },
-  });
-
-  return email;
+  } catch (error) {
+    console.error("Error in fetchEmailByIdAction:", error);
+    throw new Error("Failed to fetch by id the email.");
+  }
 }
 
-export async function markEmailAsStarredAction(id: number | string, starred: boolean) {
-  const parsedId = parseInt(id as unknown as string, 10);
+export async function markEmailAsReadAction(
+  id: number | string | undefined,
+  idToken = ""
+) {
+  try {
+    await admin.auth().verifyIdToken(idToken);
+    const parsedId = parseInt(id as unknown as string, 10);
+    const email = await prisma.emailMessage.update({
+      where: { id: parsedId },
+      data: { read: true },
+    });
 
-  const email = await prisma.emailMessage.update({
-    where: { id: parsedId },
-    data: { starred },
-  });
+    return email;
+  } catch (error) {
+    console.error("Error in markEmailAsReadAction:", error);
+    throw new Error("Failed to mark as read the email.");
+  }
+}
 
-  return email;
+export async function markEmailAsStarredAction(
+  id: number | string,
+  starred: boolean,
+  idToken = ""
+) {
+  try {
+    await admin.auth().verifyIdToken(idToken);
+
+    const parsedId = parseInt(id as unknown as string, 10);
+    const email = await prisma.emailMessage.update({
+      where: { id: parsedId },
+      data: { starred },
+    });
+
+    return email;
+  } catch (error) {
+    console.error("Error in markEmailAsStarredAction:", error);
+    throw new Error("Failed to starred the email.");
+  }
 }
 
 /**
@@ -243,8 +278,16 @@ export async function markEmailAsStarredAction(id: number | string, starred: boo
  * @param emailId - ID of the email to delete.
  * @param userId - ID of the user performing the deletion.
  */
-export async function softDeleteEmailAction(emailId: number | string | undefined) {
+export async function softDeleteEmailAction(
+  emailId: number | string | undefined,
+  idToken = ""
+) {
   try {
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
+
+    if (decodedToken?.role)
+      return { succes: false, message: ERROR_CODES.FORBIDDEN.message };
+
     const parsedEmailId = parseInt(emailId as unknown as string, 10);
     if (!parsedEmailId) {
       throw new Error("Email ID is required for soft delete.");
@@ -273,8 +316,12 @@ export async function softDeleteEmailAction(emailId: number | string | undefined
  * @param emailId - ID of the email to hide.
  * @param userId - ID of the user performing the hide action.
  */
-export async function hideEmailAction(emailId: number | string | undefined) {
+export async function hideEmailAction(
+  emailId: number | string | undefined,
+  idToken = ""
+) {
   try {
+    await admin.auth().verifyIdToken(idToken);
     const parsedEmailId = parseInt(emailId as unknown as string, 10);
     const session = await getServerSession();
     const userId = session?.user?.id;

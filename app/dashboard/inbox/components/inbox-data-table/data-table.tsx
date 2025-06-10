@@ -83,7 +83,7 @@ export function InboxDataTable<TData>({
   });
 
   const renderTable = () => (
-    <div className="rounded-md border h-[calc(100vh-33rem)] md:h-[calc(100vh-30rem)] lg:h-[calc(100vh-28rem)] overflow-y-scroll">
+    <div className="rounded-md border overflow-y-scroll">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((group) => (

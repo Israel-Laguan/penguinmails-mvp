@@ -1,7 +1,6 @@
-"use client"; // Uses client state
-
+"use client";
 import React, { useState } from "react";
-import Link from "next/link"; // Import Link
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -14,58 +13,57 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, LogIn } from "lucide-react"; // Icons
+import { Terminal, LogIn } from "lucide-react";
 import { LandingLayout } from "@/components/layout/landing";
 import { loginContent } from "./content";
-// import { useAuth } from '@/hooks/useAuth'; // Import your actual auth hook if login logic resides there
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithFirebase } from "@/actions/auth/singin";
+import { authClient } from "@/lib/firebase/firebase-client";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  // const { login } = useAuth(); // Get login function from your auth context/hook if needed
+  const router = useRouter();
 
-  const handleLogin = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setIsLoading(true);
+  const handleLogin = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
     setError(null);
-
-    // --- Placeholder for actual login logic ---
-    console.log("Login attempt:", { email /* Don't log password */ });
-
+  
     try {
-      // Simulate API call to your backend
-      await new Promise((resolve, reject) =>
-        setTimeout(() => {
-          // Simulate success/failure
-          if (email === "test@email.com" && password === "Test#1234") {
-            // Example credentials
-            resolve("Success");
-            // In a real app, you'd get a token/session, update auth state
-            // login(); // Call your auth hook's login function
-          } else if (email === "test@email.com") {
-            reject(new Error(loginContent.errors.incorrectPassword));
-          } else {
-            reject(new Error(loginContent.errors.userNotFound));
-          }
-        }, 1500)
+      const userCredential = await signInWithEmailAndPassword(
+        authClient,
+        email,
+        password
       );
-
-      console.log("Login successful (simulated)");
-      // Redirect on success (e.g., to dashboard)
-      // router.push('/dashboard'); // Use Next.js router
-      alert(
-        "Login successful! (Simulated) You would be redirected to the dashboard."
-      );
+  
+      const user = userCredential.user;
+  
+      if (!user?.uid) {
+        throw new Error("User UID not found");
+      }
+  
+      const response = await signInWithFirebase(user.uid);
+  
+      if (response?.error) {
+        throw new Error(response.error);
+      }
+  
+      // Force refresh of ID token and claims
+      await user.getIdToken(true);
+      await user.getIdTokenResult();
+  
+      router.push("/dashboard");
     } catch (err) {
-      console.error("Login failed (simulated):", err);
-      setError(err instanceof Error ? err.message : loginContent.errors.generic);
-    } finally {
-      setIsLoading(false);
+      console.error("Login failed:", err);
+      setError(
+        err instanceof Error ? err.message : loginContent.errors.generic
+      );
     }
-    // --- End placeholder ---
   };
+  
 
   return (
     <LandingLayout>
@@ -92,7 +90,9 @@ export default function LoginPage() {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">{loginContent.password.label}</Label>
+                  <Label htmlFor="password">
+                    {loginContent.password.label}
+                  </Label>
                   <Link
                     href="/forgot-password"
                     className="text-sm font-medium text-primary hover:underline underline-offset-4"
@@ -120,7 +120,9 @@ export default function LoginPage() {
               )}
 
               <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? loginContent.loginButton.loading : loginContent.loginButton.default}
+                {isLoading
+                  ? loginContent.loginButton.loading
+                  : loginContent.loginButton.default}
               </Button>
             </form>
           </CardContent>

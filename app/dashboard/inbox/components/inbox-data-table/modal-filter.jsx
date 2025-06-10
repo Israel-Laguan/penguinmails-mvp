@@ -1,7 +1,10 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { DataTableFacetedFilter } from "./datatable-faceted-filter";
-import { Check, Filter, RotateCcw, RotateCw, X } from "lucide-react";
+import { Check, Filter, Package, RotateCcw, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import React from "react";
 
 export function ModalFilter({
   table,
@@ -17,6 +20,7 @@ export function ModalFilter({
     table.setGlobalFilter("");
     setFilterValue({});
   };
+  const [hiddenMessages, setHiddenMessages] = React.useState(false);
 
   return (
     <Dialog.Root>
@@ -69,6 +73,24 @@ export function ModalFilter({
                 setFilterValue={setFilterValue}
               />
             )}
+            <div className="flex items-center justify-center">
+              <Package className="mr-2 h-5 w-5" />
+              <Label htmlFor="airplane-mode">Show hidden messages</Label>
+              <div className="pl-2 transform scale-125">
+                <Switch
+                  id="airplane-mode"
+                  checked={hiddenMessages}
+                  onCheckedChange={(checked) => {
+                    setHiddenMessages(checked);
+                    setFilterValue((prev) => ({
+                      ...prev,
+                      hidden: !hiddenMessages,
+                    }));
+                  }}
+                  className="data-[state=checked]:bg-black cursor-pointer"
+                />
+              </div>
+            </div>
             <div className="flex gap-2 mt-4">
               <Button
                 variant="outline"
@@ -81,7 +103,6 @@ export function ModalFilter({
                 <RotateCcw className="mr-2 size-4" />
                 Clear All
               </Button>
-
               <Dialog.Close asChild>
                 <Button
                   size="sm"

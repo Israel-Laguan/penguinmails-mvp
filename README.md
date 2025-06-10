@@ -158,6 +158,66 @@ The Dashboard > Analytics page provides visualizations and metrics for campaign 
 - Refine mobile responsiveness, potentially adding a mobile sidebar toggle.
 - Integrate with third-party services like Stripe for payments.
 
+## Firebase Configuration
+PenguinMails uses Firebase to manage user authentication and may use other services in the future. There are two types of Firebase configurations you need to add to your .env file: one for the client (frontend) and one for the server (backend/admin SDK).
+
+### 🔐 Client-Side Firebase Config
+These variables are exposed to the browser and used to initialize Firebase on the client (e.g., Firebase Auth for sign-in):
+
+```
+# CLIENT FIREBASE KEYS
+NEXT_PUBLIC_FIREBASE_API_KEY="YOUR_NEXT_PUBLIC_FIREBASE_API_KEY"
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN="YOUR_NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN"
+NEXT_PUBLIC_FIREBASE_PROJECT_ID="YOUR_NEXT_PUBLIC_FIREBASE_PROJECT_ID"
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET="YOUR_NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET"
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="YOUR_NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"
+NEXT_PUBLIC_FIREBASE_APP_ID="YOUR_NEXT_PUBLIC_FIREBASE_APP_ID"
+NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="YOUR_NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID"
+```
+### 🔎 How to get these values:
+
+1. Go to `https://console.firebase.google.com/`.
+
+2. Select your project or create a new one.
+
+3. On the project home page, click the gear icon (⚙️) > Project settings.
+
+4. Under the Your apps section, select the Web app (or create one).
+
+5. Copy the Firebase config object values provided.
+
+### 🛡️ Server-Side Firebase Admin Config
+These variables are used to initialize the Firebase Admin SDK on the server and must remain private. They are used for secure operations like token verification, access to Firestore, etc.
+
+# SERVER FIREBASE KEYS
+```
+# SERVER FIREBASE KEYS
+FIREBASE_SERVICE_ACCOUNT="YOUR_FIREBASE_SERVICE_ACCOUNT"
+FIREBASE_PROJECT_ID="YOUR_FIREBASE_PROJECT_ID"
+FIREBASE_PRIVATE_KEY_ID="YOUR_FIREBASE_PRIVATE_KEY_ID"
+FIREBASE_PRIVATE_KEY="YOUR_FIREBASE_PRIVATE_KEY"
+FIREBASE_CLIENT_EMAIL="YOUR_FIREBASE_CLIENT_EMAIL"
+FIREBASE_CLIENT_ID="YOUR_FIREBASE_CLIENT_ID"
+FIREBASE_AUTH_URI="YOUR_FIREBASE_AUTH_URI"
+FIREBASE_TOKEN_URI="YOUR_FIREBASE_TOKEN_URI"
+FIREBASE_AUTH_PROVIDER_X509_CERT_URL="YOUR_FIREBASE_AUTH_PROVIDER_X509_CERT_URL"
+FIREBASE_CLENT_X509_CERT_URL="YOUR_FIREBASE_CLENT_X509_CERT_URL"
+FIREBASE_UNIVERSE_DOMAIN="YOUR_FIREBASE_UNIVERSE_DOMAIN"
+```
+
+📌 Important notes:
+FIREBASE_SERVICE_ACCOUNT should contain the full service account JSON, encoded as a single string (e.g., using JSON.stringify() or loading the file and escaping quotes).
+
+Make sure this value is never exposed to the client or included in any public bundle.
+
+### 🔎 How to get the service account file:
+
+1. In the Firebase Console, go to Project Settings > Service accounts tab.
+
+2. Click "Generate new private key".
+
+3. Save the .json file and convert its contents into a string for use in the FIREBASE_SERVICE_ACCOUNT variable.
+
 <!-- CONTRIBUTORS START -->
 <h2>Contributors</h2>
 <table border='1' cellspacing='0' cellpadding='5'>

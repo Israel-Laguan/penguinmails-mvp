@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AccountSettings from "@/components/settings/AccountSettings";
 import AppearanceSettings from "@/components/settings/AppearanceSettings";
@@ -90,6 +92,8 @@ interface SettingsContentProps {
 }
 
 export function SettingsContent({ settingsData }: SettingsContentProps) {
+  const searchParams = useSearchParams();
+  const checkout = searchParams.get("checkout");
   const [currentTab, setCurrentTab] = useState("account");
 
   // Use the mock data passed as props
@@ -98,6 +102,13 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
 
   // You can add state or effects here if needed for client-side interactions
   // For now, we just use the data passed down.
+
+  useEffect(() => {
+    if (checkout === 'success')
+      toast.success('Paid suscription', {
+        description: 'Has been paid user suscription.',
+      });
+  }, [checkout]);
 
   return (
     <div className="space-y-6 animate-fade-in">

@@ -1,17 +1,25 @@
 "use client";
 
-import React from "react";
+import React, { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar, CreditCard, DollarSign } from "lucide-react";
+import { Alert, AlertDescription } from "../ui/alert";
+import purchase from "@/lib/actions/purchase";
+import { getStripe } from "@/lib/stripe-client";
 
+function convertDateToLong(dateString: string) {
+  const date = new Date(dateString + 'T00:00:00');
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
 interface BillingData {
   renewalDate: string;
   emailAccountsUsed: number;
   campaignsUsed: number;
   emailsPerMonthUsed: number;
-  planDetails: { 
-    id: string; 
-    name: string; 
+  planDetails: {
+    id: string;
+    name: string;
     isMonthly: boolean;
     price: number;
     description: string;
@@ -37,6 +45,29 @@ interface BillingSettingsProps {
 }
 
 const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+
+  const handlePayNow = async (event: FormEvent) => {
+    event.preventDefault();
+    setIsProcessingPayment(true);
+
+    const res = await purchase();
+
+    if (!res.checkoutSessionId) {
+      console.error("Failed to create stripe checkout session.");
+      setIsProcessingPayment(false);
+      return;
+    }
+
+    const stripe = await getStripe();
+
+    await stripe?.redirectToCheckout({
+      sessionId: res.checkoutSessionId,
+    });
+
+    setIsProcessingPayment(false);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -71,6 +102,32 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
             <div className="flex justify-between text-sm">
               <span>Emails per month</span>
               <span>{billing.emailsPerMonthUsed.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4 rounded-md border p-4">
+          <div>
+            <h3 className="text-lg font-medium flex items-center gap-2">
+              <DollarSign className="w-5 h-5" />
+              Payment Management
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Make payments for your subscription and manage your billing.
+            </p>
+          </div>
+          <div className="space-y-4 flex flex-col">
+            <Alert>
+              <Calendar className="h-4 w-4" />
+              <AlertDescription>
+                Your next payment of ${billing.planDetails.price} is due on {convertDateToLong(billing.renewalDate)}
+              </AlertDescription>
+            </Alert>
+            <div className="">
+              <Button onClick={handlePayNow} disabled={isProcessingPayment} className="flex items-center gap-2">
+                <CreditCard className="w-4 h-4" />
+                {isProcessingPayment ? "Processing..." : "Pay Now"}
+              </Button>
             </div>
           </div>
         </div>
@@ -117,9 +174,8 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
               <div key={index} className={`p-4 flex items-center justify-between text-sm ${index > 0 ? 'border-t' : ''}`}>
                 <div
                   key={index}
-                  className={`p-4 flex items-center justify-between text-sm ${
-                    index > 0 ? "border-t" : ""
-                  }`}
+                  className={`p-4 flex items-center justify-between text-sm ${index > 0 ? "border-t" : ""
+                    }`}
                 >
                   <p className="font-medium">{item.date}</p>
                   <p className="text-xs text-muted-foreground">{item.description}</p>

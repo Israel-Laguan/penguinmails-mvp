@@ -5,11 +5,11 @@ export const ERROR_CODES = {
     },
     "UNAUTHORIZED": {
         code: 401,
-        message: 'Unauthorized',
+        message: 'Unauthorized: You must be logged in to access this resource.',
     },
     "FORBIDDEN": {
         code: 403,
-        message: 'Forbidden',
+        message: 'Forbidden: You do not have permission to perform this action.',
     },
     "NOT_FOUND": {
         code: 404,

@@ -51,7 +51,7 @@ export function DashboardSidebar() {
   const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { user, claims } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
 
   const content = (
@@ -152,10 +152,10 @@ export function DashboardSidebar() {
             {!collapsed && (
               <div className="text-sm">
                 <div className="font-medium text-gray-900 dark:text-gray-100">
-                  {user?.displayName} {claims?.role}
+                  {user?.displayName} {user?.claims?.role}
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">
-                  {claims?.plan} Account
+                  {user?.claims?.plan} Account
                 </div>
               </div>
             )}

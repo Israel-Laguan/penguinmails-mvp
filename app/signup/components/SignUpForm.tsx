@@ -96,14 +96,6 @@ export function SignUpForm({ selectedPlan, checkout }: { selectedPlan: string | 
         </CardTitle>
         <CardDescription>
           {signupContent.header.description}
-          <div className="space-y-4">
-            {checkout === "success" ? (
-              <p className="text-green-500">Payment successful!</p>
-            ) : (
-              <p className="text-red-500">Payment cancelled.</p>
-            )}
-            <PurchaseButton />
-          </div>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

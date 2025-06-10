@@ -7,13 +7,12 @@ import { SignUpForm } from "./components/SignUpForm";
 
 // Separate component for handling search params
 function SearchParamsProvider({ children }: {
-  children: (props: { selectedPlan: string | null; checkout: string | null }) => React.ReactNode
+  children: (props: { selectedPlan: string | null; }) => React.ReactNode
 }) {
   const searchParams = useSearchParams();
   const selectedPlan = searchParams.get("plan");
-  const checkout = searchParams.get("checkout");
 
-  return children({ selectedPlan, checkout });
+  return children({ selectedPlan });
 }
 
 export default function SignUpPage() {
@@ -22,8 +21,8 @@ export default function SignUpPage() {
       <div className="flex-grow flex items-center justify-center py-12 px-4">
         <Suspense fallback={null}>
           <SearchParamsProvider>
-            {({ selectedPlan, checkout }) => (
-              <SignUpForm selectedPlan={selectedPlan} checkout={checkout} />
+            {({ selectedPlan }) => (
+              <SignUpForm selectedPlan={selectedPlan} />
             )}
           </SearchParamsProvider>
         </Suspense>

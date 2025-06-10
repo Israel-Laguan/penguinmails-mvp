@@ -17,9 +17,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal, UserPlus, Building, KeyRound } from "lucide-react";
 import { signupContent } from "../content";
-import { PurchaseButton } from "@/components/ui/purchase-button";
 
-export function SignUpForm({ selectedPlan, checkout }: { selectedPlan: string | null; checkout: string | null }) {
+export function SignUpForm({ selectedPlan }: { selectedPlan: string | null; }) {
   const [signupType, setSignupType] = useState<"new" | "existing">("new");
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);

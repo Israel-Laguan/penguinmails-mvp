@@ -82,7 +82,6 @@ model Company {
   id                  Int                  @id @default(autoincrement())
   name                String
   stripeCustomerId    String?              @unique
-  planType            PlanType             @default(FREE)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   campaigns           Campaign[]
@@ -92,6 +91,7 @@ model Company {
   users               User[]
   emailAccounts       EmailAccount[]
   domains             Domain[]
+  subscriptions       Subscriptions[]
 
   @@index([stripeCustomerId])
 }
@@ -352,15 +352,40 @@ model EmailMessage {
   @@index([deletedById])
 }
 
+model Subscriptions {
+  id              String        @id @default(cuid())
+  companyId       Int
+  planDetailId    String
+  renovateBefore  DateTime?
+  payOn           DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  company         Company       @relation(fields: [companyId], references: [id])
+  planDetails     PlanDetails   @relation(fields: [planDetailId], references: [id])
+
+  @@index([companyId])
+  @@index([planDetailId])
+}
+
+model PlanDetails {
+  id                  String          @id @default(cuid())
+  name                String          @unique
+  isMonthly           Boolean
+  price               Float
+  description         String?
+  maxEmailAccounts    Int
+  maxCampaigns        Int
+  maxEmailsPerMonth   Int
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  subscriptions       Subscriptions[]
+}
+
 enum UserRole {
   ADMIN
   MEMBER
-}
-
-enum PlanType {
-  FREE
-  STARTER
-  PRO
 }
 
 enum CampaignStatus {

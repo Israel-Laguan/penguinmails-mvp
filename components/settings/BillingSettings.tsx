@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, CreditCard, DollarSign } from "lucide-react";
 import { Alert, AlertDescription } from "../ui/alert";
-import purchase from "@/lib/actions/purchase";
+import purchaseAction from "@/lib/actions/purchase";
 import { getStripe } from "@/lib/stripe-client";
 
 function convertDateToLong(dateString: string) {
@@ -51,7 +51,7 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
     event.preventDefault();
     setIsProcessingPayment(true);
 
-    const res = await purchase();
+    const res = await purchaseAction();
 
     if (!res.checkoutSessionId) {
       console.error("Failed to create stripe checkout session.");

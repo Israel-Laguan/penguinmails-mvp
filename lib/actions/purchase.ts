@@ -5,7 +5,7 @@ import { stripeApi } from "@/lib/stripe-server";
 const priceId = process.env.STRIPE_PRICE_ID;
 const settingsPath = '/dashboard/settings';
 
-export default async function purchase() {
+export default async function purchaseAction() {
   try {
     const stripeCheckoutSession = await stripeApi.checkout.sessions.create({
       payment_method_types: ['card'],

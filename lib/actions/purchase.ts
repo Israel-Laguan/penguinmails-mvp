@@ -1,17 +1,32 @@
 "use server";
 
+import { PlanDetails } from "@/components/settings/types";
 import { stripeApi } from "@/lib/stripe-server";
 
-const priceId = process.env.STRIPE_PRICE_ID;
 const settingsPath = '/dashboard/settings';
 
-export default async function purchaseAction() {
+export default async function purchaseAction(productPlan: PlanDetails) {
   try {
+    const { description, name, price, id } = productPlan;
     const stripeCheckoutSession = await stripeApi.checkout.sessions.create({
       payment_method_types: ['card'],
       line_items: [
         {
-          price: priceId,
+          price_data: {
+            currency: 'usd',
+            unit_amount: price * 100,
+            product_data: {
+              name: name,
+              description: description,
+              metadata: {
+                planId: id
+              }
+            },
+            recurring: {
+              interval: 'month',
+              interval_count: 1,
+            }
+          },
           quantity: 1
         },
       ],

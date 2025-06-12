@@ -7,41 +7,11 @@ import { Calendar, CreditCard, DollarSign } from "lucide-react";
 import { Alert, AlertDescription } from "../ui/alert";
 import purchaseAction from "@/lib/actions/purchase";
 import { getStripe } from "@/lib/stripe-client";
+import { BillingSettingsProps } from "./types";
 
 function convertDateToLong(dateString: string) {
   const date = new Date(dateString + 'T00:00:00');
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-}
-interface BillingData {
-  renewalDate: string;
-  emailAccountsUsed: number;
-  campaignsUsed: number;
-  emailsPerMonthUsed: number;
-  planDetails: {
-    id: string;
-    name: string;
-    isMonthly: boolean;
-    price: number;
-    description: string;
-    maxEmailAccounts: number;  // 0 for "Unlimited" or a number
-    maxCampaigns: number;
-    maxEmailsPerMonth: number;
-  };
-  paymentMethod: {
-    lastFour: string;
-    expiry: string;
-    brand: string; // e.g., "Visa"
-  };
-  billingHistory: Array<{
-    date: string;
-    description: string;
-    amount: string;
-    method: string; // e.g., "Visa •••• 4242"
-  }>;
-}
-
-interface BillingSettingsProps {
-  billing: BillingData;
 }
 
 const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
@@ -51,7 +21,7 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
     event.preventDefault();
     setIsProcessingPayment(true);
 
-    const res = await purchaseAction();
+    const res = await purchaseAction(billing.planDetails);
 
     if (!res.checkoutSessionId) {
       console.error("Failed to create stripe checkout session.");

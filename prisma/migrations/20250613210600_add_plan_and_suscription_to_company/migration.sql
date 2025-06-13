@@ -4,6 +4,9 @@
   - You are about to drop the column `planType` on the `Company` table. All the data in the column will be lost.
 
 */
+-- CreateEnum
+CREATE TYPE "SubscriptionStatus" AS ENUM ('ACTIVE', 'CANCELED', 'EXPIRED', 'PENDING', 'ON_HOLD');
+
 -- AlterTable
 ALTER TABLE "Company" DROP COLUMN "planType";
 
@@ -15,6 +18,7 @@ CREATE TABLE "Subscriptions" (
     "id" TEXT NOT NULL,
     "companyId" INTEGER NOT NULL,
     "planDetailId" TEXT NOT NULL,
+    "status" "SubscriptionStatus" NOT NULL DEFAULT 'ACTIVE',
     "renovateBefore" TIMESTAMP(3),
     "payOn" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

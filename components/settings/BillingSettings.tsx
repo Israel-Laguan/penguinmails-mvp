@@ -2,26 +2,45 @@
 
 import React, { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, CreditCard, DollarSign } from "lucide-react";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Briefcase, Calendar, Check, CreditCard, Crown, DollarSign, Star } from "lucide-react";
 import { Alert, AlertDescription } from "../ui/alert";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import purchaseAction from "@/lib/actions/purchase";
 import { getStripe } from "@/lib/stripe-client";
-import { BillingSettingsProps } from "./types";
+import { useAuth } from "@/context/AuthContext";
+import { BillingSettingsProps, PlanTypes } from "./types";
+import { toast } from "sonner";
+import { pricingContent } from "@/app/pricing/content";
 
 function convertDateToLong(dateString: string) {
-  const date = new Date(dateString + 'T00:00:00');
+  const date = new Date(dateString);
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
+const BillingSettings: React.FC<BillingSettingsProps> = ({ billing, pricingPlans }) => {
+  const { user } = useAuth();
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<string>(billing.planDetails.id);
+  const [currentPlan, setCurrentPlan] = useState<string>(billing.planDetails.id)
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  const handlePlanChange = () => {
+    setCurrentPlan(selectedPlan);
+    setIsModalOpen(false);
+    // Aquí iría la lógica para actualizar el plan en el backend
+  };
 
   const handlePayNow = async (event: FormEvent) => {
     event.preventDefault();
-    setIsProcessingPayment(true);
 
-    const res = await purchaseAction(billing.planDetails);
+    if (billing.planDetails.name === 'FREE')
+      return toast.info('Free Suscription', {
+        description: 'Payment it´s not needed to pay Free suscription.',
+      });
+
+    setIsProcessingPayment(true);
+    const res = await purchaseAction(Number(user?.claims.companyId), billing.planDetails);
 
     if (!res.checkoutSessionId) {
       console.error("Failed to create stripe checkout session.");
@@ -52,10 +71,17 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
             <div>
               <h3 className="text-lg font-medium">{billing.planDetails.name}</h3>
               <p className="text-sm text-muted-foreground">
-                {billing.planDetails.price} / month • Renews on {billing.renewalDate}{" "}
+                {
+                  billing.planDetails.name !== 'FREE' &&
+                  <>
+                    ${billing.planDetails.price} / month • Renews on {new Date(billing.renewalDate).toLocaleDateString()}{" "}
+                  </>
+                }
               </p>
             </div>
-            <Button variant="outline">Change Plan</Button>
+            <Button className="cursor-pointer" variant="outline" onClick={() => setIsModalOpen(true)}>
+              Change Plan
+            </Button>
           </div>
 
           <div className="mt-4 space-y-1">
@@ -71,7 +97,7 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
             </div>
             <div className="flex justify-between text-sm">
               <span>Emails per month</span>
-              <span>{billing.emailsPerMonthUsed.toLocaleString()}</span>
+              <span>{billing.planDetails.maxEmailsPerMonth.toLocaleString()}</span>
             </div>
           </div>
         </div>
@@ -88,13 +114,25 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
           </div>
           <div className="space-y-4 flex flex-col">
             <Alert>
-              <Calendar className="h-4 w-4" />
+              {
+                billing.planDetails.name.toLowerCase() !== 'free'
+                && <Calendar className="h-4 w-4" />
+              }
               <AlertDescription>
-                Your next payment of ${billing.planDetails.price} is due on {convertDateToLong(billing.renewalDate)}
+                {billing.planDetails.name.toLowerCase() !== 'free' ?
+                  <>
+                    Your next payment of ${billing.planDetails.price} is due on {convertDateToLong(billing.renewalDate)}
+                  </> :
+                  <>
+                    In order to make the best use of the platform, you should start using paid plans.
+
+                  </>
+                }
+
               </AlertDescription>
             </Alert>
             <div className="">
-              <Button onClick={handlePayNow} disabled={isProcessingPayment} className="flex items-center gap-2">
+              <Button onClick={handlePayNow} disabled={isProcessingPayment} className="flex items-center gap-2 cursor-pointer">
                 <CreditCard className="w-4 h-4" />
                 {isProcessingPayment ? "Processing..." : "Pay Now"}
               </Button>
@@ -131,7 +169,7 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
                 </p>
               </div>
             </div>
-            <Button variant="ghost" size="sm">
+            <Button className="cursor-pointer" variant="ghost" size="sm">
               Change
             </Button>
           </div>
@@ -164,6 +202,84 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
           </div>
         </div>
       </CardContent>
+
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-6xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Choose Your Plan</DialogTitle>
+            <DialogDescription>
+              Select the plan that best fits your needs. You can change or cancel anytime.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid md:grid-cols-3 gap-6 mt-6">
+            {pricingPlans.map((plan) => {
+              const planName = plan.name.toLowerCase() as PlanTypes;
+              const detailedPlan: any = pricingContent.plans[planName];
+
+              return (
+                <Card
+                  key={plan.id}
+                  className={`relative cursor-pointer transition-all ${selectedPlan === plan.id ? "ring-2 ring-blue-600 shadow-lg" : "hover:shadow-md"
+                    }`}
+                  onClick={() => setSelectedPlan(plan.id)}
+                >
+                  <CardHeader className="pb-4 flex flex-col items-center">
+                    {
+                      planName == 'free' &&
+                      <Briefcase className="h-8 w-8 mb-2 text-primary" />
+                    }
+                    {
+                      planName == 'starter' &&
+                      <Star className="h-8 w-8 mb-2 text-primary" />
+                    }
+                    {
+                      planName == 'pro' &&
+                      <Crown className="h-8 w-8 mb-2 text-primary" />
+                    }
+                    <CardTitle>{plan.name}</CardTitle>
+                    <CardDescription>
+                      {detailedPlan.description}
+                    </CardDescription>
+                    <div className="text-4xl font-bold mt-2">
+                      {plan.price}
+                      <span className="text-xl font-normal text-muted-foreground">
+                        {plan.isMonthly && '/mo'}
+                      </span>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="h-full flex flex-col">
+                    <ul className="space-y-2 mb-6">
+                      {detailedPlan.features.map((feature: string, index: number) => (
+                        <li key={index} className="flex items-center gap-2 text-sm">
+                          <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <CardFooter className="mt-auto">
+                      <Button className="w-full" variant={selectedPlan === plan.id ? "default" : "outline"}>
+                        {currentPlan === plan.id ? "Current Plan" : "Select Plan"}
+                      </Button>
+                    </CardFooter>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+
+          <div className="flex justify-end gap-3 mt-6 pt-6 border-t">
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handlePlanChange} disabled={selectedPlan === currentPlan}>
+              {selectedPlan === currentPlan ? "Current Plan" : "Confirm Change"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

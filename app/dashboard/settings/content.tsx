@@ -9,6 +9,10 @@ import AppearanceSettings from "@/components/settings/AppearanceSettings";
 import NotificationSettings from "@/components/settings/NotificationSettings";
 import { ComplianceSettings } from "@/components/settings/ComplianceSettings";
 import BillingSettings from "@/components/settings/BillingSettings";
+import { getSuscriptionPlanAction } from "@/actions/suscription/userSuscription";
+import { useAuth } from "@/context/AuthContext";
+import { PlanDetails } from "@/components/settings/types";
+import { getPricingPlansDetailedsAction } from "@/actions/planDetailed/allPlans";
 
 interface UserProfileData {
   name: string;
@@ -55,16 +59,7 @@ interface BillingData {
   emailAccountsUsed: number;
   campaignsUsed: number;
   emailsPerMonthUsed: number;
-  planDetails: {
-    id: string;
-    name: string;
-    isMonthly: boolean;
-    price: number;
-    description: string;
-    maxEmailAccounts: number;
-    maxCampaigns: number;
-    maxEmailsPerMonth: number;
-  };
+  planDetails: PlanDetails;
   paymentMethod: {
     lastFour: string;
     expiry: string;
@@ -92,16 +87,16 @@ interface SettingsContentProps {
 }
 
 export function SettingsContent({ settingsData }: SettingsContentProps) {
-  const searchParams = useSearchParams();
-  const checkout = searchParams.get("checkout");
-  const [currentTab, setCurrentTab] = useState("account");
-
   // Use the mock data passed as props
   const { userProfile, appearance, notifications, compliance, billing } =
     settingsData;
 
-  // You can add state or effects here if needed for client-side interactions
-  // For now, we just use the data passed down.
+  const searchParams = useSearchParams();
+  const { user, loading } = useAuth();
+  const checkout = searchParams.get("checkout");
+  const [currentTab, setCurrentTab] = useState("account");
+  const [billingData, setBillingData] = useState<BillingData>(billing);
+  const [pricingPlans, setPricingPlans] = useState<PlanDetails[]>([]);
 
   useEffect(() => {
     if (checkout === 'success')
@@ -109,6 +104,29 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
         description: 'Has been paid user suscription.',
       });
   }, [checkout]);
+
+  useEffect(() => {
+    const getUserPlan = async () => {
+      if (loading || !user) return;
+
+      const response = await getSuscriptionPlanAction(Number(user.claims.companyId));
+      const userPlanDetail = response.suscription?.planDetails as PlanDetails;
+      const renovateBeforeDate = response.suscription?.renovateBefore?.toString() || new Date().toString()
+      setBillingData((prevBilling) => ({ ...prevBilling, renewalDate: renovateBeforeDate, planDetails: userPlanDetail }));
+    };
+
+    getUserPlan();
+  }, []);
+
+  useEffect(() => {
+    const getAllPricingPlans = async () => {
+      const response = await getPricingPlansDetailedsAction();
+      const plansData = response.plans;
+      setPricingPlans(plansData);
+    };
+
+    getAllPricingPlans();
+  }, []);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -166,7 +184,7 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
         </TabsContent>
         <TabsContent value="billing" className="pt-4">
           {/* Pass relevant mock data to BillingPage */}
-          <BillingSettings billing={billing} />
+          <BillingSettings billing={billingData} pricingPlans={pricingPlans} />
         </TabsContent>
       </Tabs>
     </div>

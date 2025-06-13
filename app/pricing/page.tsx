@@ -9,7 +9,7 @@ import { LandingLayout } from '@/components/layout/landing';
 
 export default function PricingPage() {
   return (
-      <LandingLayout>
+    <LandingLayout>
 
       {/* Pricing Section */}
       <section className="w-full py-12 md:py-24 lg:py-32">
@@ -26,13 +26,13 @@ export default function PricingPage() {
             <Card className="flex flex-col">
               <CardHeader className="pb-4">
                 <Briefcase className="h-8 w-8 mb-2 text-primary" />
-                <CardTitle>{pricingContent.plans.business.title}</CardTitle>
-                <CardDescription>{pricingContent.plans.business.description}</CardDescription>
-                <div className="text-4xl font-bold mt-2">{pricingContent.plans.business.price}<span className="text-xl font-normal text-muted-foreground">{pricingContent.plans.business.interval}</span></div>
+                <CardTitle>{pricingContent.plans.starter.title}</CardTitle>
+                <CardDescription>{pricingContent.plans.starter.description}</CardDescription>
+                <div className="text-4xl font-bold mt-2">{pricingContent.plans.starter.price}<span className="text-xl font-normal text-muted-foreground">{pricingContent.plans.starter.interval}</span></div>
               </CardHeader>
               <CardContent className="grid gap-4 flex-grow">
                 <ul className="grid gap-2 text-sm text-muted-foreground">
-                  {pricingContent.plans.business.features.map((feature, index) => (
+                  {pricingContent.plans.starter.features.map((feature, index) => (
                     <li key={index} className="flex items-center">
                       <Check className="mr-2 h-4 w-4 text-green-500" /> {feature}
                     </li>
@@ -41,7 +41,7 @@ export default function PricingPage() {
               </CardContent>
               <CardFooter>
                 <Button className="w-full" asChild>
-                  <Link href="/signup?plan=business">{pricingContent.plans.business.ctaText}</Link>
+                  <Link href="/signup?plan=business">{pricingContent.plans.starter.ctaText}</Link>
                 </Button>
               </CardFooter>
             </Card>
@@ -50,13 +50,13 @@ export default function PricingPage() {
             <Card className="flex flex-col border-primary ring-2 ring-primary">
               <CardHeader className="pb-4">
                 <Star className="h-8 w-8 mb-2 text-primary" />
-                <CardTitle>{pricingContent.plans.premium.title}</CardTitle>
-                <CardDescription>{pricingContent.plans.premium.description}</CardDescription>
-                <div className="text-4xl font-bold mt-2">{pricingContent.plans.premium.price}<span className="text-xl font-normal text-muted-foreground">{pricingContent.plans.premium.interval}</span></div>
+                <CardTitle>{pricingContent.plans.pro.title}</CardTitle>
+                <CardDescription>{pricingContent.plans.pro.description}</CardDescription>
+                <div className="text-4xl font-bold mt-2">{pricingContent.plans.pro.price}<span className="text-xl font-normal text-muted-foreground">{pricingContent.plans.pro.interval}</span></div>
               </CardHeader>
               <CardContent className="grid gap-4 flex-grow">
                 <ul className="grid gap-2 text-sm text-muted-foreground">
-                  {pricingContent.plans.premium.features.map((feature, index) => (
+                  {pricingContent.plans.pro.features.map((feature, index) => (
                     <li key={index} className="flex items-center">
                       <Check className="mr-2 h-4 w-4 text-green-500" /> {feature}
                     </li>
@@ -65,7 +65,7 @@ export default function PricingPage() {
               </CardContent>
               <CardFooter>
                 <Button className="w-full" asChild>
-                  <Link href="/signup?plan=premium">{pricingContent.plans.premium.ctaText}</Link>
+                  <Link href="/signup?plan=premium">{pricingContent.plans.pro.ctaText}</Link>
                 </Button>
               </CardFooter>
             </Card>
@@ -121,6 +121,6 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
-      </LandingLayout>
+    </LandingLayout>
   );
 }

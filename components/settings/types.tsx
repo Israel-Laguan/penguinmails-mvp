@@ -1,10 +1,12 @@
 
+export type PlanTypes = "free" | "starter" | "pro";
+
 export interface PlanDetails {
   id: string;
   name: string;
   isMonthly: boolean;
   price: number;
-  description: string;
+  description: string | null;
   maxEmailAccounts: number;  // 0 for "Unlimited" or a number
   maxCampaigns: number;
   maxEmailsPerMonth: number;
@@ -31,4 +33,5 @@ export interface BillingData {
 
 export interface BillingSettingsProps {
   billing: BillingData;
+  pricingPlans: PlanDetails[];
 }

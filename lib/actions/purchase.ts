@@ -1,11 +1,11 @@
 "use server";
 
-import { PlanDetails } from "@/components/settings/types";
 import { stripeApi } from "@/lib/stripe-server";
+import { PlanDetails } from "@/components/settings/types";
 
 const settingsPath = '/dashboard/settings';
 
-export default async function purchaseAction(productPlan: PlanDetails) {
+export default async function purchaseAction(companyId: number, productPlan: PlanDetails) {
   try {
     const { description, name, price, id } = productPlan;
     const stripeCheckoutSession = await stripeApi.checkout.sessions.create({
@@ -17,10 +17,7 @@ export default async function purchaseAction(productPlan: PlanDetails) {
             unit_amount: price * 100,
             product_data: {
               name: name,
-              description: description,
-              metadata: {
-                planId: id
-              }
+              description: description || '',
             },
             recurring: {
               interval: 'month',
@@ -31,6 +28,10 @@ export default async function purchaseAction(productPlan: PlanDetails) {
         },
       ],
       mode: 'subscription',
+      metadata: {
+        planId: id,
+        companyId,
+      },
       success_url: `${process.env.NEXTAUTH_URL}${settingsPath}?checkout=success`,
       cancel_url: `${process.env.NEXTAUTH_URL}${settingsPath}?checkout=cancel`,
     });

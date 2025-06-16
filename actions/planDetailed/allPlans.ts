@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function getPricingPlansDetailedsAction() {
   try {
-    const plans = await prisma.planDetails.findMany({
+    const plans = await prisma.planDetail.findMany({
       omit: { createdAt: true, updatedAt: true }
     });
 

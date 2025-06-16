@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function getSuscriptionPlanAction(companyId: number) {
   try {
-    const companySuscription = await prisma.subscriptions.findFirst({
+    const companySuscription = await prisma.subscription.findFirst({
       where: {
         companyId,
       },
@@ -12,7 +12,7 @@ export async function getSuscriptionPlanAction(companyId: number) {
       },
       select: {
         renovateBefore: true,
-        planDetails: {
+        planDetail: {
           omit: {
             createdAt: true,
             updatedAt: true,

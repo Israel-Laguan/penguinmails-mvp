@@ -14,7 +14,7 @@ async function findOrCreate(model: any, where: object, data: object) {
 
 async function main() {
   const freePlan = await findOrCreate(
-    prisma.planDetails,
+    prisma.planDetail,
     { name: "FREE" },
     {
       name: "FREE",
@@ -28,7 +28,7 @@ async function main() {
   );
 
   await findOrCreate(
-    prisma.planDetails,
+    prisma.planDetail,
     {
       name: "STARTER",
     },
@@ -44,7 +44,7 @@ async function main() {
   );
 
   await findOrCreate(
-    prisma.planDetails,
+    prisma.planDetail,
     { name: "PRO" },
     {
       name: "PRO",
@@ -65,7 +65,7 @@ async function main() {
     }
   );
 
-  await prisma.subscriptions.create({
+  await prisma.subscription.create({
     data: {
       planDetailId: freePlan.id,
       companyId: company.id,

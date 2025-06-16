@@ -34,4 +34,6 @@ export interface BillingData {
 export interface BillingSettingsProps {
   billing: BillingData;
   pricingPlans: PlanDetails[];
+  currentPlan: string;
+  onChangeUserPlan: (newPlan: string) => void;
 }

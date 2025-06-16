@@ -28,7 +28,7 @@ const createSubscriptionHistoryEntry = async (params: CreateHistoryEntryParams) 
         stripeEventId: params.stripeEventId,
       },
     });
-    console.log(`Suscription history recorded: ${params.action} for suscription ${params.subscriptionId}`);
+    console.log(`Subscription history recorded: ${params.action} for suscription ${params.subscriptionId}`);
   } catch (error) {
     console.error("Error trying to create suscription history:", error);
   }

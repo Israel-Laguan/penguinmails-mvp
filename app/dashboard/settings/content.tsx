@@ -110,7 +110,9 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
       if (loading || !user) return;
 
       const response = await getSuscriptionPlanAction(Number(user.claims.companyId));
-      const userPlanDetail = response.suscription?.planDetails as PlanDetails;
+      if (!response.suscription?.planDetail) return;
+
+      const userPlanDetail: PlanDetails = response.suscription?.planDetail;
       const renovateBeforeDate = response.suscription?.renovateBefore?.toString() || new Date().toString()
       setBillingData((prevBilling) => ({ ...prevBilling, renewalDate: renovateBeforeDate, planDetails: userPlanDetail }));
     };

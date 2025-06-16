@@ -27,3 +27,33 @@ export async function getSuscriptionPlanAction(companyId: number) {
     return { ok: false, error: error.message };
   }
 }
+
+export async function changeSubscriptionPlanAction(companyId: number, planId: string, isFreePlan: boolean) {
+  try {
+
+    await prisma.subscription.upsert({
+      where: {
+        companyId,
+      },
+      update: {
+        planDetailId: planId,
+        payOn: null,
+        renovateBefore: isFreePlan ? null : new Date(),
+        status: isFreePlan ? 'ACTIVE' : 'ON_HOLD'
+      },
+      create: {
+        planDetailId: planId,
+        companyId,
+        payOn: null,
+        renovateBefore: isFreePlan ? null : new Date(),
+        status: isFreePlan ? 'ACTIVE' : 'ON_HOLD'
+      }
+    });
+
+    return { ok: true, message: "Suscription change successfully." };
+
+  } catch (error: any) {
+    console.error("Error registering user:", error);
+    return { ok: false, error: error.message };
+  }
+}

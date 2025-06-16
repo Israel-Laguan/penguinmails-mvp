@@ -2,33 +2,29 @@
 
 import React, { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Briefcase, Calendar, Check, CreditCard, Crown, DollarSign, Star } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar, CreditCard, DollarSign } from "lucide-react";
 import { Alert, AlertDescription } from "../ui/alert";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import purchaseAction from "@/lib/actions/purchase";
 import { getStripe } from "@/lib/stripe-client";
 import { useAuth } from "@/context/AuthContext";
-import { BillingSettingsProps, PlanTypes } from "./types";
+import { BillingSettingsProps } from "./types";
 import { toast } from "sonner";
-import { pricingContent } from "@/app/pricing/content";
+import PlanDialog from "./PlanDialog";
 
 function convertDateToLong(dateString: string) {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-const BillingSettings: React.FC<BillingSettingsProps> = ({ billing, pricingPlans }) => {
+const BillingSettings: React.FC<BillingSettingsProps> = ({ billing, pricingPlans, currentPlan, onChangeUserPlan }) => {
   const { user } = useAuth();
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<string>(billing.planDetails.id);
-  const [currentPlan, setCurrentPlan] = useState<string>(billing.planDetails.id)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const handlePlanChange = () => {
-    setCurrentPlan(selectedPlan);
+  const handlePlanChange = async (planParam: string) => {
+    await onChangeUserPlan(planParam)
     setIsModalOpen(false);
-    // Aquí iría la lógica para actualizar el plan en el backend
   };
 
   const handlePayNow = async (event: FormEvent) => {
@@ -36,7 +32,7 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing, pricingPlans
 
     if (billing.planDetails.name === 'FREE')
       return toast.info('Free Suscription', {
-        description: 'Payment it´s not needed to pay Free suscription.',
+        description: 'Payment it´s not needed to pay Free subscription.',
       });
 
     setIsProcessingPayment(true);
@@ -206,83 +202,7 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing, pricingPlans
         </div>
       </CardContent>
 
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-6xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Choose Your Plan</DialogTitle>
-            <DialogDescription>
-              Select the plan that best fits your needs. You can change or cancel anytime.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid md:grid-cols-3 gap-6 mt-6">
-            {pricingPlans.map((plan) => {
-              const planName = plan.name.toLowerCase() as PlanTypes;
-              const detailedPlan: any = pricingContent.plans[planName];
-
-              return (
-                <Card
-                  key={plan.id}
-                  className={`relative cursor-pointer transition-all ${selectedPlan === plan.id ? "ring-2 ring-blue-600 shadow-lg" : "hover:shadow-md"
-                    }`}
-                  onClick={() => setSelectedPlan(plan.id)}
-                >
-                  <CardHeader className="pb-4 flex flex-col items-center">
-                    {
-                      planName == 'free' &&
-                      <Briefcase className="h-8 w-8 mb-2 text-primary" />
-                    }
-                    {
-                      planName == 'starter' &&
-                      <Star className="h-8 w-8 mb-2 text-primary" />
-                    }
-                    {
-                      planName == 'pro' &&
-                      <Crown className="h-8 w-8 mb-2 text-primary" />
-                    }
-                    <CardTitle>{plan.name}</CardTitle>
-                    <CardDescription>
-                      {detailedPlan.description}
-                    </CardDescription>
-                    <div className="text-4xl font-bold mt-2">
-                      {plan.price}
-                      <span className="text-xl font-normal text-muted-foreground">
-                        {plan.isMonthly && '/mo'}
-                      </span>
-                    </div>
-                  </CardHeader>
-
-                  <CardContent className="h-full flex flex-col">
-                    <ul className="space-y-2 mb-6">
-                      {detailedPlan.features.map((feature: string, index: number) => (
-                        <li key={index} className="flex items-center gap-2 text-sm">
-                          <Check className="h-4 w-4 text-green-600 flex-shrink-0" />
-                          {feature}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <CardFooter className="mt-auto">
-                      <Button className="w-full" variant={selectedPlan === plan.id ? "default" : "outline"}>
-                        {currentPlan === plan.id ? "Current Plan" : "Select Plan"}
-                      </Button>
-                    </CardFooter>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-
-          <div className="flex justify-end gap-3 mt-6 pt-6 border-t">
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handlePlanChange} disabled={selectedPlan === currentPlan}>
-              {selectedPlan === currentPlan ? "Current Plan" : "Confirm Change"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <PlanDialog planDetailId={billing.planDetails.id} isModalOpen={isModalOpen} currentPlan={currentPlan} setIsModalOpen={setIsModalOpen} handlePlanChange={handlePlanChange} pricingPlans={pricingPlans} />
     </Card>
   );
 };

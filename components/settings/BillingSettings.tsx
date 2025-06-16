@@ -131,12 +131,15 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing, pricingPlans
 
               </AlertDescription>
             </Alert>
-            <div className="">
-              <Button onClick={handlePayNow} disabled={isProcessingPayment} className="flex items-center gap-2 cursor-pointer">
-                <CreditCard className="w-4 h-4" />
-                {isProcessingPayment ? "Processing..." : "Pay Now"}
-              </Button>
-            </div>
+            {
+              billing.planDetails.name.toLowerCase() !== 'free' &&
+              <div className="">
+                <Button onClick={handlePayNow} disabled={isProcessingPayment} className="flex items-center gap-2 cursor-pointer">
+                  <CreditCard className="w-4 h-4" />
+                  {isProcessingPayment ? "Processing..." : "Pay Now"}
+                </Button>
+              </div>
+            }
           </div>
         </div>
 

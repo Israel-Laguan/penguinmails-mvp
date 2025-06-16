@@ -91,7 +91,8 @@ model Company {
   users               User[]
   emailAccounts       EmailAccount[]
   domains             Domain[]
-  subscriptions       Subscriptions[]
+  subscriptions       Subscription[]
+  subscriptionHistories SubscriptionHistory[]
 
   @@index([stripeCustomerId])
 }
@@ -352,24 +353,28 @@ model EmailMessage {
   @@index([deletedById])
 }
 
-model Subscriptions {
-  id              String        @id @default(cuid())
-  companyId       Int
-  planDetailId    String
-  status          SubscriptionStatus @default(ACTIVE) // Enum: ACTIVE, CANCELED, EXPIRED, etc.
-  renovateBefore  DateTime?
-  payOn           DateTime?
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+model Subscription {
+  id                   String        @id @default(cuid())
+  companyId            Int           @unique
+  planDetailId         String
+  status               SubscriptionStatus @default(ACTIVE)
+  renovateBefore       DateTime?
+  payOn                DateTime?
+  stripeCustomerId     String?       @unique
+  stripeSubscriptionId String?       @unique
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
 
-  company         Company       @relation(fields: [companyId], references: [id])
-  planDetails     PlanDetails   @relation(fields: [planDetailId], references: [id])
+  company              Company       @relation(fields: [companyId], references: [id])
+  planDetail           PlanDetail    @relation(fields: [planDetailId], references: [id])
+
+  history              SubscriptionHistory[]
 
   @@index([companyId])
   @@index([planDetailId])
 }
 
-model PlanDetails {
+model PlanDetail {
   id                  String          @id @default(cuid())
   name                String          @unique
   isMonthly           Boolean
@@ -381,7 +386,26 @@ model PlanDetails {
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 
-  subscriptions       Subscriptions[]
+  subscriptions       Subscription[]
+  subscriptionHistoryAsPrevious SubscriptionHistory[] @relation("PreviousPlan")
+  subscriptionHistoryAsCurrent  SubscriptionHistory[] @relation("CurrentPlan")
+}
+
+model SubscriptionHistory {
+  id                   Int       @id @default(autoincrement())
+  subscriptionId       String
+  companyId            Int
+  previousPlanDetailId String?
+  currentPlanDetailId  String
+  action               String
+  notes                String?    @db.Text
+  stripeEventId        String?    @unique
+  createdAt            DateTime   @default(now())
+
+  previousPlanDetail   PlanDetail?  @relation("PreviousPlan", fields: [previousPlanDetailId], references: [id])
+  currentPlanDetail    PlanDetail   @relation("CurrentPlan", fields: [currentPlanDetailId], references: [id])
+  subscription         Subscription @relation(fields: [subscriptionId], references: [id])
+  company              Company      @relation(fields: [companyId], references: [id])
 }
 
 enum UserRole {
@@ -494,4 +518,5 @@ enum SubscriptionStatus {
   EXPIRED
   PENDING
   ON_HOLD
+  FREE_DOWNGRADED
 }

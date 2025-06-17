@@ -54,7 +54,6 @@ export function SignUpForm({ selectedPlan }: { selectedPlan: string | null; }) {
       return;
     }
 
-    alert("Stripe integration is not implemented yet. Please proceed with the signup.");
     try {
       const response = await fetch('/api/signup', {
         method: 'POST',

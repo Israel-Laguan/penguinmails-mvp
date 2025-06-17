@@ -93,9 +93,6 @@ function SignUpForm({
       return;
     }
 
-    alert(
-      "Stripe integration is not implemented yet. Please proceed with the signup."
-    );
     try {
       const response = await registerUserAction({
         email,

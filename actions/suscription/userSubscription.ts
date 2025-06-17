@@ -1,7 +1,7 @@
 "use server"
 import { prisma } from "@/lib/prisma";
 
-export async function getSuscriptionPlanAction(companyId: number) {
+export async function getSubscriptionPlanAction(companyId: number) {
   try {
     const companySuscription = await prisma.subscription.findFirst({
       where: {

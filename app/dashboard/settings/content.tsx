@@ -9,7 +9,7 @@ import AppearanceSettings from "@/components/settings/AppearanceSettings";
 import NotificationSettings from "@/components/settings/NotificationSettings";
 import { ComplianceSettings } from "@/components/settings/ComplianceSettings";
 import BillingSettings from "@/components/settings/BillingSettings";
-import { changeSubscriptionPlanAction, getSuscriptionPlanAction } from "@/actions/suscription/userSuscription";
+import { changeSubscriptionPlanAction, getSubscriptionPlanAction } from "@/actions/suscription/userSubscription";
 import { useAuth } from "@/context/AuthContext";
 import { PlanDetails } from "@/components/settings/types";
 import { getPricingPlansDetailedsAction } from "@/actions/planDetailed/allPlans";
@@ -103,7 +103,7 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
   const getUserPlan = async () => {
     if (loading || !user) return;
 
-    const response = await getSuscriptionPlanAction(Number(user.claims.companyId));
+    const response = await getSubscriptionPlanAction(Number(user.claims.companyId));
     if (!response.suscription?.planDetail) return;
 
     const userPlanDetail: PlanDetails = response.suscription.planDetail;

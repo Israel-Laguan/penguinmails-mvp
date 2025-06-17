@@ -92,7 +92,6 @@ model Company {
   emailAccounts       EmailAccount[]
   domains             Domain[]
   subscriptions       Subscription[]
-  subscriptionHistories SubscriptionHistory[]
 
   @@index([stripeCustomerId])
 }
@@ -359,7 +358,7 @@ model Subscription {
   planDetailId         String
   status               SubscriptionStatus @default(ACTIVE)
   renovateBefore       DateTime?
-  payOn                DateTime?
+  paidOn               DateTime?
   stripeCustomerId     String?       @unique
   stripeSubscriptionId String?       @unique
   createdAt            DateTime      @default(now())
@@ -367,8 +366,6 @@ model Subscription {
 
   company              Company       @relation(fields: [companyId], references: [id])
   planDetail           PlanDetail    @relation(fields: [planDetailId], references: [id])
-
-  history              SubscriptionHistory[]
 
   @@index([companyId])
   @@index([planDetailId])
@@ -387,25 +384,6 @@ model PlanDetail {
   updatedAt           DateTime        @updatedAt
 
   subscriptions       Subscription[]
-  subscriptionHistoryAsPrevious SubscriptionHistory[] @relation("PreviousPlan")
-  subscriptionHistoryAsCurrent  SubscriptionHistory[] @relation("CurrentPlan")
-}
-
-model SubscriptionHistory {
-  id                   Int       @id @default(autoincrement())
-  subscriptionId       String
-  companyId            Int
-  previousPlanDetailId String?
-  currentPlanDetailId  String
-  action               String
-  notes                String?    @db.Text
-  stripeEventId        String?    @unique
-  createdAt            DateTime   @default(now())
-
-  previousPlanDetail   PlanDetail?  @relation("PreviousPlan", fields: [previousPlanDetailId], references: [id])
-  currentPlanDetail    PlanDetail   @relation("CurrentPlan", fields: [currentPlanDetailId], references: [id])
-  subscription         Subscription @relation(fields: [subscriptionId], references: [id])
-  company              Company      @relation(fields: [companyId], references: [id])
 }
 
 enum UserRole {

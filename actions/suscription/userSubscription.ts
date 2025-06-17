@@ -6,6 +6,7 @@ export async function getSubscriptionPlanAction(companyId: number) {
     const companySuscription = await prisma.subscription.findFirst({
       where: {
         companyId,
+        status: 'ACTIVE',
       },
       orderBy: {
         createdAt: 'desc',
@@ -30,29 +31,6 @@ export async function getSubscriptionPlanAction(companyId: number) {
 
 export async function changeSubscriptionPlanAction(companyId: number, planId: string, isFreePlan: boolean) {
   try {
-
-    const currentSubscription = await prisma.subscription.findFirst({
-      where: {
-        companyId,
-        status: {
-          in: ['ACTIVE', 'PENDING']
-        }
-      },
-      select: {
-        id: true,
-        planDetail: {
-          select: {
-            id: true,
-          }
-        }
-      }
-    });
-
-    const isPlanChanging = currentSubscription?.planDetail.id !== planId;
-
-    if ((!isFreePlan && isPlanChanging) || (isFreePlan && !isPlanChanging))
-      return { ok: true, message: 'Subscription change successfully.' };
-
     await prisma.subscription.create({
       data: {
         planDetailId: planId,

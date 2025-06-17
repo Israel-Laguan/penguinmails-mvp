@@ -69,8 +69,8 @@ async function main() {
     data: {
       planDetailId: freePlan.id,
       companyId: company.id,
-      paidOn: new Date(),
-      renovateBefore: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      paidOn: null,
+      renovateBefore: null,
     }
   });
 

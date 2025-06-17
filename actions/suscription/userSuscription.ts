@@ -31,26 +31,39 @@ export async function getSuscriptionPlanAction(companyId: number) {
 export async function changeSubscriptionPlanAction(companyId: number, planId: string, isFreePlan: boolean) {
   try {
 
-    await prisma.subscription.upsert({
+    const currentSubscription = await prisma.subscription.findFirst({
       where: {
         companyId,
+        status: {
+          in: ['ACTIVE', 'PENDING']
+        }
       },
-      update: {
-        planDetailId: planId,
-        payOn: null,
-        renovateBefore: isFreePlan ? null : new Date(),
-        status: isFreePlan ? 'ACTIVE' : 'ON_HOLD'
-      },
-      create: {
-        planDetailId: planId,
-        companyId,
-        payOn: null,
-        renovateBefore: isFreePlan ? null : new Date(),
-        status: isFreePlan ? 'ACTIVE' : 'ON_HOLD'
+      select: {
+        id: true,
+        planDetail: {
+          select: {
+            id: true,
+          }
+        }
       }
     });
 
-    return { ok: true, message: "Suscription change successfully." };
+    const isPlanChanging = currentSubscription?.planDetail.id !== planId;
+
+    if ((!isFreePlan && isPlanChanging) || (isFreePlan && !isPlanChanging))
+      return { ok: true, message: 'Subscription change successfully.' };
+
+    await prisma.subscription.create({
+      data: {
+        planDetailId: planId,
+        companyId,
+        paidOn: null,
+        renovateBefore: isFreePlan ? null : new Date(),
+        status: isFreePlan ? 'ACTIVE' : 'PENDING'
+      }
+    });
+
+    return { ok: true, message: 'Subscription change successfully.' };
 
   } catch (error: any) {
     console.error("Error registering user:", error);

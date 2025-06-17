@@ -21,7 +21,7 @@ export async function signInWithFirebase(uid: string) {
               orderBy: { createdAt: 'desc' },
               take: 1,
               select: {
-                planDetails: {
+                planDetail: {
                   select: {
                     name: true,
                   },
@@ -38,7 +38,7 @@ export async function signInWithFirebase(uid: string) {
       role: user?.role,
       companyId: user?.company?.id,
       companyName: user?.company?.name,
-      plan: user?.company?.subscriptions[0]?.planDetails?.name,
+      plan: user?.company?.subscriptions[0]?.planDetail?.name,
     };
 
     await admin.auth().setCustomUserClaims(uid, customClaims);

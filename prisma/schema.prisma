@@ -359,8 +359,8 @@ model Subscription {
   status               SubscriptionStatus @default(ACTIVE)
   renovateBefore       DateTime?
   paidOn               DateTime?
-  stripeCustomerId     String?       @unique
-  stripeSubscriptionId String?       @unique
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
 

@@ -46,9 +46,6 @@ CREATE TABLE "PlanDetail" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Subscription_companyId_key" ON "Subscription"("companyId");
-
--- CreateIndex
 CREATE INDEX "Subscription_companyId_idx" ON "Subscription"("companyId");
 
 -- CreateIndex

@@ -354,7 +354,7 @@ model EmailMessage {
 
 model Subscription {
   id                   String        @id @default(cuid())
-  companyId            Int           @unique
+  companyId            Int
   planDetailId         String
   status               SubscriptionStatus @default(ACTIVE)
   renovateBefore       DateTime?

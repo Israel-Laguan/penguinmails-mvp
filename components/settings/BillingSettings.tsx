@@ -23,7 +23,7 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing, pricingPlans
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const handlePlanChange = async (planParam: string) => {
-    await onChangeUserPlan(planParam)
+    await onChangeUserPlan(planParam);
     setIsModalOpen(false);
   };
 

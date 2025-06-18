@@ -9,7 +9,7 @@ import AppearanceSettings from "@/components/settings/AppearanceSettings";
 import NotificationSettings from "@/components/settings/NotificationSettings";
 import { ComplianceSettings } from "@/components/settings/ComplianceSettings";
 import BillingSettings from "@/components/settings/BillingSettings";
-import { changeSubscriptionPlanAction, getSubscriptionPlanAction } from "@/actions/suscription/userSubscription";
+import { getSubscriptionPlanAction } from "@/actions/suscription/userSubscription";
 import { useAuth } from "@/context/AuthContext";
 import { PlanDetails } from "@/components/settings/types";
 import { getPricingPlansDetailedsAction } from "@/actions/planDetailed/allPlans";
@@ -101,7 +101,6 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
   const [billingData, setBillingData] = useState<BillingData>(billing);
   const [pricingPlans, setPricingPlans] = useState<PlanDetails[]>([]);
   const [currentPlan, setCurrentPlan] = useState<string>(billing.planDetails.id);
-  const [isLoadingPlanUpdated, setIsLoadingPlanUpdated] = useState<boolean>(false);
 
   const getUserPlan = async () => {
     if (loading || !user) return;
@@ -116,21 +115,16 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
   };
 
   const handleChangeUserPlan = async (selectedPlan: string) => {
-    const freePlan = pricingPlans.find((plan) => plan.name.toLowerCase() === 'free')
-    const isFreePlan = freePlan?.id === selectedPlan;
-
-    setIsLoadingPlanUpdated(true);
     if (new Date().getTime() < new Date(billingData.renewalDate).getTime())
       return toast.warning('Active paid subscription', {
         description: 'It is not possible to change, the user currently has an active paid subscription.',
       });
 
-    const response = await changeSubscriptionPlanAction(Number(user?.claims.companyId), selectedPlan, isFreePlan);
+    const selectedPlanDetails = pricingPlans.find((pricingPlan) => pricingPlan.id === selectedPlan)
 
-    if (!response.ok) return;
+    if (!selectedPlanDetails) return;
 
-    await getUserPlan();
-    setIsLoadingPlanUpdated(false);
+    setBillingData((prevBilling) => ({ ...prevBilling, planDetails: selectedPlanDetails, renewalDate: new Date().toString() }));
   };
 
   useEffect(() => {

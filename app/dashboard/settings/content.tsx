@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AccountSettings from "@/components/settings/AccountSettings";
 import AppearanceSettings from "@/components/settings/AppearanceSettings";
@@ -13,6 +13,7 @@ import { changeSubscriptionPlanAction, getSubscriptionPlanAction } from "@/actio
 import { useAuth } from "@/context/AuthContext";
 import { PlanDetails } from "@/components/settings/types";
 import { getPricingPlansDetailedsAction } from "@/actions/planDetailed/allPlans";
+import CheckoutDialog from "@/components/settings/CheckoutDialog";
 
 interface UserProfileData {
   name: string;
@@ -92,6 +93,8 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
     settingsData;
 
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const { user, loading } = useAuth();
   const checkout = searchParams.get("checkout");
   const [currentTab, setCurrentTab] = useState("account");
@@ -131,10 +134,10 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
   };
 
   useEffect(() => {
-    if (checkout === 'success')
-      toast.success('Paid suscription', {
-        description: 'Has been paid user suscription.',
-      });
+    if (typeof checkout === 'string')
+      setTimeout(() => {
+        router.push(pathname);
+      }, 2000)
   }, [checkout]);
 
   useEffect(() => {
@@ -210,6 +213,7 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
           <BillingSettings billing={billingData} pricingPlans={pricingPlans} currentPlan={currentPlan} onChangeUserPlan={(newPlan) => handleChangeUserPlan(newPlan)} />
         </TabsContent>
       </Tabs>
+      <CheckoutDialog isModalOpen={typeof checkout === 'string'} checkout={checkout} setIsModalOpen={() => router.push(pathname)} />
     </div>
   );
 }

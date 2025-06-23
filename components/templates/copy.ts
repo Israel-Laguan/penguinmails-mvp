@@ -88,6 +88,10 @@ export const copyText = {
         label: "Email Body",
         placeholder: "Write your email content here...",
         tooltip: "Use personalization tags to make your emails more personal."
+      },
+      description: {
+        label: "Description",
+        placeholder: "Enter a brief description of the template"
       }
     },
     actions: {
@@ -127,5 +131,8 @@ export const copyText = {
   },
   created: {
     label: "Created"
+  },
+  description: {
+    label: "Description",
   }
 } as const;

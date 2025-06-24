@@ -13,6 +13,11 @@ export function TemplateViewMode({ template }: TemplateViewModeProps) {
         <div className="text-sm font-medium text-muted-foreground mb-1">{t.category.label}</div>
         <div>{template.category}</div>
       </div>
+
+      <div>
+        <div className="text-sm font-medium text-muted-foreground mb-1">{t.description.label}</div>
+        <div>{template.description}</div>
+      </div>
       
       <div>
         <div className="text-sm font-medium text-muted-foreground mb-1">{t.subjectLine.label}</div>

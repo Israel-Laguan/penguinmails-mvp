@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Info, Save } from "lucide-react";
 import {
   Select,
@@ -32,6 +31,7 @@ import {
 import { TemplateCategory } from "@/app/api/generated/prisma";
 import { copyText as t } from "./copy";
 import PersonalizationTags from "@/components/email/PersonalizationTags";
+import LexicalEditor from "@/components/ui/LexicalEditor";
 
 const templateFormSchema = z.object({
   name: z.string().min(1, "Template name is required"),
@@ -122,7 +122,7 @@ export function TemplateForm({
 
           <FormField
             control={form.control}
-            name="description" 
+            name="description"
             render={({ field }) => (
               <FormItem className="col-span-3">
                 <FormLabel>
@@ -220,10 +220,10 @@ export function TemplateForm({
                 </TooltipProvider>
               </div>
               <FormControl>
-                <Textarea
-                  rows={12}
+                <LexicalEditor
+                  value={field.value}
+                  onChange={field.onChange}
                   placeholder={t.newTemplate.form.content.placeholder}
-                  {...field}
                 />
               </FormControl>
               <FormMessage />

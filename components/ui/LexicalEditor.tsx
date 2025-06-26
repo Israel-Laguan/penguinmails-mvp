@@ -4,13 +4,20 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { $generateHtmlFromNodes } from "@lexical/html";
+import { $generateHtmlFromNodes, $generateNodesFromDOM } from "@lexical/html";
 import {
   $getRoot,
   $createParagraphNode,
-  $createTextNode,
   EditorState,
+  $isElementNode,
 } from "lexical";
+import { createCommand } from "lexical";
+import type { LexicalEditor as LexicalEditorType } from "lexical";
+import Toolbar from "./toolbar";
+
+export const INSERT_IMAGE_COMMAND = createCommand("INSERT_IMAGE_COMMAND");
+export const INDENT_CONTENT_COMMAND = createCommand("INDENT_CONTENT_COMMAND");
+export const OUTDENT_CONTENT_COMMAND = createCommand("OUTDENT_CONTENT_COMMAND");
 
 interface LexicalEditorProps {
   value: string;
@@ -19,12 +26,26 @@ interface LexicalEditorProps {
 }
 
 function getInitialEditorState(value: string) {
-  return () => {
+  return (editor: LexicalEditorType) => {
     const root = $getRoot();
     root.clear();
-    const paragraph = $createParagraphNode();
-    paragraph.append($createTextNode(value));
-    root.append(paragraph);
+    let html = value && value.trim().length > 0 ? value : "";
+    if (html && !/<(p|ul|ol|h[1-6]|blockquote|pre|table)[\s>]/i.test(html)) {
+      html = `<p>${html}</p>`;
+    }
+    if (html) {
+      const parser = new DOMParser();
+      const dom = parser.parseFromString(html, "text/html");
+      const nodes = $generateNodesFromDOM(editor, dom);
+      nodes.forEach((node) => {
+        if ($isElementNode(node)) {
+          root.append(node);
+        }
+      });
+    } else {
+      const paragraph = $createParagraphNode();
+      root.append(paragraph);
+    }
   };
 }
 
@@ -36,7 +57,7 @@ export default function LexicalEditor({
   const initialConfig = {
     namespace: "TemplateEditor",
     onError: (error: Error) => {
-      throw error;
+      console.error(error);
     },
     editorState: getInitialEditorState(value),
   };
@@ -47,6 +68,7 @@ export default function LexicalEditor({
 
   return (
     <LexicalComposer initialConfig={initialConfig}>
+      <Toolbar />
       <RichTextPlugin
         contentEditable={
           <ContentEditable className="min-h-[150px] border rounded p-2" />
@@ -56,8 +78,8 @@ export default function LexicalEditor({
       />
       <HistoryPlugin />
       <OnChangePlugin
-        onChange={(_editorState: EditorState, editor) => {
-          editor.getEditorState().read(() => {
+        onChange={(editorState: EditorState, editor) => {
+          editorState.read(() => {
             const html = $generateHtmlFromNodes(editor, null);
             onChange(html);
           });

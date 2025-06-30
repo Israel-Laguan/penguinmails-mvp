@@ -75,28 +75,15 @@ export function TemplateForm({
     event?: React.BaseSyntheticEvent
   ) => {
     event?.preventDefault();
+    console.log("Body value to save:", data.body);
     await onSubmit(data);
   };
 
-  const handleInsertTag = (tag: string, field: "subject" | "body") => {
-    const currentValue = form.getValues(field);
-    const input = document.querySelector(
-      `[name="${field}"]`
-    ) as HTMLTextAreaElement;
-    if (!input) return;
-
-    const start = input.selectionStart || 0;
-    const end = input.selectionEnd || 0;
-    const newValue =
-      currentValue.substring(0, start) + tag + currentValue.substring(end);
-
-    form.setValue(field, newValue, { shouldValidate: true });
-
-    // Set cursor position after inserted tag
-    setTimeout(() => {
-      input.focus();
-      input.setSelectionRange(start + tag.length, start + tag.length);
-    }, 0);
+  const handleInsertTag = (fieldName: "subject" | "body", tag: string) => {
+    const currentValue = form.getValues(fieldName) || "";
+    const newValue = currentValue + " " + tag;
+    form.setValue(fieldName, newValue, { shouldDirty: true });
+    console.log(`updated tag for ${fieldName}:`, newValue);
   };
 
   return (
@@ -201,6 +188,10 @@ export function TemplateForm({
           )}
         />
 
+        <PersonalizationTags
+          onInsertTag={(tag) => handleInsertTag("subject", tag)}
+        />
+
         <FormField
           control={form.control}
           name="body"
@@ -232,7 +223,7 @@ export function TemplateForm({
         />
 
         <PersonalizationTags
-          onInsertTag={(tag) => handleInsertTag(tag, "body")}
+          onInsertTag={(tag) => handleInsertTag("body", tag)}
         />
 
         <div className="flex justify-end space-x-2">

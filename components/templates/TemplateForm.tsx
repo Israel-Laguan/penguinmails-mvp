@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -31,7 +32,7 @@ import {
 import { TemplateCategory } from "@/app/api/generated/prisma";
 import { copyText as t } from "./copy";
 import PersonalizationTags from "@/components/email/PersonalizationTags";
-import LexicalEditor from "@/components/ui/LexicalEditor";
+import LexicalEditor, { LexicalEditorRef } from "@/components/ui/LexicalEditor";
 
 const templateFormSchema = z.object({
   name: z.string().min(1, "Template name is required"),
@@ -58,6 +59,8 @@ export function TemplateForm({
   submitLabel = t.newTemplate.actions.create,
   submitLoadingLabel = t.newTemplate.actions.creating,
 }: TemplateFormProps) {
+  const lexicalEditorRef = useRef<LexicalEditorRef>(null);
+  
   const form = useForm<TemplateFormValues>({
     resolver: zodResolver(templateFormSchema),
     defaultValues: initialData || {
@@ -80,10 +83,15 @@ export function TemplateForm({
   };
 
   const handleInsertTag = (fieldName: "subject" | "body", tag: string) => {
-    const currentValue = form.getValues(fieldName) || "";
-    const newValue = currentValue + " " + tag;
-    form.setValue(fieldName, newValue, { shouldDirty: true });
-    console.log(`updated tag for ${fieldName}:`, newValue);
+    if (fieldName === "subject") {
+      const currentValue = form.getValues(fieldName) || "";
+      const newValue = currentValue + " " + tag;
+      form.setValue(fieldName, newValue, { shouldDirty: true });
+    } else if (fieldName === "body") {
+      if (lexicalEditorRef.current) {
+        lexicalEditorRef.current.insertText(" " + tag);
+      }
+    }
   };
 
   return (
@@ -159,6 +167,7 @@ export function TemplateForm({
             )}
           />
         </div>
+        
         <FormField
           control={form.control}
           name="subject"
@@ -212,6 +221,7 @@ export function TemplateForm({
               </div>
               <FormControl>
                 <LexicalEditor
+                  ref={lexicalEditorRef}
                   value={field.value}
                   onChange={field.onChange}
                   placeholder={t.newTemplate.form.content.placeholder}

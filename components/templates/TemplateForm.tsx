@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,7 +15,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Info, Save } from "lucide-react";
 import {
   Select,
@@ -32,6 +32,7 @@ import {
 import { TemplateCategory } from "@/app/api/generated/prisma";
 import { copyText as t } from "./copy";
 import PersonalizationTags from "@/components/email/PersonalizationTags";
+import LexicalEditor, { LexicalEditorRef } from "@/components/ui/LexicalEditor";
 
 const templateFormSchema = z.object({
   name: z.string().min(1, "Template name is required"),
@@ -58,6 +59,8 @@ export function TemplateForm({
   submitLabel = t.newTemplate.actions.create,
   submitLoadingLabel = t.newTemplate.actions.creating,
 }: TemplateFormProps) {
+  const lexicalEditorRef = useRef<LexicalEditorRef>(null);
+  
   const form = useForm<TemplateFormValues>({
     resolver: zodResolver(templateFormSchema),
     defaultValues: initialData || {
@@ -75,28 +78,20 @@ export function TemplateForm({
     event?: React.BaseSyntheticEvent
   ) => {
     event?.preventDefault();
+    console.log("Body value to save:", data.body);
     await onSubmit(data);
   };
 
-  const handleInsertTag = (tag: string, field: "subject" | "body") => {
-    const currentValue = form.getValues(field);
-    const input = document.querySelector(
-      `[name="${field}"]`
-    ) as HTMLTextAreaElement;
-    if (!input) return;
-
-    const start = input.selectionStart || 0;
-    const end = input.selectionEnd || 0;
-    const newValue =
-      currentValue.substring(0, start) + tag + currentValue.substring(end);
-
-    form.setValue(field, newValue, { shouldValidate: true });
-
-    // Set cursor position after inserted tag
-    setTimeout(() => {
-      input.focus();
-      input.setSelectionRange(start + tag.length, start + tag.length);
-    }, 0);
+  const handleInsertTag = (fieldName: "subject" | "body", tag: string) => {
+    if (fieldName === "subject") {
+      const currentValue = form.getValues(fieldName) || "";
+      const newValue = currentValue + " " + tag;
+      form.setValue(fieldName, newValue, { shouldDirty: true });
+    } else if (fieldName === "body") {
+      if (lexicalEditorRef.current) {
+        lexicalEditorRef.current.insertText(" " + tag);
+      }
+    }
   };
 
   return (
@@ -122,7 +117,7 @@ export function TemplateForm({
 
           <FormField
             control={form.control}
-            name="description" 
+            name="description"
             render={({ field }) => (
               <FormItem className="col-span-3">
                 <FormLabel>
@@ -172,6 +167,7 @@ export function TemplateForm({
             )}
           />
         </div>
+        
         <FormField
           control={form.control}
           name="subject"
@@ -201,6 +197,10 @@ export function TemplateForm({
           )}
         />
 
+        <PersonalizationTags
+          onInsertTag={(tag) => handleInsertTag("subject", tag)}
+        />
+
         <FormField
           control={form.control}
           name="body"
@@ -220,10 +220,11 @@ export function TemplateForm({
                 </TooltipProvider>
               </div>
               <FormControl>
-                <Textarea
-                  rows={12}
+                <LexicalEditor
+                  ref={lexicalEditorRef}
+                  value={field.value}
+                  onChange={field.onChange}
                   placeholder={t.newTemplate.form.content.placeholder}
-                  {...field}
                 />
               </FormControl>
               <FormMessage />
@@ -232,7 +233,7 @@ export function TemplateForm({
         />
 
         <PersonalizationTags
-          onInsertTag={(tag) => handleInsertTag(tag, "body")}
+          onInsertTag={(tag) => handleInsertTag("body", tag)}
         />
 
         <div className="flex justify-end space-x-2">

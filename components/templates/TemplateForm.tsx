@@ -35,6 +35,7 @@ import PersonalizationTags from "@/components/email/PersonalizationTags";
 
 const templateFormSchema = z.object({
   name: z.string().min(1, "Template name is required"),
+  description: z.string().optional(),
   category: z.nativeEnum(TemplateCategory),
   subject: z.string().min(1, "Subject line is required"),
   body: z.string().min(1, "Email body is required"),
@@ -64,11 +65,15 @@ export function TemplateForm({
       category: TemplateCategory.OUTREACH,
       subject: "",
       body: "",
+      description: "",
     },
     mode: "onChange",
   });
 
-  const handleSubmit = async (data: TemplateFormValues, event?: React.BaseSyntheticEvent) => {
+  const handleSubmit = async (
+    data: TemplateFormValues,
+    event?: React.BaseSyntheticEvent
+  ) => {
     event?.preventDefault();
     await onSubmit(data);
   };
@@ -107,6 +112,28 @@ export function TemplateForm({
                 <FormControl>
                   <Input
                     placeholder={t.newTemplate.form.name.placeholder}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="description" 
+            render={({ field }) => (
+              <FormItem className="col-span-3">
+                <FormLabel>
+                  {t.newTemplate.form.description?.label ?? "Description"}
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder={
+                      t.newTemplate.form.description?.placeholder ??
+                      "Enter a description"
+                    }
                     {...field}
                   />
                 </FormControl>
@@ -214,8 +241,12 @@ export function TemplateForm({
               {t.newTemplate.actions.cancel}
             </Button>
           )}
-          <Button type="submit" disabled={form.formState.isSubmitting} onClick={form.handleSubmit(handleSubmit)}>
-          <Save className="mr-2 h-4 w-4" />
+          <Button
+            type="submit"
+            disabled={form.formState.isSubmitting}
+            onClick={form.handleSubmit(handleSubmit)}
+          >
+            <Save className="mr-2 h-4 w-4" />
             {form.formState.isSubmitting ? submitLoadingLabel : submitLabel}
           </Button>
         </div>

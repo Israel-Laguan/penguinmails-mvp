@@ -1,4 +1,43 @@
-const lexicalEditorTheme = {
+export interface LexicalEditorTheme {
+  ltr: string;
+  rtl: string;
+  placeholder: string;
+  paragraph: string;
+  quote: string;
+  heading: {
+    h1: string;
+    h2: string;
+    h3: string;
+    h4: string;
+    h5: string;
+  };
+  list: {
+    nested: {
+      listitem: string;
+    };
+    ol: string;
+    ul: string;
+    listitem: string;
+  };
+  image: string;
+  link: string;
+  text: {
+    bold: string;
+    italic: string;
+    overflowed: string;
+    hashtag: string;
+    underline: string;
+    strikethrough: string;
+    underlineStrikethrough: string;
+    code: string;
+  };
+  code: string;
+  codeHighlight: {
+    [token: string]: string;
+  };
+}
+
+const lexicalEditorTheme: LexicalEditorTheme = {
   ltr: "ltr",
   rtl: "rtl",
   placeholder: "editor-placeholder",
@@ -65,4 +104,5 @@ const lexicalEditorTheme = {
     variable: "editor-tokenVariable",
   },
 };
+
 export default lexicalEditorTheme;

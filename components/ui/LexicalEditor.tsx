@@ -21,6 +21,9 @@ import {
   $getSelection,
   $insertNodes,
   $createTextNode,
+  ParagraphNode,
+  TextNode,
+  LineBreakNode,
 } from "lexical";
 import { createCommand } from "lexical";
 import type { LexicalEditor as LexicalEditorType } from "lexical";
@@ -28,8 +31,10 @@ import Toolbar from "../toolbar/toolbar";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
 import { ListNode, ListItemNode } from "@lexical/list";
-import { LinkNode } from "@lexical/link";
+import { LinkNode, AutoLinkNode } from "@lexical/link";
 import lexicalEditorTheme from "../theme/lexicalEditorTheme";
+import LinkClickHandler from "../toolbar/LinkClickHandler";
+
 
 export const INSERT_IMAGE_COMMAND = createCommand("INSERT_IMAGE_COMMAND");
 export const INDENT_CONTENT_COMMAND = createCommand("INDENT_CONTENT_COMMAND");
@@ -140,17 +145,36 @@ const LexicalEditor = forwardRef<LexicalEditorRef, LexicalEditorProps>(
   ({ value, onChange, placeholder }, ref) => {
     const editorRef = useRef<LexicalEditorType | null>(null);
 
-    const initialConfig = {
+ const initialConfig = {
       namespace: "TemplateEditor",
-      theme: lexicalEditorTheme,
+      theme: {
+        ...lexicalEditorTheme,
+        list: {
+          ul: "list-disc list-inside ml-4",
+          ol: "list-decimal list-inside ml-4",
+          listitem: "mb-1",
+        },
+        heading: {
+          h1: "text-2xl font-bold mb-2",
+          h2: "text-xl font-bold mb-2",
+          h3: "text-lg font-bold mb-2",
+        },
+        quote: "border-l-4 border-gray-400 pl-4 italic text-gray-700",
+        link: "text-blue-600 underline hover:text-blue-800",
+        image: "my-4 max-w-full",
+      },
       onError: (error: Error) => {
-        console.error(error);
+        console.error("Lexical Error:", error);
       },
       editorState: getInitialEditorState(value),
       nodes: [
+        ParagraphNode,
+        TextNode,
+        LineBreakNode,
         HeadingNode,
         QuoteNode,
         LinkNode,
+        AutoLinkNode,
         ListNode,
         ListItemNode,
       ],
@@ -170,6 +194,7 @@ const LexicalEditor = forwardRef<LexicalEditorRef, LexicalEditorProps>(
 
     return (
       <LexicalComposer initialConfig={initialConfig}>
+        <LinkClickHandler>
         <div
           ref={(el) => {
             if (el) {
@@ -207,6 +232,7 @@ const LexicalEditor = forwardRef<LexicalEditorRef, LexicalEditorProps>(
             }}
           />
         </div>
+        </LinkClickHandler>
       </LexicalComposer>
     );
   }

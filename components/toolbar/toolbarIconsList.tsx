@@ -4,7 +4,6 @@ import UndoOutlinedIcon from "@mui/icons-material/UndoOutlined";
 import FormatBoldOutlinedIcon from "@mui/icons-material/FormatBoldOutlined";
 import FormatItalicOutlinedIcon from "@mui/icons-material/FormatItalicOutlined";
 import FormatUnderlinedOutlinedIcon from "@mui/icons-material/FormatUnderlinedOutlined";
-import StrikethroughSOutlinedIcon from "@mui/icons-material/StrikethroughSOutlined";
 import InsertLinkOutlinedIcon from "@mui/icons-material/InsertLinkOutlined";
 import FormatAlignLeftOutlinedIcon from "@mui/icons-material/FormatAlignLeftOutlined";
 import FormatAlignRightOutlinedIcon from "@mui/icons-material/FormatAlignRightOutlined";

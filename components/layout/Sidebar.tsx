@@ -27,7 +27,7 @@ import SidebarItem from "./SidebarItem";
 const navigationGroups: NavLink[] = [
   {
     title: "Overview",
-    items: [{ to: "dashboard", label: "Dashboard", icon: LayoutDashboard }],
+    items: [{ to: "/dashboard", label: "Dashboard", icon: LayoutDashboard }],
   },
   {
     title: "Getting Started",

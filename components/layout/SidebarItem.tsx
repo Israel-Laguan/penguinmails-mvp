@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 function SidebarItem({ link }: { link: NavLinkItem }) {
-  const isActive = usePathname() === `/${link.to}`;
+  const isActive = usePathname() === link.to;
   return (
     <SidebarMenuItem key={link.to}>
       <SidebarMenuButton tooltip={link.label} asChild>

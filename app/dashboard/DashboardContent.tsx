@@ -1,4 +1,3 @@
-'use client';
 
 import KpiCard from "@/components/KpiCard";
 import CampaignPerformanceChart from "@/components/CampaignPerformanceChart";

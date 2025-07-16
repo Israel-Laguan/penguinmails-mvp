@@ -33,7 +33,7 @@ const navigationGroups: NavLink[] = [
     title: "Getting Started",
     items: [
       {
-        to: "onboarding",
+        to: "/dashboard/onboarding",
         label: "Setup Guide",
         icon: BookOpen,
         highlight: true,
@@ -43,25 +43,29 @@ const navigationGroups: NavLink[] = [
   {
     title: "Outreach Hub",
     items: [
-      { to: "campaigns", label: "Campaigns", icon: Send },
-      { to: "templates", label: "Templates", icon: FileText },
+      { to: "/dashboard/campaigns", label: "Campaigns", icon: Send },
+      { to: "/dashboard/templates", label: "Templates", icon: FileText },
     ],
   },
   {
     title: "Lead Hub",
-    items: [{ to: "leads", label: "Lead Lists", icon: Users }],
+    items: [{ to: "/dashboard/leads", label: "Lead Lists", icon: Users }],
   },
   {
     title: "Communication",
-    items: [{ to: "inbox", label: "Inbox", icon: Inbox }],
+    items: [{ to: "/dashboard/inbox", label: "Inbox", icon: Inbox }],
   },
   {
     title: "Infrastructure",
-    items: [{ to: "domains", label: "Domains & Mailboxes", icon: Server }],
+    items: [
+      { to: "/dashboard/domains", label: "Domains & Mailboxes", icon: Server },
+    ],
   },
   {
     title: "Analytics",
-    items: [{ to: "analytics", label: "Analytics Hub", icon: BarChart3 }],
+    items: [
+      { to: "/dashboard/analytics", label: "Analytics Hub", icon: BarChart3 },
+    ],
   },
 ];
 

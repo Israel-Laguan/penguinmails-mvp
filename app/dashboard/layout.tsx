@@ -1,6 +1,8 @@
-import React from "react";
-import { DashboardLayout } from "@/components/layout/DashboardLayout"; // Renamed to avoid conflict
+import Header from "@/components/layout/DashboardHeader";
+import AppSideBar from "@/components/layout/Sidebar";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import React from "react";
 
 export default async function DashboardRootLayout({
   children,
@@ -9,7 +11,13 @@ export default async function DashboardRootLayout({
 }) {
   return (
     <ProtectedRoute>
-      <DashboardLayout>{children}</DashboardLayout>
+      <SidebarProvider>
+        <AppSideBar />
+        <SidebarInset>
+          <Header />
+          <main className="flex-1 p-8">{children}</main>
+        </SidebarInset>
+      </SidebarProvider>{" "}
     </ProtectedRoute>
   );
 }

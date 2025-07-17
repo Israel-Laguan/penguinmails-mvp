@@ -23,7 +23,7 @@ import {
   Server,
   Users,
 } from "lucide-react";
-import SidebarItem from "./SidebarItem";
+import SidebarLink from "./SidebarLink";
 const navigationGroups: NavLink[] = [
   {
     title: "Overview",
@@ -86,24 +86,22 @@ function AppSideBar() {
           </SidebarMenu>
         </SidebarHeader>
         <SidebarContent className="gap-0">
-          {navigationGroups.map((group) => (
-            <SidebarGroup
-              key={group.title}
-              title={group.title}
-              className="p-1 "
-            >
-              <SidebarGroupLabel className="font-bold">
-                {group.title}
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
+          <SidebarMenu>
+            {navigationGroups.map((group) => (
+              <SidebarGroup key={group.title}>
+                <SidebarGroupLabel className="select-none">{group.title}</SidebarGroupLabel>
+                <SidebarGroupContent>
                   {group.items.map((item) => (
-                    <SidebarItem key={item.to} link={item} />
+                    <SidebarMenuItem key={item.to}>
+                      
+                        <SidebarLink link={item} />
+                      
+                    </SidebarMenuItem>
                   ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          ))}
+                </SidebarGroupContent>
+              </SidebarGroup>
+            ))}
+          </SidebarMenu>
         </SidebarContent>
       </>
     </Sidebar>

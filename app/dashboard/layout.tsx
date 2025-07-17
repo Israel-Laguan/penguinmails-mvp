@@ -1,6 +1,6 @@
 import Header from "@/components/layout/DashboardHeader";
 import AppSideBar from "@/components/layout/Sidebar";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { Separator } from "@/components/ui/separator";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import React from "react";
 
@@ -10,14 +10,16 @@ export default async function DashboardRootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ProtectedRoute>
-      <SidebarProvider>
-        <AppSideBar />
-        <SidebarInset>
+    // <ProtectedRoute>
+    <SidebarProvider>
+      <AppSideBar />
+      <SidebarInset className="bg-sidebar md:peer-data-[variant=inset]:shadow-none gap-5">
+        <div className="bg-white rounded-lg shadow-sm">
           <Header />
-          <main className="flex-1 p-8">{children}</main>
-        </SidebarInset>
-      </SidebarProvider>{" "}
-    </ProtectedRoute>
+        </div>
+        <main className="flex-1 px-4 sm:px-6 lg:px-8 py-6 bg-white rounded-lg shadow-sm">{children}</main>{" "}
+      </SidebarInset>
+    </SidebarProvider>
+    // </ProtectedRoute>
   );
 }

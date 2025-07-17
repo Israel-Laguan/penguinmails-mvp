@@ -6,5 +6,5 @@ export type NavLinkItem = {
   to: string;
   highlight?: boolean;
   label: string;
-  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 };

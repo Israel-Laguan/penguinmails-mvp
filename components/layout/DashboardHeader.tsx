@@ -13,11 +13,11 @@ function Header() {
       </div>
       <div className="flex h-5 items-center space-x-1">
         <div className="flex items-center space-x-1 ">
-          <LinkIcon href="/help">
+          <LinkIcon href="/dashboard/help">
             <HelpCircle className="w-5 h-5 font-bold group-hover:scale-110 transition-transform" />
           </LinkIcon>
           <NotificationsPopover />
-          <LinkIcon href="/settings">
+          <LinkIcon href="/dashboard/settings">
             <Settings className="w-5 h-5 font-bold group-hover:scale-110 transition-transform" />
           </LinkIcon>
         </div>

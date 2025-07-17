@@ -23,17 +23,17 @@ import {
   Server,
   Users,
 } from "lucide-react";
-import SidebarItem from "./SidebarItem";
+import SidebarLink from "./SidebarLink";
 const navigationGroups: NavLink[] = [
   {
     title: "Overview",
-    items: [{ to: "dashboard", label: "Dashboard", icon: LayoutDashboard }],
+    items: [{ to: "/dashboard", label: "Dashboard", icon: LayoutDashboard }],
   },
   {
     title: "Getting Started",
     items: [
       {
-        to: "onboarding",
+        to: "/dashboard/onboarding",
         label: "Setup Guide",
         icon: BookOpen,
         highlight: true,
@@ -43,25 +43,29 @@ const navigationGroups: NavLink[] = [
   {
     title: "Outreach Hub",
     items: [
-      { to: "campaigns", label: "Campaigns", icon: Send },
-      { to: "templates", label: "Templates", icon: FileText },
+      { to: "/dashboard/campaigns", label: "Campaigns", icon: Send },
+      { to: "/dashboard/templates", label: "Templates", icon: FileText },
     ],
   },
   {
     title: "Lead Hub",
-    items: [{ to: "leads", label: "Lead Lists", icon: Users }],
+    items: [{ to: "/dashboard/leads", label: "Lead Lists", icon: Users }],
   },
   {
     title: "Communication",
-    items: [{ to: "inbox", label: "Inbox", icon: Inbox }],
+    items: [{ to: "/dashboard/inbox", label: "Inbox", icon: Inbox }],
   },
   {
     title: "Infrastructure",
-    items: [{ to: "domains", label: "Domains & Mailboxes", icon: Server }],
+    items: [
+      { to: "/dashboard/domains", label: "Domains & Mailboxes", icon: Server },
+    ],
   },
   {
     title: "Analytics",
-    items: [{ to: "analytics", label: "Analytics Hub", icon: BarChart3 }],
+    items: [
+      { to: "/dashboard/analytics", label: "Analytics Hub", icon: BarChart3 },
+    ],
   },
 ];
 
@@ -82,24 +86,22 @@ function AppSideBar() {
           </SidebarMenu>
         </SidebarHeader>
         <SidebarContent className="gap-0">
-          {navigationGroups.map((group) => (
-            <SidebarGroup
-              key={group.title}
-              title={group.title}
-              className="p-1 "
-            >
-              <SidebarGroupLabel className="font-bold">
-                {group.title}
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
+          <SidebarMenu>
+            {navigationGroups.map((group) => (
+              <SidebarGroup key={group.title}>
+                <SidebarGroupLabel className="select-none">{group.title}</SidebarGroupLabel>
+                <SidebarGroupContent>
                   {group.items.map((item) => (
-                    <SidebarItem key={item.to} link={item} />
+                    <SidebarMenuItem key={item.to}>
+                      
+                        <SidebarLink link={item} />
+                      
+                    </SidebarMenuItem>
                   ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          ))}
+                </SidebarGroupContent>
+              </SidebarGroup>
+            ))}
+          </SidebarMenu>
         </SidebarContent>
       </>
     </Sidebar>

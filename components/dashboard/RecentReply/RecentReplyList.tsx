@@ -1,7 +1,3 @@
-import React from "react";
-import { Mail, BarChart2, MessageSquare, MousePointer } from "lucide-react"; // Using lucide-react for icons
-import Link from "next/link";
-
 const recentReplies = [
   {
     name: "Sarah Johnson",
@@ -36,9 +32,9 @@ const RecentRepliesList = async () => {
   if (!recentReplies || recentReplies.length === 0) {
     return <div className="p-6 text-gray-500">No recent replies found.</div>;
   }
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate loading delay
+
   return recentReplies.map((reply, index) => (
-    <div key={index} className="p-6 hover:bg-gray-50 transition-colors">
+    <div key={reply.email} className="p-6 hover:bg-gray-50 transition-colors">
       <div className="flex items-start space-x-4">
         <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
           <span className="text-sm font-medium text-gray-600">

@@ -6,7 +6,6 @@ import {
 } from "@/components/ui/card";
 import { AlertTriangle } from "lucide-react";
 async function WarmupSummary() {
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate loading delay
   return (
     <Card className="bg-white rounded-xl shadow-sm border border-gray-200 ">
       <CardHeader>

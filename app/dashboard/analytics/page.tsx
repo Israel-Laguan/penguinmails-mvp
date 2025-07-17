@@ -1,4 +1,4 @@
-function page() {
-  return <div>page</div>;
+function AnalyticsPage() {
+  return <div>AnalyticsPage</div>;
 }
-export default page;
+export default AnalyticsPage;

@@ -1,4 +1,4 @@
-function page() {
-  return <div>page</div>;
+function OnboardingPage() {
+  return <div>OnboardingPage</div>;
 }
-export default page;
+export default OnboardingPage;

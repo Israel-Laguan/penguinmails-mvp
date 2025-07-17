@@ -1,4 +1,4 @@
-function page() {
-  return <div>page</div>;
+function LeadsPage() {
+  return <div>LeadsPage</div>;
 }
-export default page;
+export default LeadsPage;

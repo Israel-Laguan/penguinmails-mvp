@@ -4,14 +4,11 @@
 import KpiCardSkeleton from "@/components/dashboard/KpiCardSkeleton";
 import KpiCards from "@/components/dashboard/KpiCards";
 import QuickActions from "@/components/dashboard/QuickActions";
-import RecentRepliesList from "@/components/dashboard/RecentReplayList";
-import RecentReplaySkeleton from "@/components/dashboard/RecentReplaySkeleton";
+import RecentRepliesList from "@/components/dashboard/RecentReply/RecentReplyList";
+import RecentReplySkeleton from "@/components/dashboard/RecentReply/RecentReplySkeleton";
 import WarmupSummary from "@/components/dashboard/WarmupSummary";
 import WarmupSummarySkeleton from "@/components/dashboard/WarmupSummarySkeleton";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Globe, Plus, Upload } from "lucide-react";
 import { Suspense } from "react";
 
 export default async function DashboardPage() {
@@ -30,7 +27,7 @@ export default async function DashboardPage() {
 
   // return <DashboardContent dashboardData={dashboardData} />;
   return (
-    <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+    <div className=" mx-auto  space-y-8">
       <div className="space-y-2">
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
         <p className="text-gray-500">
@@ -61,7 +58,7 @@ export default async function DashboardPage() {
                 fallback={
                   <div className="space-y-0">
                     {Array.from({ length: 5 }).map((_, index) => (
-                      <RecentReplaySkeleton key={index} />
+                      <RecentReplySkeleton key={index} />
                     ))}
                   </div>
                 }

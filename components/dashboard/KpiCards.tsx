@@ -25,7 +25,7 @@ async function KpiCards() {
           title={card.title}
           value={card.value}
           icon={card.icon}
-          color={card.color}
+          color={`${card.color} text-white`}
         />
       ))}
     </div>

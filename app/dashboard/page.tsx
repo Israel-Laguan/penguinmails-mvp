@@ -1,15 +1,15 @@
 // import { getServerSession } from "next-auth/next";
 // import { config as authOptions } from "@/lib/auth";
 // import { signOut } from "next-auth/react";
-import KpiCardSkeleton from "@/components/dashboard/KpiCardSkeleton";
+import KpiCardSkeleton from "@/components/dashboard/StatsCardSkeleton";
 import KpiCards from "@/components/dashboard/KpiCards";
 import QuickActions from "@/components/dashboard/QuickActions";
 import RecentRepliesList from "@/components/dashboard/RecentReply/RecentReplyList";
 import RecentReplySkeleton from "@/components/dashboard/RecentReply/RecentReplySkeleton";
 import WarmupSummary from "@/components/dashboard/WarmupSummary";
 import WarmupSummarySkeleton from "@/components/dashboard/WarmupSummarySkeleton";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Suspense } from "react";
+import {Card, CardContent, CardHeader} from "@/components/ui/card";
+import {Suspense} from "react";
 
 export default async function DashboardPage() {
   // const session = await getServerSession(authOptions);
@@ -31,19 +31,19 @@ export default async function DashboardPage() {
       <div className="space-y-2">
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
         <p className="text-gray-500">
-          Welcome back! Here's what's happening with your campaigns.
+          Welcome back! Here&quote;s what&quote;s happening with your campaigns.
         </p>
       </div>
       <Suspense
         fallback={
           <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <KpiCardSkeleton key={index} />
+            {Array.from({length: 4}).map((_, index) => (
+              <KpiCardSkeleton key={index}/>
             ))}
           </div>
         }
       >
-        <KpiCards />
+        <KpiCards/>
       </Suspense>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
@@ -57,13 +57,13 @@ export default async function DashboardPage() {
               <Suspense
                 fallback={
                   <div className="space-y-0">
-                    {Array.from({ length: 5 }).map((_, index) => (
-                      <RecentReplySkeleton key={index} />
+                    {Array.from({length: 5}).map((_, index) => (
+                      <RecentReplySkeleton key={index}/>
                     ))}
                   </div>
                 }
               >
-                <RecentRepliesList />
+                <RecentRepliesList/>
               </Suspense>
             </CardContent>
           </Card>
@@ -71,12 +71,12 @@ export default async function DashboardPage() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Warmup Summary */}
-          <Suspense fallback={<WarmupSummarySkeleton />}>
-            <WarmupSummary />
+          <Suspense fallback={<WarmupSummarySkeleton/>}>
+            <WarmupSummary/>
           </Suspense>
 
           {/* Quick Actions */}
-          <QuickActions />
+          <QuickActions/>
         </div>
       </div>
     </div>

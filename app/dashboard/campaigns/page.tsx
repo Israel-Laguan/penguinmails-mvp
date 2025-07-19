@@ -7,6 +7,7 @@ import StatsCardSkeleton from "@/components/dashboard/StatsCardSkeleton";
 import StatsCards from "@/components/dashboard/compaigns/StatsCards";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import Link from "next/link";
 import { Suspense } from "react";
 
 const companyId = 1;
@@ -42,9 +43,11 @@ export default async function CampaignsPage({
             Manage your email outreach campaigns like a pro
           </p>
         </div>
-        <Button>
-          <Plus className="w-5 h-5" />
-          <span className="font-semibold">New Campaign</span>
+        <Button asChild>
+          <Link href="/dashboard/campaigns/create">
+            <Plus className="w-5 h-5" />
+            <span className="font-semibold">New Campaign</span>
+          </Link>
         </Button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-5 gap-2">

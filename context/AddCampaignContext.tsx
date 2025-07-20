@@ -1,8 +1,10 @@
 "use client";
-import { CampaignFormValues } from "@/components/campaigns/types";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Calendar, Check, Mail, Target, Users, Zap } from "lucide-react";
 import { createContext, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
+
 const steps = [
   {
     number: 1,
@@ -47,12 +49,71 @@ const steps = [
     color: "bg-emerald-500",
   },
 ];
+
+const CampaignFormSchema = z.object({
+  name: z.string().min(1, "Campaign name is required"),
+  description: z.string().optional(),
+  leadsList: z
+    .object({
+      id: z.string(),
+      name: z.string(),
+      contacts: z.number(),
+      description: z.string().optional(),
+    })
+    .optional(),
+  selectedMailboxes: z
+    .array(
+      z.object({
+        id: z.string(),
+        email: z.string().email("Invalid email address"),
+        name: z.string().optional(),
+      })
+    )
+    .min(1, "At least one mailbox must be selected"),
+  sequence: z
+    .array(
+      z.object({
+        id: z.string(),
+        type: z.enum(["email", "wait"]),
+        subject: z.string().optional(),
+        content: z.string().optional(),
+        delay: z.number().optional(),
+        delayUnit: z.enum(["hours", "days"]).optional(),
+        condition: z.enum(["always", "no_reply"]).optional(),
+      })
+    )
+    .min(1, "At least one sequence step is required"),
+  schedule: z.object({
+    days: z
+      .array(
+        z.enum([
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+          "sunday",
+        ])
+      )
+      .min(1, "At least one sending day must be selected"),
+    startTime: z.string().regex(/^\d{2}:\d{2}$/, "Invalid start time format"),
+    endTime: z.string().regex(/^\d{2}:\d{2}$/, "Invalid end time format"),
+    dailyLimit: z.number().min(1, "Daily limit must be at least 1"),
+    delayBetween: z.number().min(0, "Delay between steps must be at least 0"),
+    timezone: z.string().optional(),
+  }),
+});
+export type CampaignFormValues = z.infer<typeof CampaignFormSchema>;
+
 interface contextType {
   currentStep: number;
   steps: typeof steps;
   currentStepData: (typeof steps)[number];
   setCurrentStep: (step: number) => void;
   form: ReturnType<typeof useForm<CampaignFormValues>>;
+  prevStep?: () => void;
+  nextStep?: () => void;
 }
 const AddCampaignContext = createContext<contextType>({
   currentStep: 1,
@@ -61,13 +122,51 @@ const AddCampaignContext = createContext<contextType>({
   setCurrentStep: () => {},
   form: {} as ReturnType<typeof useForm<CampaignFormValues>>,
 });
+
 export function AddCampaignProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const [currentStep, setCurrentStep] = useState(1);
-  const form = useForm<CampaignFormValues>();
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const nextStep = () => {
+    if (currentStep < steps.length) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const form = useForm<CampaignFormValues>({
+    resolver: zodResolver(CampaignFormSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      selectedMailboxes: [],
+      sequence: [
+        {
+          id: "1",
+          type: "email",
+          subject: "Quick question about {{company}}",
+          content:
+            "Hi {{first_name}},\n\nI hope this email finds you well. I noticed that {{company}} has been growing rapidly, and I thought our solution might be a great fit for your team.\n\nWould you be interested in a quick 15-minute call to discuss how this could benefit {{company}}?\n\nBest regards,\n{{sender_name}}",
+          condition: "always",
+        },
+      ],
+      schedule: {
+        days: ["monday", "tuesday", "wednesday", "thursday", "friday"],
+        startTime: "09:00",
+        endTime: "17:00",
+        dailyLimit: 50,
+        delayBetween: 5,
+        timezone: "UTC-08:00",
+      },
+    },
+  });
 
   const contextValue = {
     currentStep,
@@ -76,6 +175,8 @@ export function AddCampaignProvider({
       steps.find((step) => step.number === currentStep) || steps[0],
     setCurrentStep,
     form,
+    prevStep,
+    nextStep,
   };
   return (
     <AddCampaignContext.Provider value={contextValue}>

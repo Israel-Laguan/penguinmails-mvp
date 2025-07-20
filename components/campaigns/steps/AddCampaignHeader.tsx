@@ -1,7 +1,5 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import { useAddCampaignContext } from "@/context/AddCampaignContext";
-import { X } from "lucide-react";
 
 function AddCampaignHeader() {
   const { currentStep, steps, currentStepData } = useAddCampaignContext();

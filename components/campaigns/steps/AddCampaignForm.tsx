@@ -1,20 +1,27 @@
+"use client";
 import { useAddCampaignContext } from "@/context/AddCampaignContext";
+import CampaignDetailsStep from "./CampaignDetailsStep";
+import LeadsSelectionStep from "./LeadsSelectionStep";
+import MailboxAssignmentStep from "./MailboxAssignmentStep";
+import SequenceBuilderStep from "./SequenceBuilderStep";
+import ScheduleSettingStep from "./ScheduleSettingStep";
+import ReviewLaunchStep from "./ReviewLaunchStep";
 
 function AddCampaignForm() {
   const { currentStep } = useAddCampaignContext();
   switch (currentStep) {
     case 1:
-      return <div>Step 1: Campaign Details</div>;
+      return <CampaignDetailsStep />;
     case 2:
-      return <div>Step 2: Audience Selection</div>;
+      return <LeadsSelectionStep />;
     case 3:
-      return <div>Step 3: Mailbox Assignment</div>;
+      return <MailboxAssignmentStep />;
     case 4:
-      return <div>Step 4: Sequence Building</div>;
+      return <SequenceBuilderStep />;
     case 5:
-      return <div>Step 5: Schedule Setting</div>;
+      return <ScheduleSettingStep />;
     case 6:
-      return <div>Step 6: Review & Launch</div>;
+      return <ReviewLaunchStep />;
     default:
       return <div>Unknown Step</div>;
   }

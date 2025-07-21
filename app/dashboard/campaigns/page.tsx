@@ -1,7 +1,7 @@
 import TableSkeleton from "@/components/TableSkeleton";
 import CampaignsFilter from "@/components/campaigns/CampaignsFilter";
 import CampaignsTable, {
-  campaigncolums,
+  campaignColumns,
 } from "@/components/campaigns/CampaignsTable";
 import StatsCardSkeleton from "@/components/dashboard/StatsCardSkeleton";
 import StatsCards from "@/components/dashboard/compaigns/StatsCards";
@@ -21,19 +21,6 @@ interface CampaignsPageProps {
 export default async function CampaignsPage({
   searchParams,
 }: CampaignsPageProps) {
-  // const { page: pageParam, pageSize: pageSizeParam } = await searchParams;
-  // const page = parseInt(pageParam || "1", 10);
-  // const pageSize = parseInt(pageSizeParam || "10", 10);
-  // const currentPage = Math.max(1, page);
-  // const currentPageSize = Math.max(1, Math.min(pageSize, 100));
-  //
-  // const { summary } = await getCampaignsStatisticsAction(companyId);
-  // const { totalCampaigns, campaigns } = await getCampaignsDataAction({
-  //   companyId,
-  //   page: currentPage,
-  //   pageSize: currentPageSize,
-  // });
-
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -66,7 +53,7 @@ export default async function CampaignsPage({
 
       <Suspense
         fallback={
-          <TableSkeleton title="Campaigns Table" columns={campaigncolums} />
+          <TableSkeleton title="Campaigns Table" columns={campaignColumns} />
         }
       >
         <CampaignsTable />

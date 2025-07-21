@@ -24,11 +24,17 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 
+enum statusCampaign {
+  active = "active",
+  paused = "paused",
+  completed = "completed",
+}
+
 const campaigns = [
   {
     id: 1,
     name: "Q1 SaaS Outreach",
-    status: "active",
+    status: statusCampaign.active,
     mailboxes: 3,
     leadsSent: 847,
     replies: 73,
@@ -45,7 +51,7 @@ const campaigns = [
   {
     id: 2,
     name: "Enterprise Prospects",
-    status: "paused",
+    status: statusCampaign.paused,
     mailboxes: 5,
     leadsSent: 1203,
     replies: 124,
@@ -64,7 +70,7 @@ const campaigns = [
   {
     id: 3,
     name: "SMB Follow-up",
-    status: "active",
+    status: statusCampaign.active,
     mailboxes: 2,
     leadsSent: 492,
     replies: 38,
@@ -77,7 +83,7 @@ const campaigns = [
   {
     id: 4,
     name: "Product Launch Outreach",
-    status: "completed",
+    status: statusCampaign.completed,
     mailboxes: 4,
     leadsSent: 2156,
     replies: 287,
@@ -95,7 +101,7 @@ const campaigns = [
   {
     id: 5,
     name: "Partnership Outreach",
-    status: "active",
+    status: statusCampaign.active,
     mailboxes: 2,
     leadsSent: 324,
     replies: 45,
@@ -130,7 +136,7 @@ const getStatusIcon = (status: string) => {
       return <Clock className="w-3 h-3" />;
   }
 };
-export const campaigncolums = [
+export const campaignColumns  = [
   { name: "Campaign Name", key: "name" },
   { name: "Status", key: "status" },
   { name: "Mailboxes", key: "mailboxes" },
@@ -150,7 +156,7 @@ async function CampaignsTable() {
         <table className="w-full">
           <thead className="bg-gray-50">
             <tr className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              {campaigncolums.map((column) => (
+              {campaignColumns .map((column) => (
                 <th key={column.key} className="px-8 py-4">
                   {column.name}
                 </th>
@@ -235,20 +241,42 @@ async function CampaignsTable() {
   );
 }
 function CampaignsActions({ campaignId }: { campaignId: number }) {
+  const campaign = campaigns.find((c) => c.id === campaignId);
+  if (!campaign) return null;
   return (
     <div className="flex items-center space-x-3 space-x-reverse">
       <Link
         href={`/dashboard/campaigns/${campaignId}`}
-        className="text-gray-500 hover:text-gray-700"
+        className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg p-2 transition-colors"
       >
-        <Eye className="w-4 h-4" />
+        <Button variant="ghost" size="icon" title="View Campaign" asChild>
+          <Eye className="w-4 h-4" />
+        </Button>
       </Link>
       <Link
         href={`/dashboard/campaigns/${campaignId}/edit`}
-        className="text-gray-500 hover:text-gray-700"
+        className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg p-2 transition-colors"
       >
-        <Edit className="w-4 h-4" />
+        <Button variant="ghost" size="icon" title="View Campaign" asChild>
+          <Edit className="w-4 h-4" />
+        </Button>
       </Link>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="p-2 text-gray-400 hover:text-orange-600 rounded-lg hover:bg-orange-50 transition-colors"
+        title={
+          campaign.status === statusCampaign.active
+            ? "Pause Campaign"
+            : "Resume Campaign"
+        }
+      >
+        {campaign.status === statusCampaign.active ? (
+          <Pause className="w-4 h-4" />
+        ) : (
+          <Play className="w-4 h-4" />
+        )}
+      </Button>
       <Button
         variant={"ghost"}
         size={"icon"}

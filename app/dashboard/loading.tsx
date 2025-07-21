@@ -1,6 +1,6 @@
 import CircularProgress from "@mui/material/CircularProgress";
 
-function loading() {
+function Loading() {
   return (
     <div className="flex items-center justify-center h-screen">
       <CircularProgress size={60} className="text-blue-500" />
@@ -8,4 +8,5 @@ function loading() {
     </div>
   );
 }
-export default loading;
+
+export default Loading;

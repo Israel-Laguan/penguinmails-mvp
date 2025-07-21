@@ -124,8 +124,10 @@ const AddCampaignContext = createContext<contextType>({
 });
 
 export function AddCampaignProvider({
+  initialValues,
   children,
 }: {
+  initialValues?: CampaignFormValues;
   children: React.ReactNode;
 }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -146,25 +148,18 @@ export function AddCampaignProvider({
     defaultValues: {
       name: "",
       description: "",
+      leadsList: undefined,
       selectedMailboxes: [],
-      sequence: [
-        {
-          id: "1",
-          type: "email",
-          subject: "Quick question about {{company}}",
-          content:
-            "Hi {{first_name}},\n\nI hope this email finds you well. I noticed that {{company}} has been growing rapidly, and I thought our solution might be a great fit for your team.\n\nWould you be interested in a quick 15-minute call to discuss how this could benefit {{company}}?\n\nBest regards,\n{{sender_name}}",
-          condition: "always",
-        },
-      ],
+      sequence: [],
       schedule: {
-        days: ["monday", "tuesday", "wednesday", "thursday", "friday"],
+        days: [],
         startTime: "09:00",
         endTime: "17:00",
-        dailyLimit: 50,
-        delayBetween: 5,
-        timezone: "UTC-08:00",
+        dailyLimit: 100,
+        delayBetween: 0,
+        timezone: undefined,
       },
+      ...initialValues, // Merge initial values if provided
     },
   });
 

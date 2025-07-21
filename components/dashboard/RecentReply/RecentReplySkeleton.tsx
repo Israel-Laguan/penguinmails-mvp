@@ -1,4 +1,4 @@
-function RecentReplaySkeleton() {
+function RecentReplySkeleton() {
   return (
     <div className="p-6 hover:bg-gray-50 transition-colors">
       <div className="flex items-start space-x-4">
@@ -21,4 +21,4 @@ function RecentReplaySkeleton() {
   );
 }
 
-export default RecentReplaySkeleton;
+export default RecentReplySkeleton;

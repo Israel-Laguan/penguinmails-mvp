@@ -9,8 +9,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { AddCampaignProvider } from "@/context/AddCampaignContext";
-
-function page() {
+function CampaignCreatePage() {
   return (
     <AddCampaignProvider>
       <Card className="border-none shadow-none">
@@ -32,4 +31,4 @@ function page() {
     </AddCampaignProvider>
   );
 }
-export default page;
+export default CampaignCreatePage;

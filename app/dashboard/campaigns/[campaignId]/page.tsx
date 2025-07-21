@@ -1,4 +1,3 @@
-import ActivityTab from "@/components/campaigns/campaignData/ActivityTab";
 import CampaignHeader from "@/components/campaigns/campaignData/CampaignHeader";
 import CampiagnTabs from "@/components/campaigns/campaignData/CampiagnTabs";
 import LeadsTab from "@/components/campaigns/campaignData/LeadsTab";
@@ -35,7 +34,7 @@ async function CampaignContent({ campaignId }: { campaignId: string }) {
   return (
     <div className="space-y-6">
       <CampaignHeader campaign={campaign}>
-          <h1 className="text-xl font-semibold text-gray-900">{campaign.name}</h1>
+        <h1 className="text-xl font-semibold text-gray-900">{campaign.name}</h1>
       </CampaignHeader>
       <CampiagnTabs>
         <div className="p-6 overflow-y-auto max-h-[60vh]">
@@ -47,9 +46,6 @@ async function CampaignContent({ campaignId }: { campaignId: string }) {
           </TabsContent>
           <TabsContent value="leads">
             <LeadsTab />
-          </TabsContent>
-          <TabsContent value="activity">
-            <ActivityTab />
           </TabsContent>
         </div>
       </CampiagnTabs>

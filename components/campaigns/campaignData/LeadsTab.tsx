@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 import { campaignLeads } from "@/lib/data/campaigns";
 import { Eye } from "lucide-react";
+import LeadsFilter from "./LeadsFilter";
 const getStatusColor = (status: string) => {
   switch (status) {
     case "replied":
@@ -29,30 +30,10 @@ function LeadsTab() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Campaign Leads</h3>
-
-        <Select>
-          <SelectTrigger>
-            <SelectValue placeholder="Filter by Status" />
-          </SelectTrigger>
-          <SelectContent>
-            {[
-              {
-                value: "all",
-                label: "All Statuses",
-              },
-              { value: "sent", label: "Sent" },
-              { value: "opened", label: "Opened" },
-              { value: "replied", label: "Replied" },
-              { value: "bounced", label: "Bounced" },
-            ].map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </div>
-
+      <div>
+        <LeadsFilter />
+      </div>
       <Card className="p-0">
         <CardContent className="p-0">
           <table className="w-full">

@@ -8,10 +8,6 @@ function SequenceTab() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Email Sequence</h3>
-        <Button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2">
-          <Edit className="w-4 h-4" />
-          <span>Edit Sequence</span>
-        </Button>
       </div>
 
       <div className="space-y-4">
@@ -42,11 +38,6 @@ function SequenceTab() {
                   </div>
                 )}
               </div>
-              {index < sequenceSteps.length - 1 && (
-                <div className="flex-shrink-0 pt-5">
-                  <ArrowRight className="w-5 h-5 text-gray-400" />
-                </div>
-              )}
             </CardHeader>
             <CardContent>
               {step.type === "email" ? (

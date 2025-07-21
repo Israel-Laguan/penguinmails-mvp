@@ -1,4 +1,3 @@
-import ActivityTab from "@/components/campaigns/campaignData/ActivityTab";
 import CampaignHeader from "@/components/campaigns/campaignData/CampaignHeader";
 import CampiagnTabs from "@/components/campaigns/campaignData/CampiagnTabs";
 import LeadsTab from "@/components/campaigns/campaignData/LeadsTab";
@@ -72,9 +71,7 @@ async function CampaignContent({ campaignId }: { campaignId: string }) {
           <TabsContent value="leads">
             <LeadsTab />
           </TabsContent>
-          <TabsContent value="activity">
-            <ActivityTab />
-          </TabsContent>
+
         </div>
       </CampiagnTabs>
     </>

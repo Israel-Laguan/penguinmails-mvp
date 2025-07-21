@@ -34,3 +34,8 @@ export type CampaignResponse = {
   }[]
   updatedAt: Date
 }
+export enum statusCampaign {
+  active = "active",
+  paused = "paused",
+  completed = "completed",
+}

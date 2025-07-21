@@ -22,7 +22,7 @@ export default async function CampaignCreatePage({
   const campaign = await getCampaignAction(Number(campaignId));
 
   return (
-    <AddCampaignProvider>
+    <AddCampaignProvider >
       <Card className="border-none shadow-none">
         <CardHeader>
           <AddCampaignHeader>

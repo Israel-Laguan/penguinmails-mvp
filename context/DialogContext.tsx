@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogOverlay,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 import { X, XIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useState } from "react";
@@ -81,10 +82,12 @@ export function useDialogContext() {
 }
 
 export function DialogContextProviderContent({
+  className,
   url,
   back: backBoolean = false,
   children,
 }: {
+  className?: string;
   url?: string;
   back?: boolean;
   children: React.ReactNode;
@@ -100,7 +103,7 @@ export function DialogContextProviderContent({
     }
   }
   return (
-    <DialogContent className="min-w-11/12 h-11/12">
+    <DialogContent className={cn("min-w-11/12 h-11/12", className)}>
       <Button
         variant="link"
         className="absolute right-2 z-10 bg-white  cursor-pointer top-2"

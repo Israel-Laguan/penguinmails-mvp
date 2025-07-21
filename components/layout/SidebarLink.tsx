@@ -18,13 +18,6 @@ function SidebarLink({ link }: { link: NavLinkItem }) {
   } = useSidebar();
 
   function navigate() {
-    if (isMobile) {
-      setOpenMobile(false);
-      toggleSidebar();
-    } else {
-      setOpen(false);
-    }
-
     router.push(link.to);
   }
 

@@ -100,7 +100,7 @@ export function DialogContextProviderContent({
     }
   }
   return (
-    <DialogContent className="w-11/12 h-11/12">
+    <DialogContent className="min-w-11/12 h-11/12">
       <Button
         variant="link"
         className="absolute right-2 z-10 bg-white  cursor-pointer top-2"

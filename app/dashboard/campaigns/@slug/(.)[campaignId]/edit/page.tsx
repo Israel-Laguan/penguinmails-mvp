@@ -10,7 +10,9 @@ import {
   DialogContextProviderContent,
 } from "@/context/DialogContext";
 import { getCampaignAction } from "@/lib/actions/campaignActions";
+import { campaignsData } from "@/lib/data/campaigns";
 import { DialogTitle } from "@radix-ui/react-dialog";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 export default async function CampaignCreatePage({
@@ -19,11 +21,16 @@ export default async function CampaignCreatePage({
   params: Promise<{ campaignId: string }>;
 }) {
   const { campaignId } = await params;
+  const campaign = campaignsData.find((c) => c.id === Number(campaignId));
+  if (!campaign) {
+    notFound();
+  }
+  console.log("Editing campaign:", campaign);
 
   return (
     <DialogContextProvider openDefault={true} forceOpen={true}>
       {/* <AddCampaignProvider initialValues={campaign }> */}
-      <AddCampaignProvider>
+      <AddCampaignProvider initialValues={campaign}>
         <DialogContextProviderContent back={true}>
           <Suspense fallback={<CampaignSKeleton />}>
             <CampaignCreatePageContent campaignId={campaignId} />
@@ -39,7 +46,10 @@ async function CampaignCreatePageContent({
 }: {
   campaignId: string;
 }) {
-  const campaign = await getCampaignAction(Number(campaignId));
+  const campaign = campaignsData.find((c) => c.id === Number(campaignId));
+  if (!campaign) {
+    notFound();
+  }
 
   return (
     <>

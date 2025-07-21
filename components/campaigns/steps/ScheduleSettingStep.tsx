@@ -65,6 +65,11 @@ function ScheduleSettingStep() {
         <p className="text-gray-600">
           Configure when and how your emails will be sent
         </p>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+          <p className="text-blue-800 text-sm font-medium">
+            📝 Changes will apply to next scheduled emails
+          </p>
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-8">

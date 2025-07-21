@@ -8,10 +8,9 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import {
-  AddCampaignProvider
-} from "@/context/AddCampaignContext";
-import { getCampaignAction } from "@/lib/actions/campaignActions";
+import { AddCampaignProvider } from "@/context/AddCampaignContext";
+import { campaignsData } from "@/lib/data/campaigns";
+import { notFound } from "next/navigation";
 
 export default async function CampaignCreatePage({
   params,
@@ -19,10 +18,13 @@ export default async function CampaignCreatePage({
   params: Promise<{ campaignId: string }>;
 }) {
   const { campaignId } = await params;
-  const campaign = await getCampaignAction(Number(campaignId));
-
+  const campaign = campaignsData.find((c) => c.id === Number(campaignId));
+  if (!campaign) {
+    notFound();
+  }
+  console.log("Editing Campaign:", campaign);
   return (
-    <AddCampaignProvider >
+    <AddCampaignProvider initialValues={campaign}>
       <Card className="border-none shadow-none">
         <CardHeader>
           <AddCampaignHeader>

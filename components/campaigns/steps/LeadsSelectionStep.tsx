@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAddCampaignContext } from "@/context/AddCampaignContext";
+import { cn } from "@/lib/utils";
 import { Users } from "lucide-react";
 
 const leadLists = [
@@ -27,7 +28,7 @@ const leadLists = [
 ];
 
 function LeadsSelectionStep() {
-  const { form } = useAddCampaignContext();
+  const { form, editingMode } = useAddCampaignContext();
   const { setValue, watch } = form;
   const selectedLeadsList = watch("leadsList");
 
@@ -37,6 +38,7 @@ function LeadsSelectionStep() {
       setValue("leadsList", selectedList);
     }
   };
+  console.log("Selected Leads List:", selectedLeadsList);
 
   return (
     <>
@@ -55,17 +57,25 @@ function LeadsSelectionStep() {
 
         <CardContent className="grid gap-4">
           <RadioGroup
-            value={selectedLeadsList?.id || ""}
+            value={selectedLeadsList?.id || "1"}
             onValueChange={handleLeadsListChange}
+            disabled={editingMode}
           >
             {leadLists.map((list) => (
               <Label
                 key={list.id}
-                className="flex items-center p-6 border-2 rounded-xl cursor-pointer transition-all hover:shadow-md has-[[aria-checked=true]]:border-purple-500 has-[[aria-checked=true]]:bg-purple-50 border-gray-200 hover:border-gray-300"
+                className={cn(
+                  "flex items-center p-6 border-2 rounded-xl cursor-pointer transition-all hover:shadow-md has-[[aria-checked=true]]:border-purple-500 has-[[aria-checked=true]]:bg-purple-50 border-gray-200 hover:border-gray-300 bg-gray-50   disabled:opacity-50 disabled:cursor-not-allowed",
+                  {
+                    "border-purple-500 bg-purple-50":
+                      selectedLeadsList?.id === list.id,
+                    "bg-gray-200  cursor-not-allowed": editingMode,
+                  }
+                )}
               >
                 <RadioGroupItem
                   value={list.id}
-                  className="w-5 h-5 text-purple-600 focus:ring-purple-500 border-gray-300"
+                  className="w-5 h-5 text-purple-600 focus:ring-purple-500 border-gray-300 disabled:opacity-50"
                 />
                 <div className="ml-4 flex-1">
                   <div className="flex items-center justify-between">

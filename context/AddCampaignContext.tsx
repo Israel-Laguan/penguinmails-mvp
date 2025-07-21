@@ -1,4 +1,5 @@
 "use client";
+import { Campaign } from "@/lib/data/campaigns";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Calendar, Check, Mail, Target, Users, Zap } from "lucide-react";
 import { createContext, useContext, useState } from "react";
@@ -114,6 +115,8 @@ interface contextType {
   form: ReturnType<typeof useForm<CampaignFormValues>>;
   prevStep?: () => void;
   nextStep?: () => void;
+  editingMode?: boolean;
+  campaign?: Campaign;
 }
 const AddCampaignContext = createContext<contextType>({
   currentStep: 1,
@@ -127,7 +130,7 @@ export function AddCampaignProvider({
   initialValues,
   children,
 }: {
-  initialValues?: CampaignFormValues;
+  initialValues?: Campaign;
   children: React.ReactNode;
 }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -172,6 +175,8 @@ export function AddCampaignProvider({
     form,
     prevStep,
     nextStep,
+    editingMode: Boolean(initialValues),
+    campaign: initialValues,
   };
   return (
     <AddCampaignContext.Provider value={contextValue}>

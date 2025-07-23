@@ -3,21 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { useAddCampaignContext } from "@/context/AddCampaignContext";
 import { ArrowLeft, ArrowRight, Play } from "lucide-react";
-import { useCallback, useState } from "react";
-import { useFormContext } from "react-hook-form";
 
 function NavigationButtons() {
   const { currentStep, steps, prevStep, nextStep, form } =
     useAddCampaignContext();
-
-  const watchedFields = form.watch([
-    "name",
-    "leadsList",
-    "selectedMailboxes",
-    "sequence",
-  ]);
-
-  const canProceed = useCallback(() => {
+  form.watch(["name", "leadsList", "selectedMailboxes", "sequence"]);
+  const canProceed = () => {
     const values = form.getValues();
     switch (currentStep) {
       case 1:
@@ -35,8 +26,9 @@ function NavigationButtons() {
       default:
         return false;
     }
-  }, [currentStep, form, watchedFields]);
+  };
   const disabled = !canProceed();
+
   return (
     <div className="bg-white border-t border-gray-200 px-8 py-6 w-full">
       <div className="max-w-4xl mx-auto flex items-center justify-between">

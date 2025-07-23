@@ -124,6 +124,10 @@ const AddCampaignContext = createContext<contextType>({
   currentStepData: steps[0],
   setCurrentStep: () => {},
   form: {} as ReturnType<typeof useForm<CampaignFormValues>>,
+  prevStep: () => {},
+  nextStep: () => {},
+  editingMode: false,
+  campaign: undefined,
 });
 
 export function AddCampaignProvider({
@@ -162,7 +166,7 @@ export function AddCampaignProvider({
         delayBetween: 0,
         timezone: undefined,
       },
-      ...initialValues, // Merge initial values if provided
+      ...initialValues,
     },
   });
 
@@ -178,6 +182,7 @@ export function AddCampaignProvider({
     editingMode: Boolean(initialValues),
     campaign: initialValues,
   };
+
   return (
     <AddCampaignContext.Provider value={contextValue}>
       {children}

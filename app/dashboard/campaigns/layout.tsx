@@ -8,7 +8,7 @@ function layout({
   return (
     <>
       {children}
-      {slug}
+      {/* {slug} */}
     </>
   );
 }

@@ -3,9 +3,40 @@
 import { Button } from "@/components/ui/button";
 import { useAddCampaignContext } from "@/context/AddCampaignContext";
 import { ArrowLeft, ArrowRight, Play } from "lucide-react";
+import { useCallback, useState } from "react";
+import { useFormContext } from "react-hook-form";
 
 function NavigationButtons() {
-  const { currentStep, steps, prevStep, nextStep } = useAddCampaignContext();
+  const { currentStep, steps, prevStep, nextStep, form } =
+    useAddCampaignContext();
+
+  const watchedFields = form.watch([
+    "name",
+    "leadsList",
+    "selectedMailboxes",
+    "sequence",
+  ]);
+
+  const canProceed = useCallback(() => {
+    const values = form.getValues();
+    switch (currentStep) {
+      case 1:
+        return values.name?.trim().length > 0;
+      case 2:
+        return values.leadsList != null;
+      case 3:
+        return values.selectedMailboxes?.length > 0;
+      case 4:
+        return values.sequence?.length > 0;
+      case 5:
+        return true;
+      case 6:
+        return true;
+      default:
+        return false;
+    }
+  }, [currentStep, form, watchedFields]);
+  const disabled = !canProceed();
   return (
     <div className="bg-white border-t border-gray-200 px-8 py-6 w-full">
       <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -21,7 +52,7 @@ function NavigationButtons() {
         <div className="flex items-center space-x-4">
           <Button variant={"outline"}>Save as Draft</Button>
           {currentStep < steps.length ? (
-            <Button onClick={nextStep}>
+            <Button onClick={nextStep} disabled={disabled}>
               <span>Continue</span>
               <ArrowRight className="w-5 h-5" />
             </Button>

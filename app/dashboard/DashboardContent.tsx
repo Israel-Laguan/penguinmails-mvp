@@ -1,19 +1,14 @@
-import KpiCard from "@/components/KpiCard";
-import CampaignPerformanceChart from "@/components/CampaignPerformanceChart";
-import EmailStatusPieChart from "@/components/EmailStatusPieChart";
-import RecentCampaignsList from "@/components/RecentCampaignsList";
-import UpcomingTasksList from "@/components/UpcomingTasksList";
-import { Suspense } from "react";
-import StatsCardSkeleton from "@/components/dashboard/StatsCardSkeleton";
 import KpiCards from "@/components/dashboard/KpiCards";
-import Card from "@mui/material/Card";
-import CardHeader from "@mui/material/CardHeader";
-import CardContent from "@mui/material/CardContent";
-import RecentReplySkeleton from "@/components/dashboard/RecentReply/RecentReplySkeleton";
-import RecentRepliesList from "@/components/dashboard/RecentReply/RecentReplyList";
-import WarmupSummarySkeleton from "@/components/dashboard/WarmupSummarySkeleton";
-import WarmupSummary from "@/components/dashboard/WarmupSummary";
 import QuickActions from "@/components/dashboard/QuickActions";
+import RecentRepliesList from "@/components/dashboard/RecentReply/RecentReplyList";
+import RecentReplySkeleton from "@/components/dashboard/RecentReply/RecentReplySkeleton";
+import StatsCardSkeleton from "@/components/dashboard/StatsCardSkeleton";
+import WarmupSummary from "@/components/dashboard/WarmupSummary";
+import WarmupSummarySkeleton from "@/components/dashboard/WarmupSummarySkeleton";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardHeader from "@mui/material/CardHeader";
+import { Suspense } from "react";
 
 export default function DashboardContent() {
   return (

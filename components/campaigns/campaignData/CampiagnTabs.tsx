@@ -2,17 +2,17 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { campaignLeads, sequenceSteps } from "@/lib/data/campaigns";
 import { BarChart3, Mail, Users } from "lucide-react";
 
+const tabs = [
+  {
+    id: "sequence",
+    label: "Sequence",
+    icon: Mail,
+    count: sequenceSteps.length,
+  },
+  { id: "stats", label: "Stats", icon: BarChart3 },
+  { id: "leads", label: "Leads", icon: Users, count: campaignLeads.length },
+];
 function CampiagnTabs({ children }: { children?: React.ReactNode }) {
-  const tabs = [
-    {
-      id: "sequence",
-      label: "Sequence",
-      icon: Mail,
-      count: sequenceSteps.length,
-    },
-    { id: "stats", label: "Stats", icon: BarChart3 },
-    { id: "leads", label: "Leads", icon: Users, count: campaignLeads.length },
-  ];
   return (
     <Tabs defaultValue="sequence" className="w-full ">
       <TabsList className="flex space-x-8 px-0 bg-transparent border-b border-gray-200">

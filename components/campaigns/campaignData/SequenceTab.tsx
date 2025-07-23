@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { sequenceSteps } from "@/lib/data/campaigns";
-import { ArrowRight, Clock, Edit, Mail } from "lucide-react";
+import { Clock, Mail } from "lucide-react";
 
 function SequenceTab() {
   return (

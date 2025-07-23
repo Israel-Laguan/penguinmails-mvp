@@ -1,33 +1,32 @@
 "use client";
-import React, { useState, useRef } from 'react';
 import KpiCard from "@/components/KpiCard";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { 
-  LineChart,
+import {
+  AlertTriangle,
+  ChevronDown,
+  Eye,
+  EyeOff,
+  Mail,
+  MousePointer,
+  TrendingUp
+} from "lucide-react";
+import { useRef, useState } from 'react';
+import {
+  CartesianGrid,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from 'recharts';
-import { 
-  Eye, 
-  Mail, 
-  TrendingUp, 
-  MousePointer, 
-  AlertTriangle,
-  ChevronDown, 
-  Download, 
-  EyeOff 
-} from "lucide-react";
 
 interface ChartData {
   date: string;

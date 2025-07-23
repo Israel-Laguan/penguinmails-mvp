@@ -14,14 +14,24 @@ import {
 import { useAddCampaignContext } from "@/context/AddCampaignContext";
 import { Calendar } from "lucide-react";
 
+enum DayOfWeek {
+  Monday = "monday",
+  Tuesday = "tuesday",
+  Wednesday = "wednesday",
+  Thursday = "thursday",
+  Friday = "friday",
+  Saturday = "saturday",
+  Sunday = "sunday",
+}
+
 const daysOfWeek = [
-  { value: "monday", label: "Mon" },
-  { value: "tuesday", label: "Tue" },
-  { value: "wednesday", label: "Wed" },
-  { value: "thursday", label: "Thu" },
-  { value: "friday", label: "Fri" },
-  { value: "saturday", label: "Sat" },
-  { value: "sunday", label: "Sun" },
+  { value: DayOfWeek.Monday, label: "Mon" },
+  { value: DayOfWeek.Tuesday, label: "Tue" },
+  { value: DayOfWeek.Wednesday, label: "Wed" },
+  { value: DayOfWeek.Thursday, label: "Thu" },
+  { value: DayOfWeek.Friday, label: "Fri" },
+  { value: DayOfWeek.Saturday, label: "Sat" },
+  { value: DayOfWeek.Sunday, label: "Sun" },
 ] as const;
 
 function ScheduleSettingStep() {
@@ -34,22 +44,14 @@ function ScheduleSettingStep() {
   } = form;
   const selectedDays = watch("schedule.days") || [];
 
-  const handleDayToggle = (day: string, checked: boolean) => {
+  const handleDayToggle = (day: DayOfWeek, checked: boolean) => {
     const currentDays = selectedDays || [];
-    const dayValue = day as
-      | "monday"
-      | "tuesday"
-      | "wednesday"
-      | "thursday"
-      | "friday"
-      | "saturday"
-      | "sunday";
     if (checked) {
-      setValue("schedule.days", [...currentDays, dayValue]);
+      setValue("schedule.days", [...currentDays, day]);
     } else {
       setValue(
         "schedule.days",
-        currentDays.filter((d) => d !== dayValue)
+        currentDays.filter((d) => d !== day)
       );
     }
   };

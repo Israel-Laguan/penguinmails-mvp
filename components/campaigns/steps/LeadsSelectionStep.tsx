@@ -4,29 +4,10 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAddCampaignContext } from "@/context/AddCampaignContext";
+import { leadLists } from "@/lib/data/leads";
 import { cn } from "@/lib/utils";
 import { Users } from "lucide-react";
 
-const leadLists = [
-  {
-    id: "1",
-    name: "Q1 Tech Prospects",
-    contacts: 847,
-    description: "Technology decision makers and influencers",
-  },
-  {
-    id: "2",
-    name: "Enterprise Decision Makers",
-    contacts: 1203,
-    description: "C-level executives at enterprise companies",
-  },
-  {
-    id: "3",
-    name: "SMB Follow-up List",
-    contacts: 492,
-    description: "Small to medium business prospects",
-  },
-];
 
 function LeadsSelectionStep() {
   const { form, editingMode } = useAddCampaignContext();

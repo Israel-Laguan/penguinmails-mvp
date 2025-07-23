@@ -8,6 +8,7 @@ function NavigationButtons() {
   const { currentStep, steps, prevStep, nextStep, form } =
     useAddCampaignContext();
   form.watch(["name", "leadsList", "selectedMailboxes", "sequence"]);
+  console.log(form.getValues("sequence"));
   const canProceed = () => {
     const values = form.getValues();
     switch (currentStep) {
@@ -17,8 +18,12 @@ function NavigationButtons() {
         return values.leadsList != null;
       case 3:
         return values.selectedMailboxes?.length > 0;
+
       case 4:
-        return values.sequence?.length > 0;
+        return (
+          values.sequence?.length > 0 &&
+          values.sequence.every((step) => Object.values(step).every((v) => v))
+        );
       case 5:
         return true;
       case 6:

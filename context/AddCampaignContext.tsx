@@ -164,7 +164,7 @@ export function AddCampaignProvider({
         endTime: "17:00",
         dailyLimit: 100,
         delayBetween: 0,
-        timezone: undefined,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       },
       ...initialValues,
     },

@@ -12,7 +12,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAddCampaignContext } from "@/context/AddCampaignContext";
-import { Calendar } from "lucide-react";
+import { allTimezones, calculateMaxEmails, cn } from "@/lib/utils";
+import { Calendar, Check, ChevronsUpDown } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 enum DayOfWeek {
   Monday = "monday",
@@ -36,6 +51,7 @@ const daysOfWeek = [
 
 function ScheduleSettingStep() {
   const { form } = useAddCampaignContext();
+  const ref = useRef<HTMLInputElement>(null);
   const {
     register,
     setValue,
@@ -55,6 +71,16 @@ function ScheduleSettingStep() {
       );
     }
   };
+  const startTime = watch("schedule.startTime") || "09:00";
+  const endTime = watch("schedule.endTime") || "17:00";
+  const delayMinutes = watch("schedule.delayBetween") || 1;
+  const maxEmails = calculateMaxEmails(startTime, endTime, delayMinutes);
+  useEffect(() => {
+    ref.current?.setAttribute("value", maxEmails.toString());
+  }, [maxEmails]);
+  const allTimeZones = allTimezones;
+  const [openTimezone, setOpenTimezone] = useState(false);
+  const timezoneValue = watch("schedule.timezone");
 
   return (
     <Card className="max-w-3xl mx-auto space-y-8">
@@ -159,11 +185,16 @@ function ScheduleSettingStep() {
               Daily Email Limit
             </Label>
             <Input
-              {...register("schedule.dailyLimit", { valueAsNumber: true })}
+              {...register("schedule.dailyLimit", {
+                valueAsNumber: true,
+                max: maxEmails,
+              })}
               id="daily-limit"
               type="number"
               className="w-full"
               min="1"
+              ref={ref}
+              max={maxEmails}
             />
             {errors.schedule?.dailyLimit && (
               <p className="text-red-500 text-sm mt-1">
@@ -171,6 +202,7 @@ function ScheduleSettingStep() {
               </p>
             )}
           </div>
+
           <div>
             <Label
               htmlFor="delay"
@@ -192,30 +224,60 @@ function ScheduleSettingStep() {
             )}
           </div>
         </div>
-
+        <Alert>
+          <AlertDescription className="text-blue-800 text-sm font-medium">
+            Daily limit cannot exceed {maxEmails} emails based on your time
+            range and delay settings.
+          </AlertDescription>
+        </Alert>
         <div>
           <Label className="text-sm font-medium text-gray-700 mb-2 block">
             Timezone
           </Label>
-          <Select
-            onValueChange={(value) => setValue("schedule.timezone", value)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select timezone" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="UTC-08:00">
-                UTC-08:00 (Pacific Time)
-              </SelectItem>
-              <SelectItem value="UTC-05:00">
-                UTC-05:00 (Eastern Time)
-              </SelectItem>
-              <SelectItem value="UTC+00:00">UTC+00:00 (UTC)</SelectItem>
-              <SelectItem value="UTC+01:00">
-                UTC+01:00 (Central European Time)
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          <Popover open={openTimezone} onOpenChange={setOpenTimezone}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                role="combobox"
+                aria-expanded={openTimezone}
+                className="w-full justify-between"
+              >
+                {timezoneValue
+                  ? allTimeZones.find((zone) => zone.value === timezoneValue)
+                      ?.label
+                  : "Select timezone..."}
+                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+              <Command>
+                <CommandInput placeholder="Search timezone..." />
+                <CommandEmpty>No timezone found.</CommandEmpty>
+                <CommandGroup className="max-h-60 overflow-y-auto">
+                  {allTimeZones.map((zone) => (
+                    <CommandItem
+                      key={zone.value}
+                      value={zone.value}
+                      onSelect={(currentValue) => {
+                        setValue("schedule.timezone", currentValue);
+                        setOpenTimezone(false);
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          timezoneValue === zone.value
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                      {zone.label}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </Command>
+            </PopoverContent>
+          </Popover>
           {errors.schedule?.timezone && (
             <p className="text-red-500 text-sm mt-1">
               {errors.schedule.timezone.message}

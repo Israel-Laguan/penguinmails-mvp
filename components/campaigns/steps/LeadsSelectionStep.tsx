@@ -45,7 +45,7 @@ function LeadsSelectionStep() {
 
         <CardContent className="grid gap-4">
           <RadioGroup
-            value={selectedLeadsList?.id || "1"}
+            value={selectedLeadsList?.id || "0"}
             onValueChange={handleLeadsListChange}
             disabled={editingMode}
           >

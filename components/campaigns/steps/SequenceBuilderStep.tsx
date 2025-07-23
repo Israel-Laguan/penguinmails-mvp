@@ -13,6 +13,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useAddCampaignContext } from "@/context/AddCampaignContext";
 import { Clock, Mail, Trash2, Zap } from "lucide-react";
+import { useRef } from "react";
 
 interface EmailStep {
   id: string;
@@ -28,7 +29,7 @@ function SequenceBuilderStep() {
   const { form } = useAddCampaignContext();
   const { setValue, watch } = form;
   const sequence = watch("sequence") || [];
-
+  const focusedTextareaIndex = useRef<number | null>(null);
   const addEmailStep = () => {
     const newStep: EmailStep = {
       id: Date.now().toString(),
@@ -62,6 +63,18 @@ function SequenceBuilderStep() {
     setValue("sequence", updatedSequence);
   };
 
+  function addMergeTag(tag: string) {
+    if (focusedTextareaIndex.current === null) return;
+
+    const stepToUpdate = sequence[focusedTextareaIndex.current];
+    if (stepToUpdate && stepToUpdate.type === "email") {
+      const currentContent = stepToUpdate.content || "";
+      const updatedContent = currentContent
+        ? `${currentContent} ${tag}`
+        : tag;
+      updateStep(focusedTextareaIndex.current, { content: updatedContent });
+    }
+  }
   return (
     <>
       <Card className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
@@ -162,6 +175,7 @@ function SequenceBuilderStep() {
                     onChange={(e) =>
                       updateStep(index, { content: e.target.value })
                     }
+                    onFocus={() => (focusedTextareaIndex.current = index)}
                     placeholder="Email content..."
                     className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
                   />
@@ -249,6 +263,7 @@ function SequenceBuilderStep() {
           ].map((tag) => (
             <span
               key={tag}
+              onClick={() => addMergeTag(tag)}
               className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full font-mono"
             >
               {tag}
@@ -260,3 +275,4 @@ function SequenceBuilderStep() {
   );
 }
 export default SequenceBuilderStep;
+

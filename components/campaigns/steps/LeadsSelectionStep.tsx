@@ -65,7 +65,7 @@ function LeadsSelectionStep() {
                   value={list.id}
                   className="w-5 h-5 text-purple-600 focus:ring-purple-500 border-gray-300 disabled:opacity-50"
                 />
-                <div className="ml-4 flex-1">
+                <div className="ml-4 flex-1"> 
                   <div className="flex items-center justify-between">
                     <h4 className="text-lg font-semibold text-gray-900">
                       {list.name}

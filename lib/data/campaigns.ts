@@ -1,4 +1,5 @@
 import { statusCampaign } from "@/types/campaign";
+import { Mail, Send, TrendingUp, Users } from "lucide-react";
 
 export const campaignsData = [
   {
@@ -184,5 +185,61 @@ export const activityLog = [
     message: "Email opened by Lisa Rodriguez",
     timestamp: "6 hours ago",
     details: "Step 1: Quick question about {{company}}",
+  },
+];
+
+
+export const availableMailboxes = [
+  "john@mycompany.com",
+  "sarah@mycompany.com",
+  "mike@mycompany.com",
+  "lisa@mycompany.com",
+  "david@mycompany.com",
+];
+
+
+export const statsCards = [
+  { title: "Active Campaigns", value: "12", icon: Send, color: "bg-blue-500" },
+  {
+    title: "Leads Contacted",
+    value: "2,847",
+    icon: Users,
+    color: "bg-green-500",
+  },
+  { title: "Open Rate", value: "34.2%", icon: Mail, color: "bg-purple-500" },
+  {
+    title: "Reply Rate",
+    value: "8.7%",
+    icon: TrendingUp,
+    color: "bg-orange-500",
+  },
+];
+export const recentReplies = [
+  {
+    name: "Sarah Johnson",
+    email: "sarah@techcorp.com",
+    company: "TechCorp",
+    message:
+        "Thanks for reaching out! I'd love to schedule a call to discuss this further.",
+    time: "2 hours ago",
+    type: "positive",
+  },
+  {
+    name: "Mike Chen",
+    email: "mike@startup.io",
+    company: "Startup.io",
+    message:
+        "Not interested at this time, but please keep us in mind for the future.",
+    time: "4 hours ago",
+    type: "neutral",
+  },
+  {
+    name: "Lisa Rodriguez",
+    email: "lisa@enterprise.com",
+    company: "Enterprise Inc",
+    message:
+        "This looks interesting. Can you send me more information about pricing?",
+    time: "6 hours ago",
+    type: "positive",
   },
 ];

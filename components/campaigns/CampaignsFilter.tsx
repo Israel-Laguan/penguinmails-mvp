@@ -10,13 +10,8 @@ import {
 import { Calendar, CheckIcon, Search, Server } from "lucide-react";
 import { useState } from "react";
 import DatePicker from "../DatePicker";
-const availableMailboxes = [
-  "john@mycompany.com",
-  "sarah@mycompany.com",
-  "mike@mycompany.com",
-  "lisa@mycompany.com",
-  "david@mycompany.com",
-];
+import { availableMailboxes } from "@/lib/data/campaigns";
+
 enum CampaignStatus {
   All = "all",
   Active = "active",

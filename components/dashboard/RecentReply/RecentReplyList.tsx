@@ -1,33 +1,5 @@
-const recentReplies = [
-  {
-    name: "Sarah Johnson",
-    email: "sarah@techcorp.com",
-    company: "TechCorp",
-    message:
-        "Thanks for reaching out! I'd love to schedule a call to discuss this further.",
-    time: "2 hours ago",
-    type: "positive",
-  },
-  {
-    name: "Mike Chen",
-    email: "mike@startup.io",
-    company: "Startup.io",
-    message:
-        "Not interested at this time, but please keep us in mind for the future.",
-    time: "4 hours ago",
-    type: "neutral",
-  },
-  {
-    name: "Lisa Rodriguez",
-    email: "lisa@enterprise.com",
-    company: "Enterprise Inc",
-    message:
-        "This looks interesting. Can you send me more information about pricing?",
-    time: "6 hours ago",
-    type: "positive",
-  },
-];
-// Accept campaigns as props
+import { recentReplies } from "@/lib/data/campaigns";
+
 const RecentRepliesList = async () => {
   if (!recentReplies || recentReplies.length === 0) {
     return <div className="p-6 text-gray-500">No recent replies found.</div>;

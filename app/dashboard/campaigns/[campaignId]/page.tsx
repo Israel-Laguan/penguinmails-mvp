@@ -27,13 +27,12 @@ async function CampaignContent({ campaignId }: { campaignId: string }) {
   const campaign = campaignsData.find(
     (campaign) => campaign.id === parseInt(campaignId)
   );
-  await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate data fetching delay
   if (!campaign) {
     notFound();
   }
   return (
     <div className="space-y-6">
-      <CampaignHeader campaign={campaign}>
+      <CampaignHeader backArrow={true} campaign={campaign}>
         <h1 className="text-xl font-semibold text-gray-900">{campaign.name}</h1>
       </CampaignHeader>
       <CampiagnTabs>

@@ -1,4 +1,5 @@
 "use client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -65,11 +66,11 @@ function ScheduleSettingStep() {
         <p className="text-gray-600">
           Configure when and how your emails will be sent
         </p>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
-          <p className="text-blue-800 text-sm font-medium">
+        <Alert variant={"default"} className="bg-blue-100 ">
+          <AlertDescription className="text-blue-800 text-sm font-medium">
             📝 Changes will apply to next scheduled emails
-          </p>
-        </div>
+          </AlertDescription>
+        </Alert>
       </CardHeader>
 
       <CardContent className="space-y-8">

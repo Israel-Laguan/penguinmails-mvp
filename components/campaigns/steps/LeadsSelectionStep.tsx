@@ -1,4 +1,5 @@
 "use client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -38,7 +39,6 @@ function LeadsSelectionStep() {
       setValue("leadsList", selectedList);
     }
   };
-  console.log("Selected Leads List:", selectedLeadsList);
 
   return (
     <>
@@ -53,6 +53,13 @@ function LeadsSelectionStep() {
           <p className="text-gray-600">
             Choose which leads you want to target with this campaign
           </p>
+          {editingMode ? (
+            <Alert className="mt-4 bg-blue-100">
+              <AlertDescription className="text-blue-800 text-sm font-medium">
+                Lead list cannot be changed after launch
+              </AlertDescription>
+            </Alert>
+          ) : null}
         </CardHeader>
 
         <CardContent className="grid gap-4">

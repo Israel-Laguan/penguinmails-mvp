@@ -2,22 +2,26 @@ import { Campaign } from "@/lib/data/campaigns";
 import CampaignsActions, { CampaignActionsEnum } from "../CampaignsActions";
 import { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import BackArrow from "@/components/BackArrow";
 
 function CampaignHeader({
   children,
   campaign,
+  backArrow = false,
 }: {
   children: ReactNode;
   campaign: Campaign;
+  backArrow?: boolean;
 }) {
-  const actions = [
-    "EDIT",
-    campaign.status == "active" ? "PAUSE" : "RESUME",
-    "COPY",
-    "DELETE",
-  ] as (keyof typeof CampaignActionsEnum)[];
+  const actions = ["EDIT"] as (keyof typeof CampaignActionsEnum)[];
+
   return (
-    <div className="px-6 py-4 border-b border-gray-200 ">
+    <div className="px-6 py-4 border-b border-gray-200 flex flex-col gap-4">
+      {backArrow && (
+        <div className="self-end">
+          <BackArrow/>
+        </div>
+      )}
       <div className="flex items-center justify-between">
         {children}
         <div className="flex items-center space-x-4 mt-1">

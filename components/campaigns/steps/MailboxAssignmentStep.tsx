@@ -78,9 +78,9 @@ function MailboxAssignmentStep() {
 
         <CardContent className="grid gap-4">
           {editingMode && (
-            <Alert className="mb-4">
+            <Alert className="mb-4 bg-blue-100 text-blue-800">
               <Info className="h-4 w-4" />
-              <AlertDescription>
+              <AlertDescription className="text-sm font-medium text-inherit">
                 You can add new mailboxes to this active campaign, but cannot
                 remove mailboxes that are already assigned and actively sending
                 emails.

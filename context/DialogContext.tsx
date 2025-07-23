@@ -1,14 +1,10 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogOverlay,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogOverlay } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { X, XIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Maximize2, XIcon } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import path from "path";
 import { createContext, useContext, useState } from "react";
 
 type DialogContextType = {
@@ -90,9 +86,12 @@ export function DialogContextProviderContent({
   className?: string;
   url?: string;
   back?: boolean;
+  fullScreen?: boolean;
   children: React.ReactNode;
 }) {
   const { close, back, redirect } = useDialogContext();
+  const router = useRouter();
+
   function handleClose() {
     if (backBoolean) {
       back();
@@ -102,15 +101,23 @@ export function DialogContextProviderContent({
       close();
     }
   }
+  function handleFullScreen() {
+    router.forward();
+  }
   return (
     <DialogContent className={cn("min-w-11/12 h-11/12", className)}>
-      <Button
-        variant="link"
-        className="absolute right-2 z-10 bg-white  cursor-pointer top-2"
-        onClick={handleClose}
-      >
-        <XIcon className="w-4 h-4" />
-      </Button>
+      <div className="absolute right-2 z-10 bg-white  cursor-pointer top-2 flex items-center justify-center ">
+        <Button
+          variant="link"
+          className="cursor-pointer"
+          onClick={handleFullScreen}
+        >
+          <Maximize2 className="w-4 h-4" />
+        </Button>
+        <Button variant="link" className="cursor-pointer" onClick={handleClose}>
+          <XIcon className="w-4 h-4" />
+        </Button>
+      </div>
 
       {children}
     </DialogContent>

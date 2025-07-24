@@ -1,14 +1,5 @@
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { campaignLeads } from "@/lib/data/campaigns";
-import { Eye } from "lucide-react";
 import LeadsFilter from "./LeadsFilter";
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -51,9 +42,6 @@ function LeadsTab() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Last Activity
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -83,15 +71,6 @@ function LeadsTab() {
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
                     {lead.lastActivity}
-                  </td>
-                  <td className="px-6 py-4 flex justify-end">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="flex items-center space-x-2"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </Button>
                   </td>
                 </tr>
               ))}

@@ -8,12 +8,10 @@ import { leadLists } from "@/lib/data/leads";
 import { cn } from "@/lib/utils";
 import { Users } from "lucide-react";
 
-
 function LeadsSelectionStep() {
   const { form, editingMode } = useAddCampaignContext();
   const { setValue, watch } = form;
   const selectedLeadsList = watch("leadsList");
-
   const handleLeadsListChange = (listId: string) => {
     const selectedList = leadLists.find((list) => list.id === listId);
     if (selectedList) {
@@ -45,7 +43,7 @@ function LeadsSelectionStep() {
 
         <CardContent className="grid gap-4">
           <RadioGroup
-            value={selectedLeadsList?.id || "0"}
+            value={selectedLeadsList?.id.toString()}
             onValueChange={handleLeadsListChange}
             disabled={editingMode}
           >
@@ -65,7 +63,7 @@ function LeadsSelectionStep() {
                   value={list.id}
                   className="w-5 h-5 text-purple-600 focus:ring-purple-500 border-gray-300 disabled:opacity-50"
                 />
-                <div className="ml-4 flex-1"> 
+                <div className="ml-4 flex-1">
                   <div className="flex items-center justify-between">
                     <h4 className="text-lg font-semibold text-gray-900">
                       {list.name}

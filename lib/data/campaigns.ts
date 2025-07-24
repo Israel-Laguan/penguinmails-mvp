@@ -18,6 +18,12 @@ export const campaignsData = [
       "sarah@mycompany.com",
       "mike@mycompany.com",
     ],
+    leadsList :{
+      id: 1,
+      name: "Q1 SaaS Leads",
+      description: "Leads collected from Q1 SaaS events and webinars",
+      contacts: 1200,
+    }
   },
   {
     id: 2,
@@ -37,6 +43,12 @@ export const campaignsData = [
       "lisa@mycompany.com",
       "david@mycompany.com",
     ],
+    leadsList :{
+      id: 2,
+      name: "Enterprise Leads",
+      description: "High-value enterprise leads from industry reports",
+      contacts: 2000,
+    }
   },
   {
     id: 3,
@@ -50,6 +62,12 @@ export const campaignsData = [
     lastSent: "4 hours ago",
     createdDate: "2024-01-10",
     assignedMailboxes: ["lisa@mycompany.com", "david@mycompany.com"],
+    leadsList :{
+      id: 3,
+      name: "SMB Leads",
+      description: "Leads from small and medium businesses in Q1",
+      contacts: 800,
+    }
   },
   {
     id: 4,
@@ -68,6 +86,12 @@ export const campaignsData = [
       "mike@mycompany.com",
       "lisa@mycompany.com",
     ],
+    leadsList :{
+      id: 2,
+      name: "Enterprise Leads",
+      description: "High-value enterprise leads from industry reports",
+      contacts: 2000,
+    }
   },
   {
     id: 5,
@@ -81,6 +105,12 @@ export const campaignsData = [
     lastSent: "6 hours ago",
     createdDate: "2024-01-12",
     assignedMailboxes: ["sarah@mycompany.com", "david@mycompany.com"],
+    leadsList :{
+      id: 1,
+      name: "Q1 SaaS Leads",
+      description: "Leads collected from Q1 SaaS events and webinars",
+      contacts: 1200,
+    }
   },
 ];
 

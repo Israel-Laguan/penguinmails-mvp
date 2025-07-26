@@ -1,9 +1,13 @@
-function loading() {
+import CircularProgress from "@mui/material/CircularProgress";
+
+function Loading() {
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-blue-500"></div>
-      <p className="ml-4 text-gray-600">Loading...</p>
+      <CircularProgress size={60} className="text-blue-500" />
+      <span className="ml-4 text-lg text-gray-700">Loading...</span>
     </div>
   );
 }
-export default loading;
+
+export default Loading;
+

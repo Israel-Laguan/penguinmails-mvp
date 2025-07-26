@@ -1,66 +1,46 @@
-"use client";
+import AddCampaignForm from "@/components/campaigns/steps/AddCampaignForm";
+import AddCampaignHeader from "@/components/campaigns/steps/AddCampaignHeader";
+import AddCampaignSteps from "@/components/campaigns/steps/AddCampaignSteps";
+import NavigationButtons from "@/components/campaigns/steps/NavigationButtons";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { AddCampaignProvider } from "@/context/AddCampaignContext";
+import { campaignsData } from "@/lib/data/campaigns";
+import { notFound } from "next/navigation";
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { CampaignForm } from "@/components/campaigns/CampaignForm";
-import { copyText as t } from "@/components/campaigns/copy";
-import { CampaignFormValues } from "@/components/campaigns/types";
-import { getCampaignAction, updateCampaignAction } from "@/lib/actions/campaignActions";
-import { ParamValue } from "next/dist/server/request/params";
-import { toast } from "sonner";
-
-export default function CampaignCreatePage() {
-  const router = useRouter();
-  const { campaignId } = useParams<{ campaignId?: ParamValue }>();
-  const [campaign, setCampaign] = useState<CampaignFormValues>();
-  const [loading, setLoading] = useState<boolean>(true);
-
-  const handleSubmit = async (data: CampaignFormValues) => {
-    console.log("Form Submitted:", data);
-    const result = await updateCampaignAction(Number(campaignId), data);
-    if (!result.success) {
-      toast.error('Error in campaign update', {
-        description: 'An error has occurred while trying to updated a campaign.',
-      });
-      return;
-    }
-
-    toast.success('Campaign updated', {
-      description: 'Has been updated into your campaigns.',
-    });
-  };
-
-  const handleCancel = () => {
-    router.back();
-  };
-
-  useEffect(() => {
-    const fetchCampagingData = async () => {
-      if (!campaignId) return;
-      if (loading) setLoading(true);
-
-      const campaign: CampaignFormValues = await getCampaignAction(Number(campaignId));
-      setCampaign(campaign);
-      setLoading(false);
-    };
-    fetchCampagingData();
-
-  }, [campaignId]);
-
+export default async function CampaignCreatePage({
+  params,
+}: {
+  params: Promise<{ campaignId: string }>;
+}) {
+  const { campaignId } = await params;
+  const campaign = campaignsData.find((c) => c.id === Number(campaignId));
+  if (!campaign) {
+    notFound();
+  }
+  console.log("Editing Campaign:", campaign);
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">{t.pageTitleEdition}</h1>
-      </div>
-      {loading && !campaign && 'Loading data...'}
-      {
-        !loading &&
-        <CampaignForm
-          initialData={campaign}
-          onSubmit={handleSubmit}
-          onCancel={handleCancel}
-        />
-      }
-    </div>
+    <AddCampaignProvider initialValues={campaign}>
+      <Card className="border-none shadow-none">
+        <CardHeader>
+          <AddCampaignHeader>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Edit Campaign {campaign.name || "New Campaign"}
+            </h1>
+          </AddCampaignHeader>
+        </CardHeader>
+        <CardContent className="space-y-8 ">
+          <AddCampaignSteps />
+          <AddCampaignForm />
+        </CardContent>
+        <CardFooter>
+          <NavigationButtons />
+        </CardFooter>
+      </Card>
+    </AddCampaignProvider>
   );
 }

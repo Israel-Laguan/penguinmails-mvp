@@ -1,60 +1,34 @@
-"use client";
-
-import { redirect, useRouter } from "next/navigation";
-import { CampaignForm } from "@/components/campaigns/CampaignForm";
-import { copyText as t } from "@/components/campaigns/copy";
-import { CampaignFormValues } from "@/components/campaigns/types";
-import { createCampaignAction } from "@/lib/actions/campaignActions";
-import { defaultSteps } from "@/components/campaigns/const-mock";
-import { toast } from "sonner";
-
-const defaultValues: CampaignFormValues = {
-  name: "",
-  fromName: "",
-  fromEmail: "",
-  status: 'DRAFT',
-  steps: defaultSteps,
-  clients: [],
-  timezone: 'UTC',
-  sendTimeStart: '09:03',
-  sendTimeEnd: '17:00',
-  sendDays: [0, 1, 2, 3, 4]
-};
-
-export default function CampaignCreatePage() {
-  const router = useRouter();
-
-  const handleSubmit = async (data: CampaignFormValues) => {
-    const result = await createCampaignAction(data);
-
-    if (!result.success) {
-      toast.error('Error in campaign creation', {
-        description: 'An error has occurred while trying to create a campaign.',
-      });
-      return;
-    }
-
-    toast.success('Campaign created', {
-      description: 'Has been inserted into your campaigns.',
-    });
-
-    redirect('/dashboard/campaigns');
-  };
-
-  const handleCancel = () => {
-    router.back();
-  };
-
+import AddCampaignForm from "@/components/campaigns/steps/AddCampaignForm";
+import AddCampaignHeader from "@/components/campaigns/steps/AddCampaignHeader";
+import AddCampaignSteps from "@/components/campaigns/steps/AddCampaignSteps";
+import NavigationButtons from "@/components/campaigns/steps/NavigationButtons";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { AddCampaignProvider } from "@/context/AddCampaignContext";
+function CampaignCreatePage() {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">{t.pageTitle}</h1>
-      </div>
-      <CampaignForm
-        initialData={defaultValues}
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-      />
-    </div>
+    <AddCampaignProvider>
+      <Card className="border-none shadow-none">
+        <CardHeader>
+          <AddCampaignHeader>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Create New Campaign
+            </h1>
+          </AddCampaignHeader>
+        </CardHeader>
+        <CardContent className="space-y-8 ">
+          <AddCampaignSteps />
+          <AddCampaignForm />
+        </CardContent>
+        <CardFooter>
+          <NavigationButtons />
+        </CardFooter>
+      </Card>
+    </AddCampaignProvider>
   );
 }
+export default CampaignCreatePage;

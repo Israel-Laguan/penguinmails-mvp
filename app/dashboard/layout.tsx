@@ -9,6 +9,7 @@ export default async function DashboardRootLayout({
   children: React.ReactNode;
 }) {
   return (
+
     <SidebarProvider>
       <AppSideBar />
       <SidebarInset className="bg-sidebar md:peer-data-[variant=inset]:shadow-none gap-5">

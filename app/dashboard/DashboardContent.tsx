@@ -10,6 +10,7 @@ import CardContent from "@mui/material/CardContent";
 import CardHeader from "@mui/material/CardHeader";
 import { Suspense } from "react";
 
+
 export default function DashboardContent() {
   return (
     <div className=" mx-auto  space-y-8">

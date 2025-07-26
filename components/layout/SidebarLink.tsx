@@ -54,6 +54,7 @@ function SidebarLink({ link }: { link: NavLinkItem }) {
         </div>
       )}
     </SidebarMenuButton>
+
   );
 }
 

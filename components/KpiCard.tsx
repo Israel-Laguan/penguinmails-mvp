@@ -30,6 +30,7 @@ const KpiCard: React.FC<KpiCardProps> = ({
         </div>
         <div className={cn("p-3 rounded-lg ", color)}>
           <Icon className="w-6 h-6 " />
+
         </div>
       </CardContent>
     </Card>

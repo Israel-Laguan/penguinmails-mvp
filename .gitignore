@@ -38,3 +38,4 @@ yarn-error.log*
 
 # prisma
 app/api/generated/prisma
+public/example-leads.csv

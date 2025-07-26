@@ -1,4 +1,4 @@
-import ListsTab from "@/components/campaigns/leadsTabs/listsTab";
+import ListsTab from "@/components/leads/listsTab";
 import StatsCardSkeleton from "@/components/dashboard/StatsCardSkeleton";
 import Icon from "@/components/Icon";
 import StatsCard from "@/components/StatsCard";
@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { leadsStats, leadsTabs } from "@/lib/data/leads";
 import { Suspense } from "react";
+import CSVUploadTab from "@/components/leads/CSVUploadTab";
 
 function LeadsPage() {
   return (
@@ -55,7 +56,9 @@ function LeadsPage() {
                 <ListsTab />
               </Suspense>
             </TabsContent>
-            <TabsContent value="recipients"></TabsContent>
+            <TabsContent value="upload">
+              <CSVUploadTab/>
+            </TabsContent>
           </CardContent>
         </Tabs>
       </Card>

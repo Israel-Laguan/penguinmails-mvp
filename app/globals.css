@@ -393,7 +393,8 @@ body {
 }
 
 .tabs-list {
-  @apply flex space-x-8 px-0 bg-transparent border-b border-gray-200;
+  @apply flex space-x-8 px-0 bg-transparent border-b border-gray-200 
+     rounded-none;
 }
 .tabs-list .tabs-trigger {
   @apply py-4 px-1 

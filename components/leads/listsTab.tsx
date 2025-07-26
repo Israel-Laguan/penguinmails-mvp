@@ -32,10 +32,11 @@ function ListsTab() {
       return;
     }
     const sortedLists = [...filteredLists].sort((a, b) => {
-      if (a[columnId as keyof typeof a] < b[columnId as keyof typeof b])
-        return -1;
-      if (a[columnId as keyof typeof a] > b[columnId as keyof typeof b])
-        return 1;
+      const aValue = a[columnId as keyof typeof a];
+      const bValue = b[columnId as keyof typeof b];
+      if (aValue == null || bValue == null) return 0;
+      if (aValue < bValue) return -1;
+      if (aValue > bValue) return 1;
       return 0;
     });
     setFilteredLists(sortedLists);
@@ -50,11 +51,10 @@ function ListsTab() {
           <DropDownFilter
             options={[
               { value: "all", label: "All Lists" },
-              { value: "active", label: "Active Lists" },
-              { value: "complete", label: "Complete Lists" },
-              { value: "paused", label: "Paused Lists" },
+              { value: "used", label: "Being Used" },
+              { value: "not-used", label: "Not Used Yet" },
             ]}
-            placeholder="Filter by List"
+            placeholder="Filter by Status"
           />
           <DropDownFilter
             options={[

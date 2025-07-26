@@ -1,4 +1,4 @@
-import { Eye, FileText, Mail, Send, TrendingUp, Upload, Users } from "lucide-react";
+import { FileText, Mail, Upload, Users } from "lucide-react";
 
 export const leadLists = [
   {
@@ -48,7 +48,7 @@ export const  leadListsData = [
     id: 1,
     name: 'Q1 Tech Prospects',
     contacts: 847,
-    status: 'active',
+    status: 'used',
     campaign: 'Q1 SaaS Outreach',
     uploadDate: '2024-01-15',
     bounced: 24,
@@ -59,7 +59,7 @@ export const  leadListsData = [
     id: 2,
     name: 'Enterprise Decision Makers',
     contacts: 1203,
-    status: 'active',
+    status: 'being-used',
     campaign: 'Enterprise Prospects',
     uploadDate: '2024-01-08',
     bounced: 47,
@@ -70,12 +70,34 @@ export const  leadListsData = [
     id: 3,
     name: 'SMB Follow-up List',
     contacts: 492,
-    status: 'completed',
+    status: 'used',
     campaign: 'SMB Follow-up',
     uploadDate: '2024-01-01',
     bounced: 14,
     tags: ['smb', 'follow-up'],
     performance: { openRate: 28.9, replyRate: 7.7 }
+  },
+  {
+    id: 4,
+    name: 'Healthcare Prospects',
+    contacts: 324,
+    status: 'not-used',
+    campaign: null,
+    uploadDate: '2024-01-20',
+    bounced: 0,
+    tags: ['healthcare', 'prospects'],
+    performance: { openRate: 0, replyRate: 0 }
+  },
+  {
+    id: 5,
+    name: 'Education Sector List',
+    contacts: 156,
+    status: 'not-used',
+    campaign: null,
+    uploadDate: '2024-01-22',
+    bounced: 0,
+    tags: ['education', 'institutions'],
+    performance: { openRate: 0, replyRate: 0 }
   }
 ];
 
@@ -134,10 +156,10 @@ export const sampleLeads = [
     email: 'emily@techstart.com',
     company: 'TechStart',
     title: 'CTO',
-    status: 'not used yet',
+    status: 'not-used',
     tags: ['tech', 'startup', 'cto'],
     lastContact: null,
-    campaign: 'Q1 SaaS Outreach',
+    campaign: null,
     source: 'Conference'
   }
 ] as const;

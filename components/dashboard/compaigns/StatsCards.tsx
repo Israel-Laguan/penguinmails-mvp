@@ -1,4 +1,4 @@
-import KpiCard from "@/components/KpiCard";
+import KpiCard from "@/components/StatsCard";
 import { statsCards } from "@/lib/data/stats.mock";
 
 async function StatsCards() {

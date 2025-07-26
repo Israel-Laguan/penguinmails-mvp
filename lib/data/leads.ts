@@ -127,5 +127,23 @@ export const sampleLeads = [
     lastContact: '2024-01-12',
     campaign: 'SMB Follow-up',
     source: 'Referral'
+  },
+  {
+    id: 5,
+    name: 'Emily Zhang',
+    email: 'emily@techstart.com',
+    company: 'TechStart',
+    title: 'CTO',
+    status: 'pending',
+    tags: ['tech', 'startup', 'cto'],
+    lastContact: '2024-01-11',
+    campaign: 'Q1 SaaS Outreach',
+    source: 'Conference'
   }
-];
+] as const;
+
+export type Lead = typeof sampleLeads[number];
+
+
+
+

@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { leadsStats, leadsTabs } from "@/lib/data/leads";
 import { Suspense } from "react";
 import CSVUploadTab from "@/components/leads/CSVUploadTab";
+import ContactsTab from "@/components/leads/ContactsTab";
 
 function LeadsPage() {
   return (
@@ -57,8 +58,11 @@ function LeadsPage() {
               </Suspense>
             </TabsContent>
             <TabsContent value="upload">
-              <CSVUploadTab/>
+              <CSVUploadTab />
             </TabsContent>
+            <TabsContent value="contacts">
+              <ContactsTab />
+              </TabsContent>
           </CardContent>
         </Tabs>
       </Card>

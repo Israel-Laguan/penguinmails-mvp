@@ -39,7 +39,7 @@ function ListsTab() {
     <div className="space-y-6">
       <Filter>
         <SearchInput />
-        <div>
+        <div className="flex items-center space-x-4">
           <DropDownFilter
             options={[
               { value: "all", label: "All Lists" },

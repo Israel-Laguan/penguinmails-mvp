@@ -1,6 +1,13 @@
 "use client";
 import { DropDownFilter, Filter, SearchInput } from "@/components/Filter";
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { leadListsData } from "@/lib/data/leads";
 import { ArrowUpDown } from "lucide-react";
 import { useState } from "react";
@@ -61,37 +68,36 @@ function ListsTab() {
         </div>
       </Filter>
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
-            <tr>
+        <Table>
+          <TableHeader>
+            <TableRow>
               {listTableColumn.map((column) => (
-                <th
+                <TableHead
                   key={column.id}
-                  className={cn(
-                    "px-4 py-2 text-left text-sm font-medium text-gray-500",
-                    {
-                      "cursor-pointer": column.canSort,
-                    }
-                  )}
+                  className={cn({
+                    "cursor-pointer": column.canSort,
+                  })}
                 >
                   <Button
                     variant={"ghost"}
-                    className="flex items-center gap-2"
-                    onClick={() => handleSortBy(column.id)}
+                    className="flex items-center gap-2 h-auto p-0 hover:bg-transparent"
+                    onClick={
+                      column.canSort ? () => handleSortBy(column.id) : undefined
+                    }
                   >
                     {column.label}
                     {column.canSort && <ArrowUpDown className="w-4 h-4 " />}
                   </Button>
-                </th>
+                </TableHead>
               ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {filteredLists.map((list) => (
               <ListTableRow key={list.id} list={list} />
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

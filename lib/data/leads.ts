@@ -134,9 +134,9 @@ export const sampleLeads = [
     email: 'emily@techstart.com',
     company: 'TechStart',
     title: 'CTO',
-    status: 'pending',
+    status: 'not used yet',
     tags: ['tech', 'startup', 'cto'],
-    lastContact: '2024-01-11',
+    lastContact: null,
     campaign: 'Q1 SaaS Outreach',
     source: 'Conference'
   }

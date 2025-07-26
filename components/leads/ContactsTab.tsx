@@ -34,13 +34,14 @@ import {
 } from "../ui/table";
 
 const getStatusColor = (status: string) => {
+  const statusLower = status.toLowerCase().replaceAll(" ", "_");
   const colors = {
     replied: "bg-green-100 text-green-800 border-green-200",
     sent: "bg-blue-100 text-blue-800 border-blue-200",
     bounced: "bg-red-100 text-red-800 border-red-200",
-    pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    not_used_yet: "bg-yellow-100 text-yellow-800 border-yellow-200",
   };
-  return colors[status as keyof typeof colors] || colors.pending;
+  return colors[statusLower as keyof typeof colors] || colors.not_used_yet;
 };
 
 function ContactsTab() {
@@ -161,10 +162,9 @@ function ContactsTab() {
                     <ArrowUpDown className="ml-2 h-3 w-3" />
                   </Button>
                 </TableHead>
-                <TableHead>Company</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Tags</TableHead>
-                <TableHead>Campaign</TableHead>
+                <TableHead>List</TableHead>
                 <TableHead>
                   <Button
                     variant="ghost"
@@ -205,20 +205,10 @@ function ContactsTab() {
                         <div className="text-sm text-muted-foreground">
                           {contact.email}
                         </div>
-                        {contact.title && (
-                          <div className="text-sm text-muted-foreground">
-                            {contact.title}
-                          </div>
-                        )}
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <div className="font-medium">{contact.company}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {contact.source}
-                    </div>
-                  </TableCell>
+
                   <TableCell>
                     <Badge
                       variant="outline"
@@ -244,10 +234,12 @@ function ContactsTab() {
                     <div className="text-sm">{contact.campaign}</div>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
-                    {new Date(contact.lastContact).toLocaleDateString()}
+                    {contact.lastContact
+                      ? new Date(contact.lastContact).toLocaleDateString()
+                      : "Not Used Yet"}
                   </TableCell>
                   <TableCell className="text-right">
-                    <div className="flex items-center justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center justify-end space-x-1">
                       <Button
                         variant="ghost"
                         size="icon"
@@ -263,14 +255,6 @@ function ContactsTab() {
                         title="Edit Contact"
                       >
                         <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        title="More Actions"
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

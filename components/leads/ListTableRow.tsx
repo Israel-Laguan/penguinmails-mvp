@@ -1,4 +1,5 @@
 import { leadListsData } from "@/lib/data/leads";
+import { TableCell, TableRow } from "@/components/ui/table";
 import {
   Clock,
   Download,
@@ -9,6 +10,7 @@ import {
   Users,
   XCircle,
 } from "lucide-react";
+import { Button } from "../ui/button";
 const getStatusColor = (status: string) => {
   switch (status) {
     case "replied":
@@ -41,8 +43,8 @@ const getStatusIcon = (status: string) => {
 
 function ListTableRow({ list }: { list: (typeof leadListsData)[0] }) {
   return (
-    <tr key={list.id} className="hover:bg-gray-50 transition-colors group">
-      <td className="px-6 py-4">
+    <TableRow key={list.id}>
+      <TableCell>
         <div>
           <h3 className="font-semibold text-gray-900">{list.name}</h3>
           <div className="flex items-center space-x-4 mt-1">
@@ -59,16 +61,16 @@ function ListTableRow({ list }: { list: (typeof leadListsData)[0] }) {
             ))}
           </div>
         </div>
-      </td>
-      <td className="px-6 py-4">
+      </TableCell>
+      <TableCell>
         <div className="flex items-center space-x-2">
           <Users className="w-4 h-4 text-gray-400" />
           <span className="text-sm font-medium text-gray-900">
             {list.contacts.toLocaleString()}
           </span>
         </div>
-      </td>
-      <td className="px-6 py-4">
+      </TableCell>
+      <TableCell>
         <span
           className={`inline-flex items-center space-x-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
             list.status
@@ -77,11 +79,11 @@ function ListTableRow({ list }: { list: (typeof leadListsData)[0] }) {
           {getStatusIcon(list.status)}
           <span className="capitalize">{list.status}</span>
         </span>
-      </td>
-      <td className="px-6 py-4">
+      </TableCell>
+      <TableCell>
         <div className="text-sm font-medium text-gray-900">{list.campaign}</div>
-      </td>
-      <td className="px-6 py-4">
+      </TableCell>
+      <TableCell>
         <div className="space-y-1">
           <div className="flex items-center space-x-2">
             <span className="text-sm font-medium text-blue-600">
@@ -96,39 +98,47 @@ function ListTableRow({ list }: { list: (typeof leadListsData)[0] }) {
             <span className="text-xs text-gray-500">reply</span>
           </div>
         </div>
-      </td>
-      <td className="px-6 py-4 text-sm text-gray-500">
+      </TableCell>
+      <TableCell className="text-sm text-gray-500">
         {new Date(list.uploadDate).toLocaleDateString()}
-      </td>
-      <td className="px-6 py-4 text-right">
-        <div className="flex items-center justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button
-            className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+      </TableCell>
+      <TableCell className="text-right">
+        <div >
+          <Button
+            variant="ghost"
+            size={"icon"}
+            className=" hover:text-blue-600 hover:bg-blue-50"
             title="View Contacts"
           >
             <Eye className="w-4 h-4" />
-          </button>
-          <button
-            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors"
+          </Button>
+          <Button
+           variant="ghost"
+            size={"icon"}
+            className=" hover:text-gray-600 hover:bg-gray-100"
             title="Edit List"
           >
             <Edit className="w-4 h-4" />
-          </button>
-          <button
-            className="p-2 text-gray-400 hover:text-green-600 rounded-lg hover:bg-green-50 transition-colors"
+          </Button>
+          <Button
+           variant="ghost"
+            size={"icon"}
+            className=" hover:text-green-600 hover:bg-green-50"
             title="Download CSV"
           >
             <Download className="w-4 h-4" />
-          </button>
-          <button
-            className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+          </Button>
+          <Button
+           variant="ghost"
+            size={"icon"}
+            className=" hover:text-red-600 hover:bg-red-50"
             title="Delete List"
           >
             <Trash2 className="w-4 h-4" />
-          </button>
+          </Button>
         </div>
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 }
 export default ListTableRow;

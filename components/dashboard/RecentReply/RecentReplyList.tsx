@@ -4,7 +4,6 @@ const RecentRepliesList = async () => {
   if (!recentReplies || recentReplies.length === 0) {
     return <div className="p-6 text-gray-500">No recent replies found.</div>;
   }
-
   return (
       <>
         {recentReplies.map((reply, index) => (

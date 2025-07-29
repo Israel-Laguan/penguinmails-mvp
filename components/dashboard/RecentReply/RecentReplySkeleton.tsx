@@ -20,5 +20,4 @@ function RecentReplySkeleton() {
     </div>
   );
 }
-
 export default RecentReplySkeleton;

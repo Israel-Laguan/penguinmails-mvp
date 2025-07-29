@@ -9,11 +9,18 @@ import {
 import { Search } from "lucide-react";
 import { Input } from "./ui/input";
 
-function Filter({ children }: { children: React.ReactNode }) {
+function Filter({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
     <div
       className={cn(
-        "flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0 lg:space-x-4 p-4 bg-white border rounded-lg shadow-sm"
+        "flex flex-col lg:flex-row items-start lg:items-center justify-between space-y-4 lg:space-y-0 lg:space-x-4 p-4 bg-white border rounded-lg shadow-sm",
+        className
       )}
     >
       {children}

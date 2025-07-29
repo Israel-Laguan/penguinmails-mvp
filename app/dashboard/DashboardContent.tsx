@@ -5,9 +5,7 @@ import RecentReplySkeleton from "@/components/dashboard/RecentReply/RecentReplyS
 import StatsCardSkeleton from "@/components/dashboard/StatsCardSkeleton";
 import WarmupSummary from "@/components/dashboard/WarmupSummary";
 import WarmupSummarySkeleton from "@/components/dashboard/WarmupSummarySkeleton";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardHeader from "@mui/material/CardHeader";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Suspense } from "react";
 
 export default function DashboardContent() {

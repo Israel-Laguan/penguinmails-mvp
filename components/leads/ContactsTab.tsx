@@ -7,7 +7,7 @@ import {
   Eye,
   Send,
   Tag,
-  Trash2
+  Trash2,
 } from "lucide-react";
 import { useState } from "react";
 import { DropDownFilter, Filter, SearchInput } from "../Filter";
@@ -107,9 +107,9 @@ function ContactsTab() {
     selectedContacts.length === filteredContacts.length &&
     filteredContacts.length > 0;
   return (
-    <Card>
+    <Card className="border-none shadow-none">
       <CardHeader>
-        <Filter>
+        <Filter className="border-none shadow-none p-0">
           <SearchInput />
           <div className="flex items-center space-x-2">
             <DropDownFilter
@@ -118,6 +118,7 @@ function ContactsTab() {
                 { value: "bounced", label: "Bounced" },
                 { value: "replied", label: "Replied" },
                 { value: "sent", label: "Sent" },
+                { value: "not-used", label: "Not Used" },
               ]}
               placeholder="Status"
             />
@@ -166,10 +167,10 @@ function ContactsTab() {
         </Filter>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="border p-0 rounded-xl overflow-hidden">
         <div className="overflow-hidden">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-gray-100">
               <TableRow>
                 <TableHead className="w-12">
                   <Checkbox

@@ -4,7 +4,7 @@ import CampaignsTable, {
   campaignColumns,
 } from "@/components/campaigns/CampaignsTable";
 import StatsCardSkeleton from "@/components/dashboard/StatsCardSkeleton";
-import StatsCards from "@/components/dashboard/compaigns/StatsCards";
+import StatsCards from "@/components/dashboard/campaigns/StatsCards";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";

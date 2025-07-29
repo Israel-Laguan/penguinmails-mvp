@@ -29,7 +29,7 @@ function CampaignsTableRow({ campaign }: { campaign: Campaign }) {
   const actions = [
     "VIEW",
     "EDIT",
-    campaign.status == "active" ? "PAUSE" : "RESUME",
+    campaign.status === "active" ? "PAUSE" : "RESUME",
     "COPY",
     "DELETE",
   ] as (keyof typeof CampaignActionsEnum)[];

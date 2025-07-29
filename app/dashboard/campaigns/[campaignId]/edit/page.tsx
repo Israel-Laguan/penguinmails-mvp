@@ -22,7 +22,6 @@ export default async function CampaignCreatePage({
   if (!campaign) {
     notFound();
   }
-  console.log("Editing Campaign:", campaign);
   return (
     <AddCampaignProvider initialValues={campaign}>
       <Card className="border-none shadow-none">

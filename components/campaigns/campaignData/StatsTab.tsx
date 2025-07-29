@@ -1,5 +1,5 @@
 "use client";
-import KpiCard from "@/components/KpiCard";
+import KpiCard from "@/components/StatsCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {

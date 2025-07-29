@@ -2,7 +2,7 @@ import { Card, CardContent } from "@/components/ui/card"; // Import from the new
 import { cn } from "@/lib/utils"; // Import the cn utility
 import React from "react";
 
-interface KpiCardProps {
+interface StatsCardProps {
   title: string;
   value: string;
   icon: React.ElementType;
@@ -10,7 +10,7 @@ interface KpiCardProps {
   className?: string;
 }
 
-const KpiCard: React.FC<KpiCardProps> = ({
+const StatsCard: React.FC<StatsCardProps> = ({
   title,
   value,
   icon,
@@ -30,11 +30,10 @@ const KpiCard: React.FC<KpiCardProps> = ({
         </div>
         <div className={cn("p-3 rounded-lg ", color)}>
           <Icon className="w-6 h-6 " />
-
         </div>
       </CardContent>
     </Card>
   );
 };
 
-export default KpiCard;
+export default StatsCard;

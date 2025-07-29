@@ -12,7 +12,7 @@ const tabs = [
   { id: "stats", label: "Stats", icon: BarChart3 },
   { id: "leads", label: "Leads", icon: Users, count: campaignLeads.length },
 ];
-function CampiagnTabs({ children }: { children?: React.ReactNode }) {
+function CampaignTabs({ children }: { children?: React.ReactNode }) {
   return (
     <Tabs defaultValue="sequence" className="w-full ">
       <TabsList className="tabs-list">
@@ -35,4 +35,4 @@ function CampiagnTabs({ children }: { children?: React.ReactNode }) {
     </Tabs>
   );
 }
-export default CampiagnTabs;
+export default CampaignTabs;

@@ -62,7 +62,7 @@ function LeadsPage() {
             </TabsContent>
             <TabsContent value="contacts">
               <ContactsTab />
-              </TabsContent>
+            </TabsContent>
           </CardContent>
         </Tabs>
       </Card>

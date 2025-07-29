@@ -45,7 +45,9 @@ function CampaignsFilter() {
           type="text"
           placeholder="Search campaigns..."
           className="w-full lg:max-w-md border-none shadow-none focus-visible:border-none focus-visible:ring-0 peer"
-          onChange={(e) => console.log("Search:", e.target.value)}
+          onChange={(e) => {
+            /* Handle search input */
+          }}
         />
       </div>
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:space-x-2">

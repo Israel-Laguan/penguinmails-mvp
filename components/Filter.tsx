@@ -23,7 +23,7 @@ function Filter({ children }: { children: React.ReactNode }) {
 
 function SearchInput() {
   return (
-    <div className="flex items-center space-x-2 border shadow-sm rounded-lg px-2 bg-gray-50 peer-focus-within:border-priring-primary focus-within:ring-1 focus-within:ring-primary w-full lg:w-auto">
+    <div className="flex items-center space-x-2 border shadow-sm rounded-lg px-2 bg-gray-50 peer-focus-within:border-ring-primary focus-within:ring-1 focus-within:ring-primary w-full lg:w-auto">
       <Search className="text-gray-400 w-5 h-5" />
       <Input
         type="text"

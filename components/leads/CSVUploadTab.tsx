@@ -1,5 +1,5 @@
 "use client";
-import { Upload, Loader2, X, Download, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -25,8 +25,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useState, useRef, ChangeEvent } from "react";
+import { AlertCircle, Download, Loader2, Upload, X } from "lucide-react";
+import Papa from "papaparse";
+import { useRef, useState } from "react";
 
 const CSV_COLUMNS = [
   { key: "email", label: "Email Address", required: true },
@@ -45,9 +46,9 @@ const SAMPLE_CSV_DATA = [
 ];
 
 const downloadSampleCSV = () => {
-  const csvContent = SAMPLE_CSV_DATA
-    .map((row) => row.map((cell) => `"${cell}"`).join(","))
-    .join("\n");
+  const csvContent = SAMPLE_CSV_DATA.map((row) =>
+    row.map((cell) => `"${cell}"`).join(",")
+  ).join("\n");
 
   const blob = new Blob([csvContent], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
@@ -138,7 +139,9 @@ function FilePreview({
     columnMapping: Record<string, string>;
   }) => void;
 }) {
-  const [columnMapping, setColumnMapping] = useState<Record<string, string>>({});
+  const [columnMapping, setColumnMapping] = useState<Record<string, string>>(
+    {}
+  );
   const [listName, setListName] = useState("");
   const [tags, setTags] = useState("");
 
@@ -262,7 +265,11 @@ function FilePreview({
           </div>
           <Button
             onClick={() =>
-              onImport({ listName: listName.trim(), tags: tags.trim(), columnMapping })
+              onImport({
+                listName: listName.trim(),
+                tags: tags.trim(),
+                columnMapping,
+              })
             }
             disabled={!isValid()}
           >
@@ -281,26 +288,67 @@ export default function CSVUploadTab() {
   const [error, setError] = useState("");
 
   const parseCSV = (text: string) => {
-    const lines = text.split("\n").filter((line) => line.trim());
-    if (lines.length === 0) throw new Error("File is empty");
+    return new Promise<any[]>((resolve, reject) => {
+      interface CSVError {
+        type: string;
+        code: string;
+        message: string;
+        row?: number;
+      }
 
-    const headers = lines[0].split(",").map((h) => h.trim().replace(/"/g, ""));
-    const rows = lines
-      .slice(1)
-      .map((line) => {
-        const values = line.split(",").map((v) => v.trim().replace(/"/g, ""));
-        const row: any = {};
-        headers.forEach((header, index) => {
-          row[header] = values[index] || "";
-        });
-        return row;
-      })
-      .filter((row) => Object.values(row).some((val) => val));
+      interface CSVParseResult {
+        data: Record<string, string>[];
+        errors: CSVError[];
+        meta: {
+          delimiter: string;
+          linebreak: string;
+          aborted: boolean;
+          truncated: boolean;
+          cursor: number;
+        };
+      }
 
-    return rows;
+      Papa.parse(text, {
+        header: true,
+        skipEmptyLines: true,
+        transformHeader: (header: string): string => header.trim(),
+        transform: (value: string): string => value.trim(),
+        complete: (results: CSVParseResult): void => {
+          if (results.errors.length > 0) {
+            const criticalErrors: CSVError[] = results.errors.filter(
+              (error: CSVError) =>
+                error.type === "Delimiter" || error.type === "Quotes"
+            );
+            if (criticalErrors.length > 0) {
+              reject(
+                new Error(`CSV parsing error: ${criticalErrors[0].message}`)
+              );
+              return;
+            }
+          }
+
+          if (!results.data || results.data.length === 0) {
+            reject(new Error("File is empty or contains no valid data"));
+            return;
+          }
+
+          const filteredData: Record<string, string>[] = results.data.filter(
+            (row: Record<string, string>) =>
+              Object.values(row).some(
+                (val: string) => val && val.toString().trim()
+              )
+          );
+
+          resolve(filteredData);
+        },
+        error: (error: Error): void => {
+          reject(new Error(`Failed to parse CSV: ${error.message}`));
+        },
+      });
+    });
   };
 
-  const handleFileUpload = (file: File) => {
+  const handleFileUpload = async (file: File) => {
     if (!file.name.endsWith(".csv")) {
       setError("Please select a valid CSV file.");
       return;
@@ -314,25 +362,20 @@ export default function CSVUploadTab() {
     setCsvFile(file);
     setIsUploading(true);
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const text = e.target?.result as string;
-        const data = parseCSV(text);
-        setCsvData(data);
-        setIsUploading(false);
-      } catch (err) {
-        setError("Failed to parse CSV file. Please check the format.");
-        setIsUploading(false);
-        setCsvFile(null);
-      }
-    };
-    reader.onerror = () => {
-      setError("Failed to read the file.");
+    try {
+      const text = await file.text();
+      const data = await parseCSV(text);
+      setCsvData(data);
+      setIsUploading(false);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to parse CSV file. Please check the format."
+      );
       setIsUploading(false);
       setCsvFile(null);
-    };
-    reader.readAsText(file);
+    }
   };
 
   const handleImport = ({
@@ -446,4 +489,3 @@ export default function CSVUploadTab() {
     </div>
   );
 }
-        

@@ -5,10 +5,9 @@ import {
   Download,
   Edit,
   Eye,
-  MoreHorizontal,
   Send,
   Tag,
-  Trash2,
+  Trash2
 } from "lucide-react";
 import { useState } from "react";
 import { DropDownFilter, Filter, SearchInput } from "../Filter";
@@ -46,17 +45,44 @@ const getStatusColor = (status: string) => {
 
 function ContactsTab() {
   const [selectedContacts, setSelectedContacts] = useState<number[]>([]);
-  const [filteredContacts] = useState(sampleLeads);
+  const [filteredContacts, setFilteredContacts] = useState([...sampleLeads]);
   const [sortField, setSortField] = useState<string>("");
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
 
   const handleSort = (field: string) => {
+    let newSortDirection: "asc" | "desc" = "asc";
+
     if (sortField === field) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortField(field);
-      setSortDirection("asc");
+      newSortDirection = sortDirection === "asc" ? "desc" : "asc";
     }
+
+    setSortField(field);
+    setSortDirection(newSortDirection);
+
+    const sortedContacts = [...filteredContacts].sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      if (field === "name") {
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+      } else if (field === "lastContact") {
+        aValue = a.lastContact ? new Date(a.lastContact).getTime() : 0;
+        bValue = b.lastContact ? new Date(b.lastContact).getTime() : 0;
+      } else {
+        return 0;
+      }
+
+      if (aValue < bValue) {
+        return newSortDirection === "asc" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return newSortDirection === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+
+    setFilteredContacts(sortedContacts);
   };
 
   const handleSelectAll = (checked: boolean) => {

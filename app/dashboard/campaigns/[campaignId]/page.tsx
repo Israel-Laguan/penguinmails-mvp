@@ -1,5 +1,5 @@
 import CampaignHeader from "@/components/campaigns/campaignData/CampaignHeader";
-import CampiagnTabs from "@/components/campaigns/campaignData/CampiagnTabs";
+import CampiagnTabs from "@/components/campaigns/campaignData/CampaignTabs";
 import LeadsTab from "@/components/campaigns/campaignData/LeadsTab";
 import SequenceTab from "@/components/campaigns/campaignData/SequenceTab";
 import StatsTab from "@/components/campaigns/campaignData/StatsTab";

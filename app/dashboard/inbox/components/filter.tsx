@@ -1,85 +1,117 @@
 "use client";
-import React from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Filter, SearchInput } from "@/components/Filter";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Filter } from "lucide-react";
 import {
   Select,
-  SelectTrigger,
   SelectContent,
   SelectItem,
+  SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { Archive, Inbox, Mail, Send, Trash2, Users } from "lucide-react";
+import { useState } from "react";
 
-type Props = {
-  onFilterChange: (filters: { type: string; campaignId?: string }) => void;
-};
+function InboxFilter() {
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
+  const [campaignFilter, setCampaignFilter] = useState("all");
+  const [timeFilter, setTimeFilter] = useState("all");
 
-const campaigns = [
-  { id: "1", name: "Campaña Navidad" },
-  { id: "2", name: "Campaña Black Friday" },
-  { id: "3", name: "Campaña Verano" },
-];
-
-export const EmailFilters: React.FC<Props> = ({ onFilterChange }) => {
-  const [type, setType] = React.useState("all");
-  const [campaignId, setCampaignId] = React.useState<string | undefined>();
-
-  React.useEffect(() => {
-    if (type !== "campaign") {
-      onFilterChange({ type });
-    } else if (type === "campaign" && campaignId) {
-      onFilterChange({ type, campaignId });
-    }
-  }, [type, campaignId]);
+  const filters = [
+    { id: "all", label: "All Messages", count: 156, icon: Inbox },
+    { id: "unread", label: "Unread", count: 24, icon: Mail },
+    { id: "sent", label: "Sent", count: 89, icon: Send },
+    { id: "archived", label: "Archived", count: 43, icon: Archive },
+    { id: "trash", label: "Trash", count: 12, icon: Trash2 },
+    { id: "team", label: "Team", count: 8, icon: Users },
+  ];
 
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" size="sm">
-          <Filter className="mr-2 h-4 w-4" />
-          Filtros
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-72 space-y-4">
-        <div>
-          <Label>Tipo de Email</Label>
-          <Select value={type} onValueChange={(val) => setType(val)}>
-            <SelectTrigger className="w-full mt-1">
-              <SelectValue placeholder="Seleccionar tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="unread">Sin leer</SelectItem>
-              <SelectItem value="starred">Importantes</SelectItem>
-              <SelectItem value="campaign">Por campaña</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+    <>
+      <Filter
+        className={cn(
+          "bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out lg:flex-col rounded-none"
+        )}
+      >
+        <SearchInput />
 
-        {type === "campaign" && (
-          <div>
-            <Label>Campaña</Label>
-            <Select value={campaignId} onValueChange={(val) => setCampaignId(val)}>
-              <SelectTrigger className="w-full mt-1">
-                <SelectValue placeholder="Seleccionar campaña" />
+        {/* Filters */}
+        <div className="flex-1 p-4 overflow-y-auto">
+          <div className="space-y-1">
+            {filters.map((filter) => {
+              const Icon = filter.icon;
+              return (
+                <Button
+                  key={filter.id}
+                  onClick={() => setSelectedFilter(filter.id)}
+                  variant={selectedFilter === filter.id ? "secondary" : "ghost"}
+                  className={cn(
+                    "w-full justify-between h-auto py-2.5 px-3",
+                    selectedFilter === filter.id
+                      ? "bg-blue-50 text-blue-700 hover:bg-blue-100"
+                      : "text-gray-700"
+                  )}
+                >
+                  <div className="flex items-center space-x-3">
+                    <Icon
+                      className={cn(
+                        "w-4 h-4",
+                        selectedFilter === filter.id
+                          ? "text-blue-600"
+                          : "text-gray-500"
+                      )}
+                    />
+                    <span className="text-sm font-medium">{filter.label}</span>
+                  </div>
+                  <Badge
+                    variant={
+                      selectedFilter === filter.id ? "default" : "secondary"
+                    }
+                    className="text-xs"
+                  >
+                    {filter.count}
+                  </Badge>
+                </Button>
+              );
+            })}
+          </div>
+
+          {/* Additional Filters */}
+          <div className="mt-6 space-y-3">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Filter By
+            </h3>
+            <Select value={campaignFilter} onValueChange={setCampaignFilter}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="All Campaigns" />
               </SelectTrigger>
               <SelectContent>
-                {campaigns.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
+                <SelectItem value="all">All Campaigns</SelectItem>
+                <SelectItem value="Q1 SaaS Outreach">
+                  Q1 SaaS Outreach
+                </SelectItem>
+                <SelectItem value="Enterprise Prospects">
+                  Enterprise Prospects
+                </SelectItem>
+                <SelectItem value="SMB Follow-up">SMB Follow-up</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={timeFilter} onValueChange={setTimeFilter}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="All Time" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Time</SelectItem>
+                <SelectItem value="today">Today</SelectItem>
+                <SelectItem value="week">This Week</SelectItem>
+                <SelectItem value="month">This Month</SelectItem>
               </SelectContent>
             </Select>
           </div>
-        )}
-      </PopoverContent>
-    </Popover>
+        </div>
+      </Filter>
+    </>
   );
-};
+}
+export default InboxFilter;

@@ -1,31 +1,36 @@
+"use client ";
 import { Button } from "@/components/ui/button";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Archive, Pin, Star, Tag, X } from "lucide-react";
 import Link from "next/link";
 import ShowNotesButton from "./show-notes-button";
-function ConversationHeaderButton({
-  selectedConv,
-}: {
-  selectedConv: Conversation;
-}) {
+import { useConversation } from "@/context/ConversationContext";
+import { cn } from "@/lib/utils";
+
+function ConversationHeaderButtons() {
+  const { selectedConversation } = useConversation();
   return (
     <div className="flex items-center space-x-2">
       <ShowNotesButton />
       <Button variant="ghost" size="icon">
         <Star
-          className={`w-5 h-5 ${
-            selectedConv.isStarred ? "text-yellow-500 fill-current" : ""
-          }`}
+          className={cn(
+            "w-5 h-5",
+            selectedConversation.isStarred && "text-yellow-500 fill-current"
+          )}
         />
       </Button>
       <Button variant="ghost" size="icon">
         <Pin
-          className={`w-5 h-5 ${selectedConv.isPinned ? "text-blue-600" : ""}`}
+          className={cn(
+            "w-5 h-5",
+            selectedConversation.isPinned && "text-blue-600"
+          )}
         />
       </Button>
       <DropdownMenu>
@@ -44,9 +49,9 @@ function ConversationHeaderButton({
           ].map((tag) => (
             <DropdownMenuItem
               key={tag}
-              className={
-                selectedConv.tag === tag ? "bg-blue-50 text-blue-700" : ""
-              }
+              className={cn(
+                selectedConversation.tag === tag && "bg-blue-50 text-blue-700"
+              )}
             >
               {tag.replace("-", " ")}
             </DropdownMenuItem>
@@ -64,4 +69,4 @@ function ConversationHeaderButton({
     </div>
   );
 }
-export default ConversationHeaderButton;
+export default ConversationHeaderButtons;

@@ -3,6 +3,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useConversation } from "@/context/ConversationContext";
 import { Calendar } from "lucide-react";
+import ConversationHeaderButtons from "./conversation-header-buttons";
 const getTagColor = (tag: string) => {
   switch (tag) {
     case "interested":
@@ -44,6 +45,7 @@ function ConversationHeader() {
             </div>
           </div>
         </div>
+        <ConversationHeaderButtons />
       </div>
 
       {/* Campaign and Status Info */}

@@ -1,11 +1,19 @@
 import ConversationHeader from "@/components/inbox/conversation/conversation-header";
+import ConversationMessages from "@/components/inbox/conversation/conversation-messages";
+import ConversationReplay from "@/components/inbox/conversation/conversation-replay";
 import ConversationSkeleton from "@/components/inbox/conversation/conversation-skeleton";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { ConversationProvider } from "@/context/ConversationContext";
 import { conversations } from "@/lib/data/Inbox.mock";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-function page({ params: { id } }: { params: { id: number } }) {
+function page({ params: { id } }: { params: { id: string } }) {
   return (
     <Suspense fallback={<ConversationSkeleton />}>
       <Conversation id={id} />
@@ -13,18 +21,25 @@ function page({ params: { id } }: { params: { id: number } }) {
   );
 }
 export default page;
-async function Conversation({ id }: { id: number }) {
-  const conversation = conversations.find(
-    (conv) => conv.id.toString() === id.toString()
-  );
-  console.log(conversation);
+async function Conversation({ id }: { id: string }) {
+  const conversation = conversations.find((conv) => conv.id.toString() === id);
 
   if (!conversation) {
     return notFound();
   }
   return (
     <ConversationProvider conversation={conversation}>
-      <ConversationHeader />
+      <Card className="shadow-none border-0 rounded-none gap-0 p-0">
+        <CardHeader className="p-0">
+          <ConversationHeader />
+        </CardHeader>
+        <CardContent className="p-0">
+          <ConversationMessages />
+        </CardContent>
+        <CardFooter className="p-0" >
+          <ConversationReplay />
+        </CardFooter>
+      </Card>
     </ConversationProvider>
   );
 }
@@ -136,44 +151,6 @@ async function Conversation({ id }: { id: number }) {
 //       </div>
 //     </div>
 //   </div>
-// </div>
-
-{
-  /* Messages */
-}
-// <div className="flex-1 p-6 space-y-6 overflow-y-auto bg-gray-50">
-//   {messageThread.map((message) => (
-//     <div
-//       key={message.id}
-//       className={`flex ${
-//         message.type === "outgoing" ? "justify-end" : "justify-start"
-//       }`}
-//     >
-//       <div
-//         className={`max-w-2xl ${
-//           message.type === "outgoing" ? "order-2" : "order-1"
-//         }`}
-//       >
-//         <div className="flex items-center space-x-2 mb-2">
-//           <span className="text-sm font-medium text-gray-900">
-//             {message.sender}
-//           </span>
-//           <span className="text-xs text-gray-500">
-//             {getRelativeTime(message.time)}
-//           </span>
-//         </div>
-//         <div
-//           className={`p-4 rounded-2xl ${
-//             message.type === "outgoing"
-//               ? "bg-blue-600 text-white"
-//               : "bg-white border border-gray-200 text-gray-900"
-//           }`}
-//         >
-//           <div className="whitespace-pre-wrap">{message.content}</div>
-//         </div>
-//       </div>
-//     </div>
-//   ))}
 // </div>
 
 {

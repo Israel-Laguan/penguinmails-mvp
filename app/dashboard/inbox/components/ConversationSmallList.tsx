@@ -26,7 +26,7 @@ const getTagColor = (tag: string) => {
 function ConversationSmallList() {
   const filteredConversations = conversations;
   return (
-    <>
+    <div className="flex flex-col h-full">
       <ConversationsListHeader title="Conversations" />
       <div className="overflow-y-auto p-2 space-y-2">
         {filteredConversations.map((conversation) => (
@@ -97,7 +97,7 @@ function ConversationSmallList() {
                     </p>
 
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 flex-wrap">
                         <Badge
                           variant="outline"
                           className={cn(
@@ -122,7 +122,7 @@ function ConversationSmallList() {
           </Link>
         ))}
       </div>
-    </>
+    </div>
   );
 }
 export default ConversationSmallList;

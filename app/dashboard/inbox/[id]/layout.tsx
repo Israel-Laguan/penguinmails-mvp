@@ -7,16 +7,14 @@ import ConversationSmallList from "../components/ConversationSmallList";
 
 function layout({ children }: { children: React.ReactNode }) {
   return (
-    <ResizablePanelGroup direction="horizontal" className="flex h-full">
-      <ResizablePanel defaultSize={40} minSize={35} className="flex flex-col">
+    <ResizablePanelGroup direction="horizontal">
+      <ResizablePanel defaultSize={25} minSize={15}>
         <ConversationSmallList />
       </ResizablePanel>
 
       <ResizableHandle />
 
-      <ResizablePanel defaultSize={65} className="flex-1">
-        {children}
-      </ResizablePanel>
+      <ResizablePanel defaultSize={75}>{children}</ResizablePanel>
     </ResizablePanelGroup>
   );
 }

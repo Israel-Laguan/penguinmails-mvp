@@ -1,90 +1,61 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, Shield, CheckCircle, Network } from "lucide-react";
-import { copyText as t } from "./copy";
-import { Domain } from "./types";
+import { domains, mailboxes } from "@/lib/data/domains.mock";
+import { CheckCircle, Globe, Mail, TrendingUp } from "lucide-react";
+import StatsCard from "../StatsCard";
+import { cn } from "@/lib/utils";
 
-type OverviewCardsProps = {
-  domains: Domain[];
-};
+function OverviewCards() {
+  const readyMailboxes = mailboxes.filter(
+    (m) => m.warmupStatus === "ready"
+  ).length;
 
-export function OverviewCards({ domains }: OverviewCardsProps) {
-  const getAuthenticatedCount = () => {
-    return domains.filter(d => d.spf && d.dkim && d.dmarc).length;
-  };
+  const avgEngagement =
+    mailboxes.reduce((sum, m) => sum + parseFloat(m.engagement), 0) /
+    mailboxes.length;
 
-  const getAverageReputation = () => {
-    if (domains.length === 0) return 0;
-    return Math.round(
-      domains.reduce((sum, d) => sum + d.reputation, 0) / domains.length
-    );
-  };
-
-  const getTotalEmailAccounts = () => {
-    return domains.reduce((sum, d) => sum + d.emailAccounts, 0);
-  };
+  const cards = [
+    {
+      title: "Total Domains",
+      value: domains.length,
+      icon: Globe,
+      iconBg: "bg-blue-100",
+      iconColor: "text-blue-600",
+    },
+    {
+      title: "Active Mailboxes",
+      value: mailboxes.filter((m) => m.status === "active").length,
+      icon: Mail,
+      iconBg: "bg-purple-100",
+      iconColor: "text-purple-600",
+    },
+    {
+      title: "Ready to Send",
+      value: readyMailboxes,
+      icon: CheckCircle,
+      iconBg: "bg-green-100",
+      iconColor: "text-green-600",
+    },
+    {
+      title: "Avg. Engagement",
+      value: `${avgEngagement.toFixed(1)}%`,
+      icon: TrendingUp,
+      iconBg: "bg-orange-100",
+      iconColor: "text-orange-600",
+    },
+  ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-4">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            {t.cards.overview.domains.title}
-          </CardTitle>
-          <Network className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{domains.length}</div>
-          <p className="text-xs text-muted-foreground">
-            {domains.filter((d) => d.status === "VERIFIED").length}{" "}
-            {t.cards.overview.domains.verifiedText}
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            {t.cards.overview.authentication.title}
-          </CardTitle>
-          <Shield className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{getAuthenticatedCount()}</div>
-          <p className="text-xs text-muted-foreground">
-            {t.cards.overview.authentication.subtitle}
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            {t.cards.overview.reputation.title}
-          </CardTitle>
-          <CheckCircle className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{getAverageReputation()}%</div>
-          <p className="text-xs text-muted-foreground">
-            {t.cards.overview.reputation.subtitle}
-          </p>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">
-            {t.cards.overview.accounts.title}
-          </CardTitle>
-          <Mail className="h-4 w-4 text-muted-foreground" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{getTotalEmailAccounts()}</div>
-          <p className="text-xs text-muted-foreground">
-            {t.cards.overview.accounts.subtitle}
-          </p>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {cards.map((card, index) => (
+        <StatsCard
+          key={index}
+          title={card.title}
+          value={card.value.toString()}
+          icon={card.icon}
+          color={cn(card.iconBg, card.iconColor)}
+          className="flex-row-reverse gap-5 justify-end"
+        />
+      ))}
     </div>
   );
 }
+export default OverviewCards;

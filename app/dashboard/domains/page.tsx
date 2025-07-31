@@ -1,58 +1,52 @@
-import DomainsContent, { type Domain } from "./content";
+import OverviewCards from "@/components/domains/overview-cards";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { tabs } from "@/lib/data/domains.mock";
+import { Suspense } from "react";
 
-// Sample domains data for development
-const domains: Domain[] = [
-  {
-    id: 1,
-    name: "example.com",
-    provider: "Google Domains",
-    status: "VERIFIED",
-    daysActive: 120,
-    reputation: 88,
-    spf: true,
-    dkim: true,
-    dmarc: true,
-    emailAccounts: 3,
-    createdAt: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date().toISOString(),
-    companyId: 1,
-    createdById: "user_1",
-  },
-  {
-    id: 2,
-    name: "marketing.example.com",
-    provider: "Namecheap",
-    status: "SETUP_REQUIRED",
-    daysActive: 30,
-    reputation: 72,
-    spf: true,
-    dkim: false,
-    dmarc: false,
-    emailAccounts: 1,
-    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date().toISOString(),
-    companyId: 1,
-    createdById: "user_1",
-  },
-  {
-    id: 3,
-    name: "outreach.example.com",
-    provider: "GoDaddy",
-    status: "PENDING",
-    daysActive: 5,
-    reputation: 65,
-    spf: true,
-    dkim: false,
-    dmarc: false,
-    emailAccounts: 0,
-    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-    updatedAt: new Date().toISOString(),
-    companyId: 1,
-    createdById: "user_1",
-  }
-];
-
-export default function DomainsPage() {
-  // In the future, this will fetch data from the server
-  return <DomainsContent domains={domains} />;
+function page() {
+  return (
+    <div className="space-y-8 ">
+      <div className="space-y-1">
+        <h1 className="text-3xl font-bold text-gray-900">
+          Domains & Mailboxes
+        </h1>
+        <p className="text-gray-600 ">
+          Manage your sending domains, mailboxes, and warmup processes
+        </p>
+      </div>
+      <Suspense>
+        <OverviewCards />
+      </Suspense>
+      <Card>
+        <Tabs defaultValue={tabs.at(0)?.id} className="w-full">
+          <CardHeader>
+            <TabsList className="tabs-list">
+              {tabs.map((tab) => (
+                <TabsTrigger
+                  key={tab.id}
+                  value={tab.id}
+                  className="tabs-trigger"
+                >
+                  <tab.icon className="h-4 w-4 mr-2 inline-block" />
+                  {tab.label}
+                  {tab.count > 0 && (
+                    <span className="ml-2 text-sm ">({tab.count})</span>
+                  )}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </CardHeader>
+          <CardContent>
+            {tabs.map((tab) => (
+              <TabsContent key={tab.id} value={tab.id}>
+                <tab.tabContent />
+              </TabsContent>
+            ))}
+          </CardContent>
+        </Tabs>
+      </Card>
+    </div>
+  );
 }
+export default page;

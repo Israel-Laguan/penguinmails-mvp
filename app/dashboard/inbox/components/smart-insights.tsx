@@ -48,7 +48,7 @@ function SmartInsights() {
       </h2>
       <div className="grid grid-cols-2 gap-3">
         {list.map((item) => (
-          <Card key={item.id} className={cn(item.borderColor)}>
+          <Card key={item.id} className={cn(item.borderColor , "p-1")}>
             <CardContent className="flex items-center space-x-3 p-4">
               <div className={cn("rounded-lg p-1.5", item.iconBackground)}>
                 <Icon

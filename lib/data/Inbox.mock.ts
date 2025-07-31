@@ -1,4 +1,4 @@
-export const conversations = [
+export const conversations : Conversation[] = [
   {
     id: 1,
     name: 'Sarah Johnson',

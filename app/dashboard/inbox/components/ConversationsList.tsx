@@ -12,6 +12,7 @@ import {
   Star,
 } from "lucide-react";
 import Link from "next/link";
+import ConversationsListHeader from "./ConversationsListHeader";
 
 const getTagColor = (tag: string) => {
   switch (tag) {
@@ -33,32 +34,15 @@ const getTagColor = (tag: string) => {
 function ConversationsList({
   searchParams,
 }: {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams?: Record<string, string | string[] | undefined>;
 }) {
   const filteredConversations = conversations;
 
   return (
     <div className="flex flex-col h-full w-full">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">
-            All Conversations
-            <span className="ml-2 text-sm font-normal text-gray-500">
-              ({filteredConversations.length})
-            </span>
-          </h2>
-          <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <RefreshCw className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-              <Settings className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
+      <ConversationsListHeader />
 
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-2">
         <div className="space-y-4">
           {filteredConversations.map((conversation) => (
             <Link
@@ -68,7 +52,7 @@ function ConversationsList({
             >
               <Card
                 className={cn(
-                  "cursor-pointer hover:shadow-md transition-all duration-200 group"
+                  "cursor-pointer hover:shadow-md transition-all duration-200 group p-0"
                 )}
               >
                 <CardContent className="p-6">

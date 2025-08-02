@@ -38,10 +38,6 @@ function ConversationHeader() {
             </h1>
             <div className="flex items-center space-x-2 text-gray-600">
               <span>{selectedConversation.email}</span>
-              <span>•</span>
-              <span>{selectedConversation.company}</span>
-              <span>•</span>
-              <span>{selectedConversation.title}</span>
             </div>
           </div>
         </div>

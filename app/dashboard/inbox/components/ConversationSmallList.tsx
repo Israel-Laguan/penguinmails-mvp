@@ -76,15 +76,7 @@ function ConversationSmallList() {
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-2 mb-1">
-                      <p className="text-sm text-gray-500 truncate">
-                        {conversation.company}
-                      </p>
-                      <span className="text-xs text-gray-400">•</span>
-                      <p className="text-sm text-gray-500 truncate">
-                        {conversation.title}
-                      </p>
-                    </div>
+                    
 
                     <p
                       className={`text-sm truncate mb-2 ${

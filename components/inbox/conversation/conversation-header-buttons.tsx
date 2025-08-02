@@ -44,7 +44,6 @@ function ConversationHeaderButtons() {
             "interested",
             "not-interested",
             "maybe-later",
-            "replied",
             "follow-up",
           ].map((tag) => (
             <DropdownMenuItem

@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Archive, Inbox, Mail, Send, Trash2, Users } from "lucide-react";
+import { Archive, Bell, Clock, Eye, Inbox, Mail, Reply, Send, Star, Trash2, TrendingUp, Users, X } from "lucide-react";
 import { useState } from "react";
 
 function InboxFilter() {
@@ -19,12 +19,14 @@ function InboxFilter() {
   const [timeFilter, setTimeFilter] = useState("all");
 
   const filters = [
-    { id: "all", label: "All Messages", count: 156, icon: Inbox },
-    { id: "unread", label: "Unread", count: 24, icon: Mail },
-    { id: "sent", label: "Sent", count: 89, icon: Send },
-    { id: "archived", label: "Archived", count: 43, icon: Archive },
-    { id: "trash", label: "Trash", count: 12, icon: Trash2 },
-    { id: "team", label: "Team", count: 8, icon: Users },
+    { id: "all", label: "All Messages", count: 47, icon: Mail },
+    { id: "unread", label: "Unread", count: 12, icon: Eye },
+    { id: "interested", label: "Interested", count: 8, icon: TrendingUp },
+    { id: "not-interested", label: "Not Interested", count: 15, icon: X },
+    { id: "maybe-later", label: "Maybe Later", count: 5, icon: Clock },
+    { id: "replied", label: "Replied", count: 18, icon: Reply },
+    { id: "follow-up", label: "Needs Follow-up", count: 6, icon: Bell },
+    { id: "starred", label: "Starred", count: 4, icon: Star },
   ];
 
   return (

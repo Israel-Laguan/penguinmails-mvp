@@ -1,9 +1,18 @@
 import { domains, getStatusColor } from "@/lib/data/domains.mock";
-import { AlertTriangle, Check, Copy, Settings, Trash2, X } from "lucide-react";
+import {
+  AlertTriangle,
+  Check,
+  Copy,
+  Plus,
+  Settings,
+  Trash2,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 export const getRecordIcon = (status: string) => {
   switch (status) {
@@ -40,6 +49,17 @@ function DomainsTab() {
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <Button asChild>
+          <Link
+            href={"/dashboard/domains/new"}
+            className="flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4 " />
+            Add Domain
+          </Link>
+        </Button>
+      </div>
       {domains.map((domain) => (
         <Card key={domain.id} className="p-6">
           <CardHeader className="flex flex-row items-center justify-between p-0 mb-6">

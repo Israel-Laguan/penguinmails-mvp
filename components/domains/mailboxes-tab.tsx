@@ -10,13 +10,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getStatusColor, mailboxes } from "@/lib/data/domains.mock";
-import { Mail, Settings, Trash2 } from "lucide-react";
+import { Mail, Plus, Settings, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 function MailboxesTab() {
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex justify-between items-center">
         <CardTitle>All Mailboxes</CardTitle>
+        <div className="flex justify-end">
+          <Button asChild>
+            <Link
+              href={"/dashboard/mailboxes/new"}
+              className="flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4 " />
+              Add Mailbox
+            </Link>
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">

@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Archive, Bell, Clock, Eye, Inbox, Mail, Reply, Send, Star, Trash2, TrendingUp, Users, X } from "lucide-react";
+import { Bell, Clock, Eye, Mail, Reply, Star, TrendingUp, X } from "lucide-react";
 import { useState } from "react";
 
 function InboxFilter() {

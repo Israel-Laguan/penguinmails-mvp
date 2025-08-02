@@ -1,3 +1,5 @@
+"use client";
+import { useAddMailboxesContext } from "@/context/AddMailboxesContext";
 import { LucideIcon } from "lucide-react";
 
 function NewMailboxHeaderDetails() {

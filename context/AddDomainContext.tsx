@@ -59,15 +59,15 @@ const dnsRecords: DNSRecord[] = [
   },
 ];
 
-const AddDomainContext = createContext({
-  steps,
-  currentStep: 1,
-  setCurrentStep: (step: number) => {},
-  dnsRecords,
-  currentStepData: steps[0],
-});
+export const AddDomainContext = createContext<{
+  steps: typeof steps;
+  currentStep: number;
+  setCurrentStep: (step: number) => void;
+  dnsRecords: typeof dnsRecords;
+  currentStepData: (typeof steps)[0];
+} | null>(null);
 
-const addDomainForm = z.object({
+const addDomainFormSchema = z.object({
   domain: z
     .string()
     .min(1, "Domain is required")
@@ -87,7 +87,7 @@ const addDomainForm = z.object({
   ),
 });
 
-type AddDomainFormType = z.infer<typeof addDomainForm>;
+type AddDomainFormType = z.infer<typeof addDomainFormSchema>;
 export function AddDomainProvider({ children }: { children: React.ReactNode }) {
   const [currentStep, setCurrentStep] = useState(1);
   const form = useForm<AddDomainFormType>({

@@ -25,25 +25,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { CSV_COLUMNS, SAMPLE_CSV_DATA } from "@/lib/data/leads";
 import { AlertCircle, Download, Loader2, Upload, X } from "lucide-react";
 import Papa from "papaparse";
 import { useRef, useState } from "react";
-
-const CSV_COLUMNS = [
-  { key: "email", label: "Email Address", required: true },
-  { key: "first_name", label: "First Name", required: true },
-  { key: "last_name", label: "Last Name", required: true },
-  { key: "company", label: "Company Name", required: false },
-  { key: "title", label: "Job Title", required: false },
-  { key: "website", label: "Website", required: false },
-  { key: "phone", label: "Phone Number", required: false },
-];
-
-const SAMPLE_CSV_DATA = [
-  ["Email Address", "First Name", "Last Name", "Company", "Job Title"],
-  ["john.doe@example.com", "John", "Doe", "Example Inc.", "Software Engineer"],
-  ["jane.smith@testcorp.com", "Jane", "Smith", "Test Corp.", "Product Manager"],
-];
 
 const downloadSampleCSV = () => {
   const csvContent = SAMPLE_CSV_DATA.map((row) =>

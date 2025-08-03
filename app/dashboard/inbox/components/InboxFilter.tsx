@@ -43,14 +43,7 @@ function InboxFilter() {
     { id: "team", label: "Team", count: 8, icon: Users },
   ];
 
-  const tags = [
-    "not interested",
-    "follow up",
-    "qualified lead",
-    "demo requested",
-    "pricing inquiry",
-    "competitor mention",
-  ];
+  const tags = ["Interested", "Not Interested", "Maybe Later", "Follow Up"];
 
   const handleMultiSelectToggle = (
     value: string,
@@ -73,7 +66,7 @@ function InboxFilter() {
     items: string[],
     selectedItems: string[],
     setSelectedItems: (items: string[]) => void,
-    icon: any
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
   ) => {
     const Icon = icon;
     return (

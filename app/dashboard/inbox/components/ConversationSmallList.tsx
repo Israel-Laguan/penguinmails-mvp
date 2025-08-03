@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 function ConversationSmallList() {
   const filteredConversations = conversations;
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col ">
       <ConversationsListHeader title="Conversations" />
       <div className="overflow-y-auto p-2 space-y-2">
         {filteredConversations.map((conversation) => (

@@ -3,15 +3,15 @@ import { useFormContext } from "react-hook-form";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function SuccessStep() {
   const form = useFormContext();
+  const router = useRouter();
   const mailboxData = form.getValues();
   function handleComplete() {
-    redirect("/dashboard/domains");
+    router.push("/dashboard/domains");
   }
-
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
       <div className="max-w-2xl mx-auto text-center space-y-8">

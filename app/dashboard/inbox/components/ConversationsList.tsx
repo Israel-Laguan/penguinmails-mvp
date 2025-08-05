@@ -3,14 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { conversations } from "@/lib/data/Inbox.mock";
 import { cn, getRelativeTime } from "@/lib/utils";
-import {
-  Eye,
-  MoreHorizontal,
-  Pin,
-  RefreshCw,
-  Settings,
-  Star,
-} from "lucide-react";
+import { Eye, MoreHorizontal, Pin, Star } from "lucide-react";
 import Link from "next/link";
 import ConversationsListHeader from "./ConversationsListHeader";
 

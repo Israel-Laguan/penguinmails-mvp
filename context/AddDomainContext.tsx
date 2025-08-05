@@ -24,7 +24,7 @@ const steps = [
     title: "Confirmation",
     subtitle: "Domain verified successfully",
     icon: CheckCircle,
-    color: "bg-green-500",
+    color: "bg-green-500 text-white",
   },
 ];
 const dnsRecords: DNSRecord[] = [

@@ -7,23 +7,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAddDomainContext } from "@/context/AddDomainContext";
 import { cn } from "@/lib/utils";
 import {
-    AlertTriangle,
-    CheckCircle,
-    Copy,
-    Eye,
-    HelpCircle,
-    Mail,
-    Server,
-    Shield,
-    X
+  AlertTriangle,
+  CheckCircle,
+  Copy,
+  Eye,
+  HelpCircle,
+  Mail,
+  Server,
+  Shield,
+  X,
 } from "lucide-react";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
@@ -88,7 +88,7 @@ const getRecordTypeIcon = (type: DNSRecord["type"]) => {
   }
 };
 function NewDomainDNSSetUp() {
-  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [_, setCopiedField] = useState<string | null>(null);
   const { dnsRecords } = useAddDomainContext();
   const copyToClipboard = async (text: string, recordType: string) => {
     try {
@@ -100,7 +100,7 @@ function NewDomainDNSSetUp() {
     }
   };
   const form = useFormContext();
-  const domainName = form.watch("domainName") || "example.com";
+  const domainName = form.watch("domain") || "example.com";
 
   return (
     <TooltipProvider>

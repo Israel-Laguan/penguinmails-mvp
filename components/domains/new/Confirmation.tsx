@@ -4,15 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ArrowRight, CheckCircle, Mail } from "lucide-react";
+import { redirect } from "next/navigation";
 import { useFormContext } from "react-hook-form";
 
 function Confirmation() {
   const form = useFormContext();
   function handleComplete() {
+    redirect("/dashboard/domains");
     form.reset();
     // Navigate to mailboxes or perform any other action
   }
-  const domainName = form.watch("domainName") || "example.com";
+  const domainName = form.watch("domain") || "example.com";
   return (
     <Card>
       <CardContent className="p-8">

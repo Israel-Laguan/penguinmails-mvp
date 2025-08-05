@@ -1,18 +1,11 @@
-import { domains, getStatusColor } from "@/lib/data/domains.mock";
-import {
-  AlertTriangle,
-  Check,
-  Copy,
-  Plus,
-  Settings,
-  Trash2,
-  X,
-} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { domains, getStatusColor } from "@/lib/data/domains.mock";
 import { cn } from "@/lib/utils";
+import { AlertTriangle, Check, Copy, Plus, Settings, X } from "lucide-react";
 import Link from "next/link";
+import DeleteDomainDialog from "./DeleteDomainDialog";
 
 export const getRecordIcon = (status: string) => {
   switch (status) {
@@ -87,16 +80,7 @@ function DomainsTab() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <Button variant="ghost" size="icon">
-                <Settings className="w-4 h-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="hover:text-destructive"
-              >
-                <Trash2 className="w-4 h-4" />
-              </Button>
+              <DeleteDomainDialog domainId={domain.id} />
             </div>
           </CardHeader>
 
@@ -109,7 +93,7 @@ function DomainsTab() {
                 const status = domain.records[recordKey];
 
                 return (
-                  <Card key={index} className="bg-muted/50">
+                  <Card key={index} className="bg-muted/50 p-0">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium">

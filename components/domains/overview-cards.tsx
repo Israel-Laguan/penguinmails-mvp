@@ -1,16 +1,12 @@
 import { domains, mailboxes } from "@/lib/data/domains.mock";
-import { CheckCircle, Globe, Mail, TrendingUp } from "lucide-react";
-import StatsCard from "../StatsCard";
 import { cn } from "@/lib/utils";
+import { CheckCircle, Clock, Globe, Mail } from "lucide-react";
+import StatsCard from "../StatsCard";
 
 function OverviewCards() {
   const readyMailboxes = mailboxes.filter(
     (m) => m.warmupStatus === "ready"
   ).length;
-
-  const avgEngagement =
-    mailboxes.reduce((sum, m) => sum + parseFloat(m.engagement), 0) /
-    mailboxes.length;
 
   const cards = [
     {
@@ -35,9 +31,9 @@ function OverviewCards() {
       iconColor: "text-green-600",
     },
     {
-      title: "Avg. Engagement",
-      value: `${avgEngagement.toFixed(1)}%`,
-      icon: TrendingUp,
+      title: "Warming Up",
+      value: 2,
+      icon: Clock,
       iconBg: "bg-orange-100",
       iconColor: "text-orange-600",
     },

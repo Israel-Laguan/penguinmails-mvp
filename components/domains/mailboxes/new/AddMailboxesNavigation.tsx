@@ -26,7 +26,7 @@ function AddMailboxesNavigation() {
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return mailboxData.name && mailboxData.domain && mailboxData.password;
+        return mailboxData.name && mailboxData.domain && mailboxData.password && mailboxData.confirmPassword === mailboxData.password;
       case 2:
         return mailboxData.dailyLimit >= 1 && mailboxData.dailyLimit <= 50;
       case 3:

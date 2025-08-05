@@ -24,8 +24,8 @@ import { useFormContext } from "react-hook-form";
 function AddMailboxDetails() {
   const form = useFormContext();
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const availableDomains = domains;
-
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
       <div className="max-w-2xl mx-auto space-y-8">
@@ -138,6 +138,49 @@ function AddMailboxDetails() {
                 <p className="text-sm text-gray-500">
                   Use at least 8 characters with a mix of letters, numbers, and
                   symbols
+                </p>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-sm font-medium text-gray-700">
+                  Confirm Password *
+                </FormLabel>
+                <div className="relative">
+                  <FormControl>
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      placeholder="Re-enter your password"
+                      className={cn(
+                        "px-4 py-3 pr-12 text-lg h-12",
+                        form.formState.errors.confirmPassword &&
+                          "border-red-300"
+                      )}
+                      {...field}
+                    />
+                  </FormControl>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 h-5 w-5 p-0"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </Button>
+                </div>
+                <FormMessage />
+                <p className="text-sm text-gray-500">
+                  Please confirm your password to proceed
                 </p>
               </FormItem>
             )}

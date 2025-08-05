@@ -1,11 +1,11 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,8 +45,8 @@ function MailboxSetting() {
                   <FormControl>
                     <Input
                       type="number"
-                      min="1"
-                      max="50"
+                      min={1}
+                      max={50}
                       className={cn(
                         "w-full px-4 py-3 pr-24 text-lg h-12",
                         form.formState.errors.dailyLimit && "border-red-300"

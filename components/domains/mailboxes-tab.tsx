@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,8 +9,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getStatusColor, mailboxes } from "@/lib/data/domains.mock";
-import { Mail, Plus, Settings, Trash2 } from "lucide-react";
+import { Mail, Plus } from "lucide-react";
 import Link from "next/link";
+import MailboxActions from "./MailboxActions";
 
 function MailboxesTab() {
   return (
@@ -33,11 +33,10 @@ function MailboxesTab() {
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-gray-100 ">
               <TableRow>
                 <TableHead>Mailbox</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Campaign</TableHead>
                 <TableHead>Daily Limit</TableHead>
                 <TableHead>Sent</TableHead>
                 <TableHead>Last Activity</TableHead>
@@ -46,42 +45,61 @@ function MailboxesTab() {
             </TableHeader>
             <TableBody>
               {mailboxes.map((mailbox) => (
-                <TableRow key={mailbox.id} className="hover:bg-muted/50">
-                  <TableCell>
+                <TableRow
+                  key={mailbox.id}
+                  className="hover:bg-gray-50 transition-colors group"
+                >
+                  <TableCell className="px-8 py-6">
                     <div>
-                      <div className="flex items-center space-x-2">
-                        <Mail className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-medium">{mailbox.email}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground">
-                        {mailbox.domain}
+                      <h3 className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors text-lg">
+                        {mailbox.email}
+                      </h3>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {mailbox.sent.toLocaleString()} sent •{" "}
+                        {mailbox.dailyLimit}/day limit
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Domain: {mailbox.domain}
                       </p>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <Badge className={getStatusColor(mailbox.status)}>
-                      {mailbox.status}
-                    </Badge>
+                  <TableCell className="px-6 py-6">
+                    <span
+                      className={`inline-flex items-center space-x-2 px-3 py-1.5 rounded-full text-sm font-medium ${getStatusColor(
+                        mailbox.status
+                      )}`}
+                    >
+                      <span className="capitalize">{mailbox.status}</span>
+                    </span>
                   </TableCell>
-                  <TableCell>{mailbox.campaign || "-"}</TableCell>
-                  <TableCell>{mailbox.dailyLimit}/day</TableCell>
-                  <TableCell>{mailbox.sent.toLocaleString()}</TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="px-6 py-6">
+                    <div className="flex items-center space-x-2">
+                      <Mail className="w-4 h-4 text-gray-400" />
+                      <span className="text-sm font-medium text-gray-900">
+                        {mailbox.dailyLimit}/day
+                      </span>
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      Daily sending limit
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-6 py-6">
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-medium text-gray-900">
+                          {mailbox.sent.toLocaleString()}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          total sent
+                        </span>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-6 py-6 text-sm text-gray-500">
                     {mailbox.lastActivity}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end space-x-2">
-                      <Button variant="ghost" size="icon">
-                        <Settings className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+                  <TableCell className="px-6 py-6 text-right">
+                    <MailboxActions mailbox={mailbox} />
                   </TableCell>
                 </TableRow>
               ))}

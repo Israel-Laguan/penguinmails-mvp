@@ -31,7 +31,7 @@ export const domains = [
     addedDate: '1 day ago'
   }
 ]
-export const mailboxes = [
+export const mailboxes : Mailbox[] = [
   {
     id: 1,
     email: 'john@mycompany.com',
@@ -136,4 +136,6 @@ export const getStatusColor = (status: string) => {
         return 'bg-gray-100 text-gray-800';
     }
   };
+
+
 

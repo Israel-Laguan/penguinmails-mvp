@@ -27,7 +27,6 @@ import StatsCard from "../StatsCard";
 function WarmupTab() {
   return (
     <div className="space-y-8">
-      <OverViewWarmup />
       <WarmupMailboxesTable />
       <Card>
         <CardContent className="p-6">

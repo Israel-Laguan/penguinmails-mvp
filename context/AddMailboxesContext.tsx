@@ -24,7 +24,7 @@ const steps = [
     title: "Success",
     subtitle: "Mailbox created successfully",
     icon: CheckCircle,
-    color: "bg-green-500",
+    color: "bg-green-500 text-white",
   },
 ];
 
@@ -39,7 +39,8 @@ export const addMailboxesFormSchema = z.object({
   name: z.string().min(2).max(100),
   domain: z.string().min(2).max(100),
   password: z.string().min(6).max(100),
-  dailyLimit: z.number().min(1).optional(),
+  confirmPassword: z.string().min(6).max(100),
+  dailyLimit: z.number().min(1),
   enableWarmup: z.boolean().optional(),
   enableWarmupLimits: z.boolean().optional(),
 });
@@ -56,7 +57,8 @@ export function AddMailboxesProvider({
       name: "",
       domain: "",
       password: "",
-      dailyLimit: undefined,
+      confirmPassword: "",
+      dailyLimit: 30,
       enableWarmup: false,
       enableWarmupLimits: false,
     },

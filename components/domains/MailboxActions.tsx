@@ -57,18 +57,36 @@ function MailboxActions({ mailbox }: { mailbox: Mailbox }) {
   );
 }
 
-const updateMailboxSchema = z.object({
-  dailyLimit: z.number().min(1, "Daily limit must be at least 1"),
-  password: z.string().optional(),
-  pause: z.boolean().optional(),
-});
+const updateMailboxSchema = z
+  .object({
+    dailyLimit: z.number().min(1, "Daily limit must be at least 1"),
+    currentPassword: z.string().optional(),
+    newPassword: z.string().optional(),
+    confirmPassword: z.string().optional(),
+    pause: z.boolean().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.newPassword && data.newPassword !== data.confirmPassword) {
+        return false;
+      }
+      return true;
+    },
+    {
+      message: "Passwords don't match",
+      path: ["confirmPassword"],
+    }
+  );
+
 type updateMailboxValuesType = z.infer<typeof updateMailboxSchema>;
 function UpdateMailboxSetting({ mailbox }: { mailbox: Mailbox }) {
   const form = useForm<updateMailboxValuesType>({
     resolver: zodResolver(updateMailboxSchema),
     defaultValues: {
       dailyLimit: mailbox.dailyLimit,
-      password: "",
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
       pause: mailbox.status === "paused",
     },
   });
@@ -104,14 +122,50 @@ function UpdateMailboxSetting({ mailbox }: { mailbox: Mailbox }) {
 
           <FormField
             control={form.control}
-            name="password"
+            name="currentPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Update Password (optional)</FormLabel>
+                <FormLabel>Current Password</FormLabel>
                 <FormControl>
                   <Input
                     type="password"
-                    placeholder="New password"
+                    placeholder="Enter current password"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="newPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Update New Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Enter new password"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirm New Password</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Confirm new password"
                     {...field}
                   />
                 </FormControl>

@@ -11,7 +11,8 @@ import {
 import { getStatusColor, mailboxes } from "@/lib/data/domains.mock";
 import { Mail, Plus } from "lucide-react";
 import Link from "next/link";
-import MailboxActions from "./MailboxActions";
+import MailboxActions from "../MailboxActions";
+import MailboxesFilter from "./MailboxesFilter";
 
 function MailboxesTab() {
   return (
@@ -30,6 +31,7 @@ function MailboxesTab() {
           </Button>
         </div>
       </CardHeader>
+      <MailboxesFilter />
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <Table>
@@ -55,8 +57,10 @@ function MailboxesTab() {
                         {mailbox.email}
                       </h3>
                       <p className="text-sm text-gray-500 mt-1">
-                        {mailbox.sent.toLocaleString()} sent •{" "}
-                        {mailbox.dailyLimit}/day limit
+                        Date Created :{" "}
+                        {Intl.DateTimeFormat("en-US").format(
+                          new Date(mailbox.createdAt)
+                        )}
                       </p>
                       <p className="text-xs text-gray-400 mt-1">
                         Domain: {mailbox.domain}

@@ -13,7 +13,7 @@ interface Mailbox {
   totalSent: number;
   replies: number;
   engagement: string;
-
+  createdAt: string; // ISO date string
 }
 
 

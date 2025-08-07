@@ -1,17 +1,7 @@
-import { getStatusColor, mailboxes } from "@/lib/data/domains.mock";
-import {
-  AlertTriangle,
-  BarChart3,
-  CheckCircle,
-  Clock,
-  Pause,
-  Play,
-  Settings,
-  TrendingUp,
-} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   Table,
   TableBody,
@@ -20,9 +10,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Progress } from "@/components/ui/progress";
+import { getStatusColor, mailboxes } from "@/lib/data/domains.mock";
 import { cn } from "@/lib/utils";
-import StatsCard from "../StatsCard";
+import {
+  AlertTriangle,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  Mail,
+  Pause,
+  Play,
+  Settings,
+} from "lucide-react";
+import Link from "next/link";
 
 function WarmupTab() {
   return (
@@ -59,67 +59,6 @@ function WarmupTab() {
 
 export default WarmupTab;
 
-function OverViewWarmup() {
-  const readyMailboxes = mailboxes.filter(
-    (m) => m.warmupStatus === "ready"
-  ).length;
-  const warmingMailboxes = mailboxes.filter(
-    (m) => m.warmupStatus === "warming"
-  ).length;
-  const pausedMailboxes = mailboxes.filter(
-    (m) => m.warmupStatus === "paused"
-  ).length;
-  const avgEngagement =
-    mailboxes.reduce((sum, m) => sum + parseFloat(m.engagement), 0) /
-    mailboxes.length;
-
-  const cards = [
-    {
-      icon: CheckCircle,
-      bgColor: "bg-green-100",
-      iconColor: "text-green-600",
-      label: "Ready to Send",
-      value: readyMailboxes,
-    },
-    {
-      icon: Clock,
-      bgColor: "bg-orange-100",
-      iconColor: "text-orange-600",
-      label: "Warming Up",
-      value: warmingMailboxes,
-    },
-    {
-      icon: Pause,
-      bgColor: "bg-gray-100",
-      iconColor: "text-gray-600",
-      label: "Paused",
-      value: pausedMailboxes,
-    },
-    {
-      icon: TrendingUp,
-      bgColor: "bg-blue-100",
-      iconColor: "text-blue-600",
-      label: "Avg. Engagement",
-      value: `${avgEngagement.toFixed(1)}%`,
-    },
-  ];
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-      {cards.map((item, index) => (
-        <StatsCard
-          key={index}
-          title={item.label}
-          value={item.value.toString()}
-          icon={item.icon}
-          color={cn(item.bgColor, item.iconColor)}
-          className="flex-row-reverse gap-5 justify-end"
-        />
-      ))}
-    </div>
-  );
-}
-
 const getStatusIcon = (status: string) => {
   switch (status) {
     case "ready":
@@ -133,19 +72,6 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-const getStatusVariant = (status: string) => {
-  switch (status) {
-    case "ready":
-      return "default";
-    case "warming":
-      return "secondary";
-    case "paused":
-      return "outline";
-    default:
-      return "outline";
-  }
-};
-
 function WarmupMailboxesTable() {
   return (
     <Card>
@@ -155,19 +81,20 @@ function WarmupMailboxesTable() {
           <Button variant="ghost" size="icon">
             <Settings className="w-4 h-4" />
           </Button>
-          <Button variant="ghost" size="icon">
-            <BarChart3 className="w-4 h-4" />
-          </Button>
+          <Link href={"/dashboard/analytics/by-mailbox"}>
+            <Button variant="ghost" size="icon">
+              <BarChart3 className="w-4 h-4" />
+            </Button>
+          </Link>
         </div>
       </CardHeader>
       <CardContent className="p-0">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-gray-100">
               <TableRow>
                 <TableHead>Mailbox</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Progress</TableHead>
                 <TableHead>Daily Count</TableHead>
                 <TableHead>Performance</TableHead>
                 <TableHead>Days Active</TableHead>
@@ -176,12 +103,31 @@ function WarmupMailboxesTable() {
             </TableHeader>
             <TableBody>
               {mailboxes.map((mailbox) => (
-                <TableRow key={mailbox.id}>
-                  <TableCell className="font-medium">{mailbox.email}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={getStatusVariant(mailbox.warmupStatus)}
-                      className="gap-1"
+                <TableRow
+                  key={mailbox.id}
+                  className="hover:bg-gray-50 transition-colors group"
+                >
+                  <TableCell className="px-8 py-6">
+                    <div>
+                      <h3 className="font-semibold text-gray-900 cursor-pointer hover:text-blue-600 transition-colors text-lg">
+                        {mailbox.email}
+                      </h3>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Date Created :{" "}
+                        {Intl.DateTimeFormat("en-US").format(
+                          new Date(mailbox.createdAt)
+                        )}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Domain: {mailbox.domain}
+                      </p>
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-6 py-6">
+                    <span
+                      className={`inline-flex items-center space-x-2 px-3 py-1.5 rounded-full text-sm font-medium ${getStatusColor(
+                        mailbox.warmupStatus
+                      )}`}
                     >
                       {getStatusIcon(mailbox.warmupStatus)}
                       <span className="capitalize">
@@ -189,46 +135,50 @@ function WarmupMailboxesTable() {
                           ? "Ready"
                           : mailbox.warmupStatus}
                       </span>
-                    </Badge>
+                    </span>
                   </TableCell>
-                  <TableCell>
+
+                  <TableCell className="px-6 py-6">
                     <div className="flex items-center space-x-2">
-                      <div className="flex-1">
-                        <Progress
-                          value={mailbox.warmupProgress}
-                          className={cn("h-2", {
-                            "[&>div]:bg-green-500":
-                              mailbox.warmupStatus === "ready",
-                            "[&>div]:bg-orange-500":
-                              mailbox.warmupStatus === "warming",
-                            "[&>div]:bg-gray-400":
-                              mailbox.warmupStatus === "paused",
-                          })}
-                        />
-                      </div>
-                      <span className="text-xs text-muted-foreground w-10">
-                        {mailbox.warmupProgress}%
+                      <Mail className="w-4 h-4 text-gray-400" />
+                      <span className="text-sm font-medium text-gray-900">
+                        {mailbox.warmupStatus === "paused"
+                          ? "0"
+                          : Math.floor(
+                              mailbox.dailyLimit *
+                                (mailbox.warmupProgress / 100)
+                            )}{" "}
+                        emails
                       </span>
                     </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      Daily warmup count
+                    </div>
                   </TableCell>
-                  <TableCell>
-                    {mailbox.warmupStatus === "paused"
-                      ? "0"
-                      : Math.floor(
-                          mailbox.dailyLimit * (mailbox.warmupProgress / 100)
-                        )}{" "}
-                    emails
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      <div>{mailbox.totalSent} sent</div>
-                      <div className="text-muted-foreground">
+                  <TableCell className="px-6 py-6">
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm font-medium text-gray-900">
+                          {mailbox.totalSent}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          total sent
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-500">
                         {mailbox.replies} replies ({mailbox.engagement})
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{mailbox.warmupDays} days</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="px-6 py-6">
+                    <span className="text-sm font-medium text-gray-900">
+                      {mailbox.warmupDays} days
+                    </span>
+                    <div className="text-xs text-gray-500 mt-1">
+                      Active period
+                    </div>
+                  </TableCell>
+                  <TableCell className="px-6 py-6 text-right">
                     <div className="flex items-center justify-end space-x-2">
                       {mailbox.warmupStatus === "warming" ||
                       mailbox.warmupStatus === "ready" ? (

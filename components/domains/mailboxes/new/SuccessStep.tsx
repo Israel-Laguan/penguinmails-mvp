@@ -10,7 +10,7 @@ function SuccessStep() {
   const router = useRouter();
   const mailboxData = form.getValues();
   function handleComplete() {
-    router.push("/dashboard/domains");
+    router.push("/dashboard/domains/mailboxes");
   }
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">

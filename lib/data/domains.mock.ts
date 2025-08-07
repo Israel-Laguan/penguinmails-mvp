@@ -1,5 +1,5 @@
 import DomainsTab from "@/components/domains/domains-tab";
-import MailboxesTab from "@/components/domains/mailboxes-tab";
+import MailboxesTab from "@/components/domains/mailboxes/mailboxes-tab";
 import WarmupTab from "@/components/domains/warmup-tab";
 import { Globe, Mail, Zap } from "lucide-react";
 
@@ -46,7 +46,8 @@ export const mailboxes : Mailbox[] = [
     warmupDays: 28,
     totalSent: 456,
     replies: 189,
-    engagement: '41.4%'
+    engagement: '41.4%',
+    createdAt: '2023-10-01T12:00:00Z',
   },
   {
     id: 2,
@@ -62,7 +63,8 @@ export const mailboxes : Mailbox[] = [
     warmupDays: 12,
     totalSent: 234,
     replies: 87,
-    engagement: '37.2%'
+    engagement: '37.2%',
+    createdAt: '2023-10-01T12:00:00Z',
   },
   {
     id: 3,
@@ -78,7 +80,8 @@ export const mailboxes : Mailbox[] = [
     warmupDays: 5,
     totalSent: 89,
     replies: 31,
-    engagement: '34.8%'
+    engagement: '34.8%',
+    createdAt: '2023-10-01T12:00:00Z'
   },
   {
     id: 4,
@@ -94,7 +97,8 @@ export const mailboxes : Mailbox[] = [
     warmupDays: 8,
     totalSent: 167,
     replies: 62,
-    engagement: '37.1%'
+    engagement: '37.1%',
+    createdAt: '2023-10-01T12:00:00Z'
   },
   {
     id: 5,
@@ -110,13 +114,14 @@ export const mailboxes : Mailbox[] = [
     warmupDays: 35,
     totalSent: 623,
     replies: 267,
-    engagement: '42.9%'
+    engagement: '42.9%',
+    createdAt: '2023-10-01T12:00:00Z'
   }
 ];
 export const tabs = [
-    { id: 'domains', label: 'Domains', count: domains.length, icon: Globe ,tabContent : DomainsTab},
-    { id: 'mailboxes', label: 'Mailboxes', count: mailboxes.length, icon: Mail ,tabContent : MailboxesTab},
-    { id: 'warmup', label: 'Warmup Hub', count: mailboxes.filter(m => m.warmupStatus !== 'ready').length, icon: Zap ,tabContent : WarmupTab},
+    { id: '', label: 'Domains', count: domains.length, icon: Globe },
+    { id: 'mailboxes', label: 'Mailboxes', count: mailboxes.length, icon: Mail  },
+    { id: 'warmup', label: 'Warmup Hub', count: mailboxes.filter(m => m.warmupStatus !== 'ready').length, icon: Zap},
   ];
 
 

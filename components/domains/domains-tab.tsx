@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { domains, getStatusColor } from "@/lib/data/domains.mock";
 import { cn } from "@/lib/utils";
-import { AlertTriangle, Check, Copy, Plus, Settings, X } from "lucide-react";
+import { AlertTriangle, Check, Copy, Plus, X } from "lucide-react";
 import Link from "next/link";
 import DeleteDomainDialog from "./DeleteDomainDialog";
 

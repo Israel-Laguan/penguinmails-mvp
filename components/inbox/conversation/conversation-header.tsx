@@ -4,22 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { useConversation } from "@/context/ConversationContext";
 import { Calendar } from "lucide-react";
 import ConversationHeaderButtons from "./conversation-header-buttons";
-const getTagColor = (tag: string) => {
-  switch (tag) {
-    case "interested":
-      return "bg-green-100 text-green-800 border-green-200";
-    case "not-interested":
-      return "bg-red-100 text-red-800 border-red-200";
-    case "maybe-later":
-      return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    case "replied":
-      return "bg-blue-100 text-blue-800 border-blue-200";
-    case "follow-up":
-      return "bg-purple-100 text-purple-800 border-purple-200";
-    default:
-      return "bg-gray-100 text-gray-800 border-gray-200";
-  }
-};
+import { getTagColor } from "@/lib/data/Inbox.mock";
 function ConversationHeader() {
   const { selectedConversation } = useConversation();
 

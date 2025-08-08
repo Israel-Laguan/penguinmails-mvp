@@ -1,7 +1,7 @@
-import NewDomainHeaderDetails from "@/components/domains/new/NewDomainHeaderDetails";
-import NewDomainNavigation from "@/components/domains/new/NewDomainNavigation";
-import NewDomainStep from "@/components/domains/new/NewDomainStep";
-import NewDomainStepper from "@/components/domains/new/NewDomainStepper";
+import AddMailboxesNavigation from "@/components/domains/mailboxes/new/AddMailboxesNavigation";
+import AddMailboxesStep from "@/components/domains/mailboxes/new/AddMailboxesStep";
+import AddMailboxesStepper from "@/components/domains/mailboxes/new/AddMailboxesStepper";
+import NewMailboxHeaderDetails from "@/components/domains/mailboxes/new/NewMailboxHeaderDetails";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,12 +9,13 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { AddDomainProvider } from "@/context/AddDomainContext";
+import { AddMailboxesProvider } from "@/context/AddMailboxesContext";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+
 function page() {
   return (
-    <AddDomainProvider>
+    <AddMailboxesProvider>
       <Card>
         <CardHeader className="px-8 py-6">
           <div className="flex items-center justify-between">
@@ -25,26 +26,26 @@ function page() {
                 </Link>
               </Button>
               <div>
-                <h1 className="text-2xl font-bold">Add New Domain</h1>
-                <p className="text-muted-foreground">
-                  Connect your domain to start creating mailboxes and sending
-                  cold emails
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Create New Mailbox
+                </h1>
+                <p className="text-gray-600">
+                  Set up a mailbox to start sending cold emails
                 </p>
               </div>
             </div>
-            <NewDomainHeaderDetails />
+            <NewMailboxHeaderDetails />
           </div>
         </CardHeader>
-
         <CardContent>
-          <NewDomainStepper />
-          <NewDomainStep />
+          <AddMailboxesStepper />
+          <AddMailboxesStep />
         </CardContent>
         <CardFooter>
-          <NewDomainNavigation />
+          <AddMailboxesNavigation />
         </CardFooter>
       </Card>
-    </AddDomainProvider>
+    </AddMailboxesProvider>
   );
 }
 export default page;

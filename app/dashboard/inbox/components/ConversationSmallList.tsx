@@ -5,11 +5,10 @@ import { ArrowRight, Pin, Star } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-
 function ConversationSmallList() {
   const filteredConversations = conversations;
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col h-full">
       <ConversationsListHeader title="Conversations" />
       <div className="overflow-y-auto p-2 space-y-2">
         {filteredConversations.map((conversation) => (

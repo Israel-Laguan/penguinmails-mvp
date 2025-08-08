@@ -1,18 +1,8 @@
 "use client";
 import { campaignsData } from "@/lib/data/campaigns";
-import { Copy, Edit, Eye, Pause, Play, Trash2 } from "lucide-react";
+import { Copy, Edit, Eye, Pause, Play } from "lucide-react";
 import Link from "next/link";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../ui/alert-dialog";
+import AlertDialogDelete from "../AlertDialogDelete";
 import { Button } from "../ui/button";
 export enum CampaignActionsEnum {
   VIEW = "view",
@@ -74,41 +64,13 @@ function EditAction({ campaignId }: { campaignId: number }) {
 }
 function DeleteAction({ campaignId }: { campaignId: number }) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-red-500 hover:text-red-700 hover:bg-transparent cursor-pointer m-0"
-        >
-          <Trash2 className="w-4 h-4" />
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle className="text-lg font-semibold">
-            Delete Campaign
-          </AlertDialogTitle>
-          <AlertDialogDescription className="text-sm text-gray-500 mt-2">
-            Are you sure you want to delete this campaign? This action cannot be
-            undone.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel className="text-gray-600">
-            Cancel
-          </AlertDialogCancel>
-          <AlertDialogAction asChild>
-            <Button
-              variant="destructive"
-              className="text-white bg-red-600 hover:bg-red-700"
-            >
-              Delete
-            </Button>
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <AlertDialogDelete
+      title="Delete Campaign"
+      description="Are you sure you want to delete this campaign? This action cannot be undone."
+      onDelete={async () => {
+        console.log(`Deleting campaign with ID: ${campaignId}`);
+      }}
+    />
   );
 }
 function PauseAction({ campaignId }: { campaignId: number }) {

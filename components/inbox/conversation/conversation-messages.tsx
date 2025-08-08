@@ -55,7 +55,3 @@ function ConversationMessages() {
   );
 }
 export default ConversationMessages;
-
-{
-  /* Messages */
-}

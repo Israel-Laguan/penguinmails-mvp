@@ -14,7 +14,11 @@ import { conversations } from "@/lib/data/Inbox.mock";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-function page({ params: { id } }: { params: { id: string } }) {
+async function page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!id) {
+    return notFound();
+  }
   return (
     <Suspense fallback={<ConversationSkeleton />}>
       <Conversation id={id} />

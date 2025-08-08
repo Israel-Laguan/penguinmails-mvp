@@ -1,4 +1,4 @@
-"use client";
+"use client ";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -6,16 +6,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useConversation } from "@/context/ConversationContext";
+import { cn } from "@/lib/utils";
 import { Archive, Pin, Star, Tag, X } from "lucide-react";
 import Link from "next/link";
 import ShowNotesButton from "./show-notes-button";
-import { useConversation } from "@/context/ConversationContext";
-import { cn } from "@/lib/utils";
+import SidebarTriggerButton from "./SidebarTriggerButton";
 
 function ConversationHeaderButtons() {
   const { selectedConversation } = useConversation();
   return (
     <div className="flex items-center space-x-2">
+      <SidebarTriggerButton />
       <ShowNotesButton />
       <Button variant="ghost" size="icon">
         <Star
@@ -40,22 +42,18 @@ function ConversationHeaderButtons() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
-          {[
-            "interested",
-            "not-interested",
-            "maybe-later",
-            "replied",
-            "follow-up",
-          ].map((tag) => (
-            <DropdownMenuItem
-              key={tag}
-              className={cn(
-                selectedConversation.tag === tag && "bg-blue-50 text-blue-700"
-              )}
-            >
-              {tag.replace("-", " ")}
-            </DropdownMenuItem>
-          ))}
+          {["interested", "not-interested", "maybe-later", "follow-up"].map(
+            (tag) => (
+              <DropdownMenuItem
+                key={tag}
+                className={cn(
+                  selectedConversation.tag === tag && "bg-blue-50 text-blue-700"
+                )}
+              >
+                {tag.replace("-", " ")}
+              </DropdownMenuItem>
+            )
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       <Button variant="ghost" size="icon">

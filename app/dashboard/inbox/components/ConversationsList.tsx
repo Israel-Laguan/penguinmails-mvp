@@ -3,7 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { conversations } from "@/lib/data/Inbox.mock";
 import { cn, getRelativeTime } from "@/lib/utils";
-import { Eye, MoreHorizontal, Pin, Star } from "lucide-react";
+import {
+  Eye,
+  MoreHorizontal,
+  Pin,
+  RefreshCw,
+  Settings,
+  Star,
+} from "lucide-react";
 import Link from "next/link";
 import ConversationsListHeader from "./ConversationsListHeader";
 
@@ -79,15 +86,7 @@ function ConversationsList({
                         </span>
                       </div>
 
-                      <div className="flex items-center space-x-2 mb-2">
-                        <p className="text-sm text-gray-600">
-                          {conversation.company}
-                        </p>
-                        <span className="text-xs text-gray-400">•</span>
-                        <p className="text-sm text-gray-600">
-                          {conversation.title}
-                        </p>
-                      </div>
+                  
 
                       <h4 className="font-medium text-gray-900 mb-2">
                         {conversation.subject}

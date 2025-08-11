@@ -1,12 +1,6 @@
 import AnalyticsHeaderActions from "@/components/analytics/AnalyticsHeaderActions";
 
-function Layout({
-  statistics,
-  children,
-}: {
-  statistics: React.ReactNode;
-  children: React.ReactNode;
-}) {
+function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="space-y-8 ">
       <div className="flex items-center justify-between">

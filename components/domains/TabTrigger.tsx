@@ -1,17 +1,20 @@
+"use client";
 import Link from "next/link";
 import { TabsTrigger } from "../ui/tabs";
+import { usePathname } from "next/navigation";
 
 function TabTrigger({
-  to,
+  id,
   children,
+  href,
 }: {
-  to: string;
+  id: string;
   children: React.ReactNode;
+  href: string;
 }) {
-  const href = `/dashboard/domains/${to}`;
-
+  const pathName = usePathname();
   return (
-    <TabsTrigger value={to} className="tabs-trigger" asChild>
+    <TabsTrigger value={id} className="tabs-trigger" asChild>
       <Link href={href}>{children}</Link>
     </TabsTrigger>
   );

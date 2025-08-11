@@ -43,12 +43,16 @@ function SearchInput() {
 function DropDownFilter({
   options,
   placeholder,
+  value,
+  onValueChange,
 }: {
   options: { value: string; label: string }[];
   placeholder: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
 }) {
   return (
-    <Select>
+    <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger className="w-full sm:w-auto">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

@@ -20,21 +20,41 @@ export const generateTimeSeriesData = (days: number, granularity: 'day' | 'week'
   const data = [];
   const now = new Date();
   
-  for (let i = days - 1; i >= 0; i--) {
+  let periods = days;
+  let periodLength = 1; // days per period
+  
+  // Calculate number of periods and period length based on granularity
+  if (granularity === 'week') {
+    periods = Math.ceil(days / 7);
+    periodLength = 7;
+  } else if (granularity === 'month') {
+    periods = Math.ceil(days / 30);
+    periodLength = 30;
+  }
+  
+  for (let i = periods - 1; i >= 0; i--) {
     const date = new Date(now);
+    
     if (granularity === 'day') {
       date.setDate(date.getDate() - i);
     } else if (granularity === 'week') {
       date.setDate(date.getDate() - (i * 7));
-    } else {
+      // Set to start of week (Monday)
+      const dayOfWeek = date.getDay();
+      const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      date.setDate(date.getDate() + diff);
+    } else if (granularity === 'month') {
       date.setMonth(date.getMonth() - i);
+      date.setDate(1); // Set to first day of month
     }
     
-    const baseValue = 100 + Math.random() * 50;
+    // Adjust base value for longer periods (weeks/months have more activity)
+    const baseValue = (100 + Math.random() * 50) * periodLength;
+    
     data.push({
       date: date.toISOString().split('T')[0],
       label: granularity === 'day' ? date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) :
-             granularity === 'week' ? `Week ${Math.ceil(date.getDate() / 7)}` :
+             granularity === 'week' ? `Week of ${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` :
              date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
       sent: Math.floor(baseValue * (0.8 + Math.random() * 0.4)),
       opens: Math.floor(baseValue * (0.3 + Math.random() * 0.2)),
@@ -88,10 +108,10 @@ export const metrics = [
 
 // Campaign comparison data
 export const campaignData = [
-  { name: 'Q1 SaaS Outreach', sent: 847, opens: 289, clicks: 73, replies: 42, openRate: 34.1, replyRate: 5.0 },
-  { name: 'Enterprise Prospects', sent: 1203, opens: 502, clicks: 124, replies: 89, openRate: 41.7, replyRate: 7.4 },
-  { name: 'SMB Follow-up', sent: 492, opens: 142, clicks: 31, replies: 18, openRate: 28.9, replyRate: 3.7 },
-  { name: 'Product Launch', sent: 2156, opens: 849, clicks: 287, replies: 156, openRate: 39.4, replyRate: 7.2 }
+  { name: 'Q1 SaaS Outreach', bounced: 10, sent: 847, opens: 289, clicks: 73, replies: 42, openRate: 34.1, replyRate: 5.0 },
+  { name: 'Enterprise Prospects', bounced: 5, sent: 1203, opens: 502, clicks: 124, replies: 89, openRate: 41.7, replyRate: 7.4 },
+  { name: 'SMB Follow-up', bounced: 8, sent: 492, opens: 142, clicks: 31, replies: 18, openRate: 28.9, replyRate: 3.7 },
+  { name: 'Product Launch', bounced: 12, sent: 2156, opens: 849, clicks: 287, replies: 156, openRate: 39.4, replyRate: 7.2 }
 ];
 export const campaigns = [
   { id: 'all', name: 'All Campaigns' },

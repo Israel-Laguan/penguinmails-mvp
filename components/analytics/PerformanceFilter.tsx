@@ -39,6 +39,7 @@ function PerformanceFilter() {
     setDateRange,
     granularity,
     setGranularity,
+    allowedGranularities,
     customDateStart,
     setCustomDateStart,
     customDateEnd,
@@ -48,6 +49,11 @@ function PerformanceFilter() {
     selectedMailboxes,
     setSelectedMailboxes,
   } = useAnalytics();
+
+  // Filter granularity options based on allowed granularities
+  const filteredGranularityOptions = granularityOptions.filter((option) =>
+    allowedGranularities.includes(option.value as "day" | "week" | "month")
+  );
 
   const handleDateRangeChange = (value: string) => {
     setDateRange(value);
@@ -86,7 +92,7 @@ function PerformanceFilter() {
 
         {/* Granularity Filter */}
         <DropDownFilter
-          options={granularityOptions}
+          options={filteredGranularityOptions}
           placeholder="Granularity"
           value={granularity}
           onValueChange={(value) =>

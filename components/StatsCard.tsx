@@ -26,7 +26,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
       >
         <div>
           <p className="text-sm font-medium text-gray-600">{title}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+          <p className="text-2xl font-bold  mt-1">{value}</p>
         </div>
         <div className={cn("p-3 rounded-lg ", color)}>
           <Icon className="w-6 h-6 " />

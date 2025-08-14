@@ -47,12 +47,16 @@ function DropDownFilter({
   onValueChange,
 }: {
   options: { value: string; label: string }[];
-  placeholder: string;
+  placeholder?: string;
   value?: string;
   onValueChange?: (value: string) => void;
 }) {
   return (
-    <Select value={value} onValueChange={onValueChange}>
+    <Select
+      value={value}
+      defaultValue={value || (!placeholder ? options[0].value : undefined)}
+      onValueChange={onValueChange}
+    >
       <SelectTrigger className="w-full sm:w-auto">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

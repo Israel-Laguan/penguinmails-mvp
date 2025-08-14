@@ -129,3 +129,41 @@ export const mailboxes = [
   { id: 'lisa', name: 'lisa@mycompany.com' }
 ];
 
+export const mockMailboxes = [
+    {
+      id: '1',
+      name: 'Primary Sales',
+      email: 'sales@company.com',
+      status: 'active',
+      warmupProgress: 95,
+      dailyVolume: 45,
+      healthScore: 92
+    },
+    {
+      id: '2',
+      name: 'Outreach Account',
+      email: 'outreach@company.com',
+      status: 'warming',
+      warmupProgress: 67,
+      dailyVolume: 30,
+      healthScore: 78
+    },
+    {
+      id: '3',
+      name: 'Follow-up Bot',
+      email: 'followup@company.com',
+      status: 'active',
+      warmupProgress: 88,
+      dailyVolume: 35,
+      healthScore: 85
+    },
+    {
+      id: '4',
+      name: 'Lead Generation',
+      email: 'leads@company.com',
+      status: 'paused',
+      warmupProgress: 42,
+      dailyVolume: 0,
+      healthScore: 65
+    }
+  ];

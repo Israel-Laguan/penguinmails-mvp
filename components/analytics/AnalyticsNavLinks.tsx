@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { BarChart3, Mail, Target } from "lucide-react";
+import { BarChart3, Mail, Target, Zap } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Icon from "../Icon";
@@ -9,6 +9,7 @@ const links = [
   { id: "", label: "Overview", icon: BarChart3 },
   { id: "campaigns", label: "By Campaign", icon: Target },
   { id: "mailboxes", label: "By Mailbox", icon: Mail },
+  { id: "warmup", label: "By Warmup", icon: Zap },
 ];
 
 function AnalyticsNavLinks() {

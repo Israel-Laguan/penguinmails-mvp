@@ -9,7 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useAnalytics } from "@/context/AnalyticsContext";
-import { campaignData, mailboxes } from "@/lib/data/analytics.mock";
+import { campaignData, mailboxes, metrics } from "@/lib/data/analytics.mock";
 import { ChevronDown, Mail, Settings, Target } from "lucide-react";
 import { DropDownFilter, Filter } from "../Filter";
 
@@ -26,8 +26,6 @@ const granularityOptions = [
   { value: "week", label: "Weekly" },
   { value: "month", label: "Monthly" },
 ];
-
-const sampleMetrics = ["Sent", "Delivered", "Opened", "Clicked", "Replied"];
 
 function PerformanceFilter() {
   const {
@@ -125,14 +123,14 @@ function PerformanceFilter() {
           icon={<Settings className="w-4 h-4" />}
           label="Metrics"
           title="Show/Hide Metrics"
-          items={sampleMetrics}
-          selectedItems={Object.keys(visibleMetrics).filter(
-            (key) => visibleMetrics[key]
-          )}
+          items={metrics.map((metric) => metric.label)}
+          selectedItems={metrics
+            .filter((metric) => visibleMetrics[metric.key])
+            .map((metric) => metric.label)}
           onItemsChange={(items) => {
             const newVisibleMetrics = { ...visibleMetrics };
-            Object.keys(newVisibleMetrics).forEach((key) => {
-              newVisibleMetrics[key] = items.includes(key);
+            metrics.forEach((metric) => {
+              newVisibleMetrics[metric.key] = items.includes(metric.label);
             });
             setVisibleMetrics(newVisibleMetrics);
           }}

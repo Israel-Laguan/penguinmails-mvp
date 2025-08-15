@@ -56,6 +56,27 @@ function WarmUpLineChart() {
     }));
   };
 
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-3">
+          <p className="font-medium text-gray-900 mb-2">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} className="text-sm" style={{ color: entry.color }}>
+              <span className="font-semibold">{entry.value}</span>
+              <span className="ml-2 text-gray-600">
+                {entry.dataKey === "totalWarmups" && "Total Warmups"}
+                {entry.dataKey === "spamFlags" && "Spam Flags"}
+                {entry.dataKey === "replies" && "Replies"}
+              </span>
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -129,14 +150,7 @@ function WarmUpLineChart() {
                 tickLine={false}
                 tick={{ fontSize: 12, fill: "#6b7280" }}
               />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "white",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                }}
-              />
+              <Tooltip content={<CustomTooltip />} />
 
               {activeMetrics.totalWarmups && (
                 <Line

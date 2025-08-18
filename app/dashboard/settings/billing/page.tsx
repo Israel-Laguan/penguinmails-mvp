@@ -1,8 +1,12 @@
+import Icon from "@/components/Icon";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { CreditCard } from "lucide-react";
+import { BarChart3, CreditCard } from "lucide-react";
+import BillingTab from "./Billing-Tab";
+import UsageTab from "./usage-tab";
 
 interface UsageItem {
   label: string;
@@ -56,6 +60,20 @@ const UsageProgressItem = ({ item }: { item: UsageItem }) => {
   );
 };
 
+const tabs = [
+  {
+    id: "billing",
+    label: "Billing",
+    icon: CreditCard,
+    Children: BillingTab,
+  },
+  {
+    id: "usage",
+    label: "Usage & Limits",
+    icon: BarChart3,
+    Children: UsageTab,
+  },
+];
 function page() {
   return (
     <div className="space-y-6">
@@ -65,54 +83,21 @@ function page() {
           Manage your subscription and view usage
         </p>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Current Plan</CardTitle>
-        </CardHeader>
-        <CardContent className="flex justify-between items-center">
-          <div>
-            <h4 className="font-medium">Professional Plan</h4>
-            <p className="text-sm text-muted-foreground">
-              $99/month • Billed annually
-            </p>
-          </div>
-          <Button variant="outline">Change Plan</Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Usage This Month</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {usageItems.map((item, index) => (
-              <UsageProgressItem key={index} item={item} />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle>Payment Method</CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gray-100 rounded flex items-center justify-center">
-              <CreditCard className="w-4 h-4 text-gray-600" />
-            </div>
-            <div>
-              <p className="font-medium text-gray-900">•••• •••• •••• 4242</p>
-              <p className="text-sm text-gray-500">Expires 12/25</p>
-            </div>
-          </div>
-          <Button variant={"outline"}>Update</Button>
-        </CardContent>
-      </Card>
-      <div className="flex justify-end">
-        <Button>Save Changes</Button>
-      </div>
+      <Tabs defaultValue={tabs[0].id}>
+        <TabsList className="tabs-list">
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab.id} className="tabs-trigger" value={tab.id}>
+              <Icon icon={tab.icon} />
+              {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        {tabs.map((tab) => (
+          <TabsContent key={tab.id} value={tab.id}>
+            <tab.Children />
+          </TabsContent>
+        ))}
+      </Tabs>
     </div>
   );
 }

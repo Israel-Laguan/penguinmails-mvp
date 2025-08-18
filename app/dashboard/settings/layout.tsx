@@ -1,13 +1,14 @@
 import Icon from "@/components/Icon";
 import NavLink from "@/components/settings/nav-link";
 import { Separator } from "@/components/ui/separator";
-import { Bell, CreditCard, Shield, User, Users } from "lucide-react";
+import { Bell, CreditCard, Shield, Target, User, Users } from "lucide-react";
 
 const tabs = [
   { id: "", label: "General", icon: User },
   { id: "security", label: "Security", icon: Shield },
   { id: "notifications", label: "Notifications", icon: Bell },
-  { id: "team", label: "Team", icon: Users },
+  // { id: "team", label: "Team", icon: Users },
+  { id: "tracking", label: "Tracking", icon: Target },
   { id: "billing", label: "Billing", icon: CreditCard },
 ];
 function layout({ children }: { children: React.ReactNode }) {

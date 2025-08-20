@@ -1,3 +1,4 @@
+"use client";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { glossaryTerms } from "@/lib/data/knowledge.mock";
 import { DropDownFilter, Filter, SearchInput } from "../Filter";
+import { useState, useMemo } from "react";
 
 const getTypeVariant = (type: string) => {
   switch (type) {
@@ -24,13 +26,33 @@ const getTypeVariant = (type: string) => {
   }
 };
 function GlossaryTab() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedType, setSelectedType] = useState("all");
+
+  const filteredTerms = useMemo(() => {
+    return glossaryTerms.filter((term) => {
+      const matchesSearch =
+        term.term.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        term.meaning.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        term.tag.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesType =
+        selectedType === "all" ||
+        term.type.toLowerCase() === selectedType.toLowerCase();
+
+      return matchesSearch && matchesType;
+    });
+  }, [searchQuery, selectedType]);
+
   return (
     <div className="space-y-4">
       <Filter>
-        <SearchInput />
+        <SearchInput value={searchQuery} onChange={setSearchQuery} />
         <div>
           <DropDownFilter
             placeholder="Types"
+            value={selectedType}
+            onChange={setSelectedType}
             options={[
               {
                 label: "All",
@@ -63,12 +85,15 @@ function GlossaryTab() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {glossaryTerms.map((term) => (
+              {filteredTerms.map((term) => (
                 <TableRow key={term.id}>
                   <TableCell>
                     <div className="flex items-center space-x-3">
                       <span className="font-semibold ">{term.term}</span>
-                      <Badge variant={getTypeVariant(term.type)} className="ml-auto">
+                      <Badge
+                        variant={getTypeVariant(term.type)}
+                        className="ml-auto"
+                      >
                         {term.type}
                       </Badge>
                     </div>
@@ -77,7 +102,7 @@ function GlossaryTab() {
                     {term.meaning}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={"outline"} >{term.tag}</Badge>
+                    <Badge variant={"outline"}>{term.tag}</Badge>
                   </TableCell>
                 </TableRow>
               ))}

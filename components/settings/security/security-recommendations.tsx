@@ -20,9 +20,10 @@ function SecurityRecommendations() {
         <AlertTitle className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div
-              className={`p-1 rounded-full ${
+              className={cn(
+                "p-1 rounded-full",
                 isEnabled ? "bg-green-100" : "bg-orange-100"
-              }`}
+              )}
             >
               {isEnabled ? (
                 <Check className="w-4 h-4 text-green-600" />

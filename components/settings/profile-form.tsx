@@ -49,9 +49,7 @@ function ProfileForm() {
     },
   });
 
-  const onSubmit = (data: ProfileFormValues) => {
-    console.log("Form submitted:", data);
-  };
+  const onSubmit = (data: ProfileFormValues) => {};
 
   return (
     <Form {...form}>

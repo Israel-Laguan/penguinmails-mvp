@@ -93,6 +93,39 @@ function AlertSuccessTwoAuth() {
 }
 function DialogTwoAuth() {
   const { open, setOpen, onSubmit, onCancel } = useTwoAuthContext();
+  const [verificationCode, setVerificationCode] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = async () => {
+    if (verificationCode.length !== 6) {
+      setError("Please enter a 6-digit verification code");
+      return;
+    }
+
+    setIsVerifying(true);
+    setError("");
+
+    try {
+      if (verificationCode === "123456") {
+        onSubmit();
+        setVerificationCode("");
+      } else {
+        setError("Invalid verification code. Please try again.");
+      }
+    } catch (err) {
+      setError("Verification failed. Please try again.");
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setVerificationCode("");
+    setError("");
+    onCancel();
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
@@ -116,14 +149,28 @@ function DialogTwoAuth() {
           </div>
           <div className="space-y-4">
             <Label>Enter verification code</Label>
-            <Input type="text" placeholder="000000" maxLength={6} />
+            <Input
+              type="text"
+              placeholder="000000"
+              maxLength={6}
+              value={verificationCode}
+              onChange={(e) =>
+                setVerificationCode(e.target.value.replace(/\D/g, ""))
+              }
+            />
+            {error && <p className="text-sm text-red-600">{error}</p>}
           </div>
         </div>
         <DialogFooter>
-          <Button variant={"ghost"} onClick={onCancel}>
+          <Button variant={"ghost"} onClick={handleCancel}>
             Cancel
           </Button>
-          <Button onClick={onSubmit}>Enable 2FA</Button>
+          <Button
+            onClick={handleSubmit}
+            disabled={isVerifying || verificationCode.length !== 6}
+          >
+            {isVerifying ? "Verifying..." : "Enable 2FA"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

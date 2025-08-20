@@ -33,9 +33,6 @@ function page() {
         <CardContent>
           <TeamMembersTable />
         </CardContent>
-        <CardFooter className="ml-auto  ">
-          <Button>Save Changes</Button>
-        </CardFooter>
       </Card>
     </div>
   );

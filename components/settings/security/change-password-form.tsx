@@ -142,9 +142,11 @@ const PasswordStrengthIndicator = ({
 };
 
 function ChangePasswordForm() {
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState({
+    current: false,
+    new: false,
+    confirm: false,
+  });
 
   const form = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordSchema),
@@ -157,10 +159,7 @@ function ChangePasswordForm() {
 
   const newPassword = form.watch("newPassword");
 
-  const handlePasswordChange = (data: PasswordFormValues) => {
-    console.log("Password change:", data);
-    // Handle password change logic here
-  };
+  const handlePasswordChange = (data: PasswordFormValues) => {};
 
   return (
     <Form {...form}>
@@ -178,14 +177,14 @@ function ChangePasswordForm() {
                 <div className="relative">
                   <Input
                     {...field}
-                    type={showCurrentPassword ? "text" : "password"}
+                    type={showPassword.current ? "text" : "password"}
                     placeholder="Enter current password"
                     className="pr-10"
                   />
                   <PasswordToggle
-                    show={showCurrentPassword}
+                    show={showPassword.current}
                     onToggle={() =>
-                      setShowCurrentPassword(!showCurrentPassword)
+                      setShowPassword((p) => ({ ...p, current: !p.current }))
                     }
                   />
                 </div>
@@ -205,13 +204,15 @@ function ChangePasswordForm() {
                 <div className="relative">
                   <Input
                     {...field}
-                    type={showNewPassword ? "text" : "password"}
+                    type={showPassword.new ? "text" : "password"}
                     placeholder="Enter new password"
                     className="pr-10"
                   />
                   <PasswordToggle
-                    show={showNewPassword}
-                    onToggle={() => setShowNewPassword(!showNewPassword)}
+                    show={showPassword.new}
+                    onToggle={() =>
+                      setShowPassword((p) => ({ ...p, new: !p.new }))
+                    }
                   />
                 </div>
               </FormControl>
@@ -233,14 +234,14 @@ function ChangePasswordForm() {
                 <div className="relative">
                   <Input
                     {...field}
-                    type={showConfirmPassword ? "text" : "password"}
+                    type={showPassword.confirm ? "text" : "password"}
                     placeholder="Confirm new password"
                     className="pr-10"
                   />
                   <PasswordToggle
-                    show={showConfirmPassword}
+                    show={showPassword.confirm}
                     onToggle={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
+                      setShowPassword((p) => ({ ...p, confirm: !p.confirm }))
                     }
                   />
                 </div>

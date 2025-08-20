@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { Edit, Trash2, User } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 
 const teamMembers = [
   {
@@ -39,14 +39,6 @@ const teamMembers = [
   },
 ];
 function TeamMembersTable() {
-  const getStatusVariant = (status: string) => {
-    return status === "active" ? "default" : "secondary";
-  };
-
-  const getRoleVariant = (role: string) => {
-    return role === "Admin" ? "default" : "secondary";
-  };
-
   const getInitials = (name: string) => {
     return name
       .split(" ")

@@ -68,19 +68,13 @@ const notificationItems: NotificationItem[] = [
 function NotificationsSettings() {
   const form = useForm<NotificationFormValues>({
     resolver: zodResolver(notificationSchema),
-    defaultValues: {
-      newReplies: true,
-      campaignUpdates: true,
-      weeklyReports: true,
-      domainAlerts: true,
-      warmupCompletion: false,
-    },
+    defaultValues: notificationItems.reduce((values, item) => {
+      values[item.id] = item.defaultValue;
+      return values;
+    }, {} as NotificationFormValues),
   });
 
-  const onSubmit = (data: NotificationFormValues) => {
-    console.log("Notification settings:", data);
-    // Handle form submission here
-  };
+  const onSubmit = (data: NotificationFormValues) => {};
 
   return (
     <Form {...form}>

@@ -42,7 +42,7 @@ function BillingTab() {
                 <h3 className="mb-1 text-lg font-semibold text-foreground">
                   {currentPlan.name} Plan
                 </h3>
-                <p className="text-2xl font-bold text-primary text-right">
+                <p className="text-2xl font-bold text-primary ">
                   ${currentPlan.price}/month
                 </p>
               </CardContent>

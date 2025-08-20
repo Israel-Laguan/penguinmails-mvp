@@ -20,7 +20,7 @@ function layout({ children }: { children: React.ReactNode }) {
         <div className="flex flex-col space-y-4">
           {tabs.map((tab) => (
             <NavLink
-              key={tab.id}
+              key={tab.label}
               href={`/dashboard/settings/${tab.id}`}
               className="w-full flex items-center px-3 py-2.5 rounded-lg text-left transition-colors gap-2"
               activeClassName="bg-blue-50 text-blue-700"

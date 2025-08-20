@@ -5,14 +5,13 @@ import {
   TwoAuthProvider,
   TwoFactorAuthenticationSwitch,
 } from "@/components/settings/security/two-factor-auth-switch";
-import { Button } from "@/components/ui/button";
 import {
-  CardContent,
   Card,
-  CardHeader,
-  CardTitle,
+  CardContent,
   CardDescription,
   CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 
 function page() {
@@ -56,10 +55,8 @@ function page() {
           </CardContent>
         </Card>
       </TwoAuthProvider>
-      <div className="flex justify-end ">
-        <Button>Save Changes</Button>
-      </div>
     </div>
   );
 }
+
 export default page;

@@ -109,10 +109,7 @@ function EmailMailboxesTable() {
           <TableHeader>
             <TableRow>
               <TableHead>Mailbox</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Warmup Progress</TableHead>
-              <TableHead>Daily Volume</TableHead>
-              <TableHead>Health Score</TableHead>
+
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -130,43 +127,7 @@ function EmailMailboxesTable() {
                     </div>
                   </div>
                 </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    {getStatusIcon(mailbox.status)}
-                    <Badge
-                      variant="secondary"
-                      className={getStatusColor(mailbox.status)}
-                    >
-                      {mailbox.status.charAt(0).toUpperCase() +
-                        mailbox.status.slice(1)}
-                    </Badge>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <Progress
-                      value={mailbox.warmupProgress}
-                      className="flex-1 h-2"
-                    />
-                    <span className="text-sm text-muted-foreground min-w-[3rem]">
-                      {mailbox.warmupProgress}%
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className="text-sm">
-                    {mailbox.dailyVolume} emails/day
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <span
-                    className={`text-sm font-semibold ${getHealthScoreColor(
-                      mailbox.healthScore
-                    )}`}
-                  >
-                    {mailbox.healthScore}%
-                  </span>
-                </TableCell>
+
                 <TableCell>
                   <Button
                     variant="ghost"

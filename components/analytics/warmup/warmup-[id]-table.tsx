@@ -8,8 +8,15 @@ import {
   TableHead,
   TableHeader,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { TableRow } from "@mui/material";
-import { Calendar, Download } from "lucide-react";
+import { Calendar, Download, HelpCircle } from "lucide-react";
+
 const dailyStats = [
   {
     date: "Aug 11",
@@ -75,9 +82,48 @@ const dailyStats = [
     healthScore: 88,
   },
 ];
+
+const headers = [
+  { key: "date", label: "Date", tooltip: null },
+  {
+    key: "emailsWarmed",
+    label: "Emails Warmed",
+    tooltip:
+      "The total number of warmup emails sent from your mailbox on this day.",
+  },
+  {
+    key: "delivered",
+    label: "Delivered",
+    tooltip:
+      "Emails that were successfully delivered to the inbox (not spam or bounced)",
+  },
+  {
+    key: "spam",
+    label: "Spam",
+    tooltip:
+      "Number of emails that first landed in the spam folder but were then rescued and moved to inbox.",
+  },
+  {
+    key: "replies",
+    label: "Replies",
+    tooltip: "Number of warmup replies received by your mailbox for that day.",
+  },
+  {
+    key: "bounce",
+    label: "Bounce",
+    tooltip:
+      "Emails that failed to send (e.g. invalid addresses or server errors).",
+  },
+  {
+    key: "healthScore",
+    label: "Health Score",
+    tooltip:
+      "Daily score based on how many emails got delivered vs flagged as spam or bounced.",
+  },
+];
 function WarmUpTable() {
   return (
-    <>
+    <TooltipProvider>
       <Filter>
         <div className="flex items-center space-x-2">
           <Calendar className="w-4 h-4" />
@@ -110,16 +156,22 @@ function WarmUpTable() {
           <Table>
             <TableHeader>
               <TableRow>
-                {[
-                  { key: "date", label: "Date" },
-                  { key: "emailsWarmed", label: "Emails Warmed" },
-                  { key: "delivered", label: "Delivered" },
-                  { key: "spam", label: "Spam" },
-                  { key: "replies", label: "Replies" },
-                  { key: "bounce", label: "Bounce" },
-                  { key: "healthScore", label: "Health Score" },
-                ].map((header) => (
-                  <TableHead key={header.key}>{header.label}</TableHead>
+                {headers.map((header) => (
+                  <TableHead key={header.key}>
+                    <div className="flex items-center gap-1">
+                      {header.label}
+                      {header.tooltip && (
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <HelpCircle className="w-3 h-3 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs">
+                            <p>{header.tooltip}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
+                    </div>
+                  </TableHead>
                 ))}
               </TableRow>
             </TableHeader>
@@ -157,7 +209,8 @@ function WarmUpTable() {
           </Table>
         </CardContent>
       </Card>
-    </>
+    </TooltipProvider>
   );
 }
+
 export default WarmUpTable;

@@ -1,21 +1,21 @@
-import ProfileForm from "@/components/settings/profile-form";
+import NotificationsSettings from "@/components/settings/notifications/notifications-settings";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 function page() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold ">General Settings</h1>
+        <h1 className="text-2xl font-bold">Notification Preferences</h1>
         <p className="text-muted-foreground">
-          Manage your account preferences and profile information
+          Choose how you want to be notified
         </p>
       </div>
       <Card>
         <CardHeader>
-          <CardTitle>Profile Information</CardTitle>
+          <CardTitle>Email Notifications</CardTitle>
         </CardHeader>
         <CardContent>
-          <ProfileForm />
+          <NotificationsSettings />
         </CardContent>
       </Card>
     </div>

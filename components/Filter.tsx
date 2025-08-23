@@ -63,7 +63,7 @@ function DropDownFilter({
   value,
   onChange,
 }: {
-  options: { value: string; label: string }[];
+  options: { value: string; label: string; default?: boolean }[];
   placeholder: string;
   value?: string;
   onChange?: (value: string) => void;
@@ -73,8 +73,13 @@ function DropDownFilter({
     setSelectedValue(value);
     onChange?.(value);
   }
+  const defaultValue = options.find((option) => option.default)?.value;
   return (
-    <Select value={selectedValue} onValueChange={handleChange}>
+    <Select
+      value={selectedValue}
+      onValueChange={handleChange}
+      defaultValue={selectedValue || defaultValue}
+    >
       <SelectTrigger className="w-full sm:w-auto">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

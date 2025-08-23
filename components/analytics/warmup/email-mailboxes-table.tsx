@@ -2,7 +2,6 @@ import { DropDownFilter, Filter, SearchInput } from "@/components/Filter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import {
   Table,
   TableBody,
@@ -12,26 +11,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { mockMailboxes } from "@/lib/data/analytics.mock";
-import { getStatusColor } from "@/lib/data/domains.mock";
-import { Activity, AlertCircle, CheckCircle, Mail, Pause } from "lucide-react";
+import { Mail } from "lucide-react";
 import Link from "next/link";
-const getStatusIcon = (status: string) => {
-  switch (status) {
-    case "active":
-      return <CheckCircle className="w-4 h-4 text-green-500" />;
-    case "warming":
-      return <Activity className="w-4 h-4 text-yellow-500" />;
-    case "paused":
-      return <Pause className="w-4 h-4 text-gray-500" />;
-    default:
-      return <AlertCircle className="w-4 h-4 text-red-500" />;
-  }
-};
-const getHealthScoreColor = (score: number) => {
-  if (score >= 80) return "text-green-600";
-  if (score >= 60) return "text-yellow-600";
-  return "text-red-600";
-};
 
 function EmailMailboxesTable() {
   const filteredMailboxes = mockMailboxes;
@@ -78,14 +59,16 @@ function EmailMailboxesTable() {
         </CardTitle>
         <Filter className="border-none shadow-none">
           <div className="flex-1">
-            <SearchInput />
+            <SearchInput placeholder="Search Mailboxes" />
           </div>
           <div>
             <DropDownFilter
+              placeholder="Select Status"
               options={[
                 {
                   label: "All Status",
                   value: "all",
+                  default: true,
                 },
                 {
                   label: "Active",

@@ -415,3 +415,7 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.grid-cols-responsive {
+  @apply grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4;
+}

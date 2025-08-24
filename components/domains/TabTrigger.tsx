@@ -2,16 +2,16 @@ import Link from "next/link";
 import { TabsTrigger } from "../ui/tabs";
 
 function TabTrigger({
-  to,
+  id,
   children,
+  href,
 }: {
-  to: string;
+  id: string;
   children: React.ReactNode;
+  href: string;
 }) {
-  const href = `/dashboard/domains/${to}`;
-
   return (
-    <TabsTrigger value={to} className="tabs-trigger" asChild>
+    <TabsTrigger value={id} className="tabs-trigger" asChild>
       <Link href={href}>{children}</Link>
     </TabsTrigger>
   );

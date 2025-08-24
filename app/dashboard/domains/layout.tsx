@@ -24,7 +24,11 @@ function Layout({ children }: { children: React.ReactNode }) {
           <CardHeader>
             <TabsList className="tabs-list">
               {tabs.map((tab) => (
-                <TabTrigger key={tab.id} to={tab.id}>
+                <TabTrigger
+                  key={tab.id}
+                  href={`/dashboard/domains/${tab.id}`}
+                  id={tab.id}
+                >
                   <tab.icon className="h-4 w-4 mr-2 inline-block" />
                   {tab.label}
                   {tab.count > 0 && (

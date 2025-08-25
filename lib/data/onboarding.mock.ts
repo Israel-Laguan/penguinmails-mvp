@@ -96,50 +96,27 @@ export const onboardingSteps = [
 
 export const faqItems = [
   {
+    id: 1,
     question: 'How long does the setup process take?',
     answer:
       'Most users complete the entire onboarding in 30-60 minutes. Domain verification can take up to 24 hours, but you can continue with other steps while waiting.',
   },
   {
+    id: 2,
     question: 'Do I need technical knowledge to set this up?',
     answer:
       'Not at all! Our step-by-step guides and video tutorials walk you through everything. For DNS setup, you might need access to your domain registrar, but we provide exact instructions.',
   },
   {
+    id: 3,
     question: 'Can I skip steps and come back later?',
     answer:
       'While you can navigate away at any time, we recommend completing steps in order for the best experience. Each step builds on the previous one.',
   },
   {
+    id: 4,
     question: 'What if I get stuck on a step?',
     answer:
       'Use the "Need Help?" button below to access our help center, or contact our support team. We\'re here to help you succeed!',
-  },
-];
-
-export const services = [
-  {
-    id: 1,
-    title: 'Lead Generation Service',
-    description:
-      'We find and verify high-quality prospects in your target market',
-    icon: Target,
-    link: 'Book a Lead Gen Call',
-  },
-  {
-    id: 2,
-    title: 'Cold Email Copywriting',
-    description:
-      'Expert-written email sequences that convert prospects into customers',
-    icon: PenTool,
-    link: 'Get Copy Written',
-  },
-  {
-    id: 3,
-    title: 'Fully Managed Setup',
-    description:
-      'We handle the entire setup process for you - completely done-for-you',
-    icon: Settings,
-    link: 'Book Setup Call',
   },
 ];

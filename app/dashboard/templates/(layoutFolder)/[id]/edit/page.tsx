@@ -1,4 +1,3 @@
-import TemplateActions from "@/components/templates/template-actions";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,10 +6,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import { initialTemplates } from "@/lib/data/template.mock";
-import { cn } from "@/lib/utils";
-import { ArrowLeft, Eye, Mail, TrendingUp } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -57,43 +57,9 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
                 <CardDescription>{category}</CardDescription>
               </div>
             </div>
-            <div>
-              <TemplateActions />
-            </div>
-          </div>
-          <div className="flex gap-5 text-sm">
-            {[
-              {
-                id: 1,
-                icon: Mail,
-                label: `${usage} uses`,
-                color: "text-gray-500",
-              },
-              {
-                id: 2,
-                icon: Eye,
-                label: `${openRate}% open rate`,
-                color: "text-primary",
-              },
-              {
-                id: 3,
-                icon: TrendingUp,
-                label: `${replyRate}% reply rate`,
-                color: "text-green-500",
-              },
-            ].map((item) => (
-              <div
-                key={item.id}
-                className={cn(item.color, "flex items-center gap-1")}
-              >
-                <item.icon className="w-4 h-4" />
-                <span className="font-extralight">{item.label}</span>
-              </div>
-            ))}
-            <div>
-              <span className="font-extralight text-sm text-gray-400">
-                Last used {lastUsed}
-              </span>
+            <div className="flex gap-2">
+              <Button variant={"outline"}>Cancel</Button>
+              <Button>Save Changes</Button>
             </div>
           </div>
         </CardHeader>
@@ -101,21 +67,21 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
         <CardContent className="space-y-6">
           <div>
             <h3 className="text-sm font-medium text-gray-700 mb-2">
+              Template Name
+            </h3>
+            <Input className="text-gray-900" defaultValue={name} />
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-gray-700 mb-2">
               Subject Line
             </h3>
-            <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-gray-900">{subject}</p>
-            </div>
+            <Input className="text-gray-900" defaultValue={subject} />
           </div>
           <div>
             <h3 className="text-sm font-medium text-gray-700 mb-2">
               Email Content
             </h3>
-            <div className="bg-gray-50 rounded-xl p-4">
-              <pre className="text-gray-900 whitespace-pre-wrap font-sans">
-                {content}
-              </pre>
-            </div>
+            <Textarea className="text-gray-900 h-64" defaultValue={content} />
           </div>
         </CardContent>
       </Card>

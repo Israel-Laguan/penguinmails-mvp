@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,10 +10,15 @@ import { initialTemplates } from "@/lib/data/template.mock";
 import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { useParams, useRouter } from "next/navigation";
 
-async function page({ params }: { params: Promise<{ id: string }> }) {
+function Default() {
+  const { id } = useParams();
+  const router = useRouter();
+  if (!id) {
+    router.push("/dashboard/templates");
+  }
   const quickReplies = initialTemplates;
-  const id = (await params).id;
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
@@ -28,7 +34,7 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
           <QuickReplaySmallItem
             key={template.id}
             template={template as Template}
-            active={parseInt(id) === template.id}
+            active={String(id) === String(template.id)}
           />
         ))}
       </div>
@@ -66,4 +72,4 @@ function QuickReplaySmallItem({
   );
 }
 
-export default page;
+export default Default;

@@ -84,7 +84,7 @@ export const initialFolders: TemplateFolder[] = [
   ] },
   { id: 6, name: 'Objection Handling', type: 'quick-reply', templateCount: 0, isExpanded: true , children: [] }
 ];
-export const initialQuickReplies = initialFolders.flatMap(folder => folder.children).filter(child => child.type === 'quick-reply');
+export const initialQuickReplies  = initialFolders.flatMap(folder => folder.children).filter(child => child.type === 'quick-reply');
 export const initialTemplates = initialFolders.flatMap(folder => folder.children).filter(child => child.type === 'template');
 
 export const tabs : Tab[] = [

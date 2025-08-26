@@ -10,7 +10,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { initialTemplates } from "@/lib/data/template.mock";
 import { cn } from "@/lib/utils";
-import { ArrowLeft, Eye, Mail, TrendingUp } from "lucide-react";
+import { ArrowLeft, Eye, Mail, Star, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -56,6 +56,13 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
                 <CardTitle className="text-lg">{name}</CardTitle>
                 <CardDescription>{category}</CardDescription>
               </div>
+              {isStarred && (
+                <div>
+                  <Button variant={"link"} size={"icon"} asChild>
+                    <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                  </Button>
+                </div>
+              )}
             </div>
             <div>
               <TemplateActions />

@@ -3,7 +3,7 @@ import MyTemplatesTab from "@/components/templates/my-templates-tab";
 import QuickRepliesTab from "@/components/templates/qucik-replies-tab";
 import { Tab } from "@/types/tab";
 
-export const initialFolders: TemplateFolder[] = [
+export const initialFolders = [
   { id: 1, name: 'Cold Outreach', type: 'template', templateCount: 2, isExpanded: true  , children: [
      {
     id: 1,

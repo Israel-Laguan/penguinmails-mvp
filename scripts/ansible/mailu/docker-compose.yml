@@ -6,7 +6,7 @@ services:
 
   # External dependencies
   redis:
-    image: redis:alpine
+    image: redis:7-alpine
     restart: always
     volumes:
       - "/mailu/redis:/data"

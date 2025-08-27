@@ -44,3 +44,6 @@ app/api/generated/prisma
 **/output/
 *.tfvars
 !*.tfvars.example
+
+# Ignore ALL Mailu env
+**/mailu.env

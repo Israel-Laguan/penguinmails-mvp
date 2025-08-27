@@ -3,6 +3,17 @@
   hosts: vps
   become: yes
 
+  vars:
+    mailu_dirs:
+      - redis
+      - certs
+      - data
+      - dkim
+      - mail
+      - mailqueue
+      - filter
+      - overrides
+
   tasks:
     - name: Update and upgrade apt packages
       apt:
@@ -54,6 +65,23 @@
         enabled: yes
         state: started
 
+    - name: Ensure Mailu base directory exists
+      file:
+        path: /mailu
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Ensure Mailu data subdirectories exist
+      file:
+        path: "/mailu/{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      loop: "{{ mailu_dirs }}"
+
     - name: Copy Mailu directory (docker-compose.yml + .env)
       copy:
         src: ./mailu/
@@ -62,7 +90,7 @@
         group: root
         mode: '0644'
 
-    - name: Start Mailu with docker compose (plugin)
-      shell: docker compose up -d || true
-      args:
-        chdir: /opt/mailu
+    - name: Ensure Mailu stack is up
+      community.docker.docker_compose:
+        project_src: /opt/mailu
+        state: present

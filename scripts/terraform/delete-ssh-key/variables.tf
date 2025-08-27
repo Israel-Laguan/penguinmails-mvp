@@ -1,6 +1,7 @@
 variable "API" {
   description = "Your Hostwinds API key"
   type        = string
+  sensitive   = true
 }
 
 variable "ssh_key_name" {

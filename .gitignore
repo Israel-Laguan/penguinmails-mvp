@@ -42,3 +42,5 @@ app/api/generated/prisma
 **/terraform.tfstate.*
 **/.terraform.lock.hcl
 **/output/
+*.tfvars
+!*.tfvars.example

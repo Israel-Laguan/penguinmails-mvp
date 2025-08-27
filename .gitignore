@@ -34,3 +34,11 @@ yarn-error.log*
 
 # prisma
 app/api/generated/prisma
+
+
+# Ignore ALL Terraform working directories & files in any subfolder
+**/.terraform/
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/.terraform.lock.hcl
+**/output/

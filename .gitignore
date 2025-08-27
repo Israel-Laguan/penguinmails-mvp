@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# editors
+/.idea
+
 # dependencies
 /node_modules
 
@@ -25,6 +28,7 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -34,7 +38,6 @@ yarn-error.log*
 
 # prisma
 app/api/generated/prisma
-
 
 # Ignore ALL Terraform working directories & files in any subfolder
 **/.terraform/

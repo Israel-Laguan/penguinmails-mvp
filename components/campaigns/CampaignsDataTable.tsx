@@ -10,7 +10,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -54,6 +53,7 @@ import Link from "next/link";
 import { copyText as t } from "./copy";
 import { CampaignResponse } from "@/types/campaign";
 import { toast } from "sonner";
+import { useSearchParams, useRouter } from "next/navigation";
 
 function formatRelativeTime(date: Date): string {
   const now = new Date();
@@ -171,10 +171,10 @@ const columns: ColumnDef<CampaignResponse>[] = [
             status === "ACTIVE"
               ? "default"
               : status === "PAUSED"
-              ? "destructive"
-              : status === "DRAFT"
-              ? "outline"
-              : "secondary"
+                ? "destructive"
+                : status === "DRAFT"
+                  ? "outline"
+                  : "secondary"
           }
         >
           {t.status[status]}
@@ -394,11 +394,10 @@ const columns: ColumnDef<CampaignResponse>[] = [
               >
                 <Button
                   variant="ghost"
-                  className={`w-full justify-start font-normal ${
-                    row.original.status === "ACTIVE"
-                      ? "bg-yellow-100 hover:bg-yellow-100 text-yellow-600 hover:text-yellow-600"
-                      : "bg-green-100 hover:bg-green-100 text-green-600 hover:text-green-600"
-                  }`}
+                  className={`w-full justify-start font-normal ${row.original.status === "ACTIVE"
+                    ? "bg-yellow-100 hover:bg-yellow-100 text-yellow-600 hover:text-yellow-600"
+                    : "bg-green-100 hover:bg-green-100 text-green-600 hover:text-green-600"
+                    }`}
                   onClick={() =>
                     row.original.status === "ACTIVE"
                       ? handlePauseCampaign(row.original.id)
@@ -437,11 +436,16 @@ const columns: ColumnDef<CampaignResponse>[] = [
   },
 ];
 
-export function CampaignsDataTable({ data }: { data: CampaignResponse[] }) {
+export function CampaignsDataTable({ data, page, pageSize, totalCount }: { data: CampaignResponse[]; page: number; pageSize: number; totalCount: number; }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const [pagination, setPagination] = React.useState({ pageIndex: page - 1, pageSize })
+  const totalPages = Math.ceil(totalCount / pageSize);
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({
       bounces: false,
@@ -452,10 +456,11 @@ export function CampaignsDataTable({ data }: { data: CampaignResponse[] }) {
   const table = useReactTable({
     data,
     columns,
+    pageCount: totalPages,
+    manualPagination: true,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -463,8 +468,24 @@ export function CampaignsDataTable({ data }: { data: CampaignResponse[] }) {
       sorting,
       columnFilters,
       columnVisibility,
+      pagination: pagination
     },
+    onPaginationChange: setPagination
   });
+
+  const handleNextPageRoute = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', (page + 1).toString());
+    router.push(`?${params.toString()}`);
+    table.nextPage();
+  };
+
+  const handlePreviousPageRoute = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set('page', (page - 1).toString());
+    router.push(`?${params.toString()}`);
+    table.previousPage();
+  };
 
   return (
     <div className="space-y-4 p-2">
@@ -529,9 +550,9 @@ export function CampaignsDataTable({ data }: { data: CampaignResponse[] }) {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -578,7 +599,7 @@ export function CampaignsDataTable({ data }: { data: CampaignResponse[] }) {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.previousPage()}
+            onClick={handlePreviousPageRoute}
             disabled={!table.getCanPreviousPage()}
           >
             {t.table.pagination.previous}
@@ -586,7 +607,7 @@ export function CampaignsDataTable({ data }: { data: CampaignResponse[] }) {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => table.nextPage()}
+            onClick={handleNextPageRoute}
             disabled={!table.getCanNextPage()}
           >
             {t.table.pagination.next}

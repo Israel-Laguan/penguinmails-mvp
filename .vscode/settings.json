@@ -1,4 +1,43 @@
 {
-    "IDX.aI.enableInlineCompletion": true,
-    "IDX.aI.enableCodebaseIndexing": true
+  "[css]": {
+    "editor.defaultFormatter": "vscode.css-language-features"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit"
+  },
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.formatOnSave": true,
+  "editor.insertSpaces": true,
+  "eslint.format.enable": true,
+  "files.autoSave": "afterDelay",
+  "files.insertFinalNewline": true,
+  "files.eol": "\n",
+  "html.autoClosingTags": true,
+  "javascript.autoClosingTags": true,
+  "javascript.suggest.autoImports": true,
+  "javascript.format.enable": false,
+  "javascript.validate.enable": true,
+  "js/ts.implicitProjectConfig.checkJs": true,
+  "search.exclude": {
+    "**/.next": true,
+    "**/node_modules": true
+  },
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

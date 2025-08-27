@@ -12,12 +12,14 @@ import { ScheduleSettings } from "./ScheduleSettings";
 import { RecipientsSettings } from "./RecipientsSettings";
 import { copyText as t } from "./copy";
 import { CampaignEventContition } from "@/app/api/generated/prisma";
+import { getCampaignSendingAccountsAction, getTimezonesMockAction } from "@/lib/actions/campaignActions";
 import { CampaignFormProps, CampaignFormValues, CampaignSteps, PartialCampaignStep } from "./types";
 import { CampaignDetails } from "./CampaignDetails";
-import { timezones } from "./const-mock";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { campaignFormSchema } from "./schemaValidations";
 import { EmailSecuenceSettings } from "./EmailSecuenceSettings";
+import { defaultSteps } from "./const-mock";
+import Loader from "./loader";
 
 export function CampaignForm({
   initialData,
@@ -28,42 +30,48 @@ export function CampaignForm({
   readOnly = false,
 }: CampaignFormProps) {
   const [steps, setSteps] = useState<CampaignSteps>(
-    initialData?.steps || [{
-      sequenceOrder: 0,
-      delayDays: 0,
-      delayHours: 0,
-      templateId: 0,
-      campaignId: 0,
-      emailSubject: "",
-      emailBody: "",
-      condition: CampaignEventContition.ALWAYS,
-    }]
+    initialData?.steps || defaultSteps,
   );
+  const [sendingAccounts, setSendingAccounts] = useState<{ value: string; label: string }[]>([]);
+  const [timezones, setTimezones] = useState<string[]>([]);
+  const [loadingAccounts, setLoadingAccounts] = useState<boolean>(true);
+  const [loadingTimezones, setLoadingTimezones] = useState<boolean>(true);
   const [currentEditingStep, setCurrentEditingStep] = useState<number | null>(null);
   const [recipients, setRecipients] = useState<string>(initialData?.clients.join('\n') ?? '');
   const emailBodyRef = useRef<HTMLTextAreaElement>(null!);
 
   const form = useForm<CampaignFormValues>({
-    defaultValues: initialData || {
-      name: "",
-      fromName: "",
-      fromEmail: "",
-      status: "DRAFT",
-      steps: steps,
-      timezone: timezones[7],
-      sendTimeStart: '09:00',
-      sendTimeEnd: '17:00',
-      sendDays: [0, 1, 2, 3, 4]
-    },
+    defaultValues: initialData,
     mode: "onChange",
   }) as unknown as UseFormReturn<CampaignFormValues>;
 
-  const { timezone = timezones[7], sendDays = [0, 1, 2, 3, 4] } = form.getValues();
+  const { timezone = 'UTC', sendDays = [0, 1, 2, 3, 4] } = form.getValues();
 
   // Update form state when steps change
   useEffect(() => {
     form.setValue("steps", steps, { shouldValidate: true });
   }, [steps, form]);
+
+  useEffect(() => {
+    const fetchSendingAccounts = async () => {
+      setLoadingAccounts(true);
+      const companyMockId = 1;
+      const accounts = await getCampaignSendingAccountsAction(companyMockId);
+      setSendingAccounts(accounts);
+      setLoadingAccounts(false);
+    };
+    fetchSendingAccounts();
+  }, []);
+
+  useEffect(() => {
+    const fetchTimezones = async () => {
+      setLoadingTimezones(true);
+      const fetchedTimezones = await getTimezonesMockAction();
+      setTimezones(fetchedTimezones);
+      setLoadingTimezones(false);
+    };
+    fetchTimezones();
+  }, []);
 
   // Handle form submission
   const handleSubmit: SubmitHandler<CampaignFormValues> = async (data: CampaignFormValues) => {
@@ -176,83 +184,92 @@ export function CampaignForm({
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleSubmit)}
-          className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>{t.cardTitles.campaignDetails}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CampaignDetails readOnly={readOnly} initialData={initialData} />
-              <CampaignDetailsForm form={form} readOnly={readOnly} />
-            </CardContent>
-          </Card>
+      {loadingAccounts && <Loader />}
+      {!loadingAccounts &&
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t.cardTitles.campaignDetails}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {!loadingAccounts ?
+                  (
+                    <>
+                      <CampaignDetails readOnly={readOnly} initialData={initialData} />
+                      <CampaignDetailsForm form={form} readOnly={readOnly} sendingAccounts={sendingAccounts} />
+                    </>
+                  ) : 'Loading data...'
+                }
+              </CardContent>
+            </Card>
 
-          <Tabs defaultValue="sequence" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="sequence">
-                <FileText className="mr-2 h-4 w-4" />
-                {t.tabs.sequence}
-              </TabsTrigger>
-              <TabsTrigger value="schedule">
-                <Clock className="mr-2 h-4 w-4" />
-                {t.tabs.schedule}
-              </TabsTrigger>
-              <TabsTrigger value="recipients">
-                <Users className="mr-2 h-4 w-4" />
-                {t.tabs.recipients}
-              </TabsTrigger>
-            </TabsList>
+            <Tabs defaultValue="sequence" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="sequence">
+                  <FileText className="mr-2 h-4 w-4" />
+                  {t.tabs.sequence}
+                </TabsTrigger>
+                <TabsTrigger value="schedule">
+                  <Clock className="mr-2 h-4 w-4" />
+                  {t.tabs.schedule}
+                </TabsTrigger>
+                <TabsTrigger value="recipients">
+                  <Users className="mr-2 h-4 w-4" />
+                  {t.tabs.recipients}
+                </TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="sequence" className="mt-4">
-              <EmailSecuenceSettings
-                steps={steps}
-                currentEditingStep={currentEditingStep}
-                emailBodyRef={emailBodyRef}
-                stepErrors={form.formState.errors.steps}
-                templates={[]}
-                actions={{
-                  onMoveStepUp: moveStepUp,
-                  onMoveStepDown: moveStepDown,
-                  onRemoveStep: removeStep,
-                  onUpdateStep: updateStep,
-                  onInsertTag: handleInsertTag,
-                  onSetCurrentEditingStep: (index) => setCurrentEditingStep(index),
-                  handleAddEmailStep: addEmailStep,
-                  onSelectTemplate: (index, templateId) => {
-                    const newSteps = [...steps];
-                    newSteps[index].templateId = templateId;
-                    setSteps(newSteps);
-                    form.setValue(`steps.${index}.templateId`, templateId);
-                  },
-                }}
-              />
-            </TabsContent>
+              <TabsContent value="sequence" className="mt-4">
+                <EmailSecuenceSettings
+                  steps={steps}
+                  currentEditingStep={currentEditingStep}
+                  emailBodyRef={emailBodyRef}
+                  stepErrors={form.formState.errors.steps}
+                  templates={[]}
+                  actions={{
+                    onMoveStepUp: moveStepUp,
+                    onMoveStepDown: moveStepDown,
+                    onRemoveStep: removeStep,
+                    onUpdateStep: updateStep,
+                    onInsertTag: handleInsertTag,
+                    onSetCurrentEditingStep: (index) => setCurrentEditingStep(index),
+                    handleAddEmailStep: addEmailStep,
+                    onSelectTemplate: (index, templateId) => {
+                      const newSteps = [...steps];
+                      newSteps[index].templateId = templateId;
+                      setSteps(newSteps);
+                      form.setValue(`steps.${index}.templateId`, templateId);
+                    },
+                  }}
+                />
+              </TabsContent>
 
-            <TabsContent value="schedule" className="mt-4">
-              {/* Pass form control/register if schedule is part of the main form */}
-              <ScheduleSettings control={form.control} register={form.register} selectedSendDays={sendDays} timezone={timezone} handleDayChange={handleDayChange} />
-            </TabsContent>
+              <TabsContent value="schedule" className="mt-4">
+                {/* Pass form control/register if schedule is part of the main form */}
+                <ScheduleSettings timezones={timezones} selectedTimezone={timezone} control={form.control} register={form.register} selectedSendDays={sendDays} handleDayChange={handleDayChange} />
+              </TabsContent>
 
-            <TabsContent value="recipients" className="mt-4">
-              {/* Pass form control/register if recipients are part of the main form */}
-              <RecipientsSettings recipients={recipients} handleChangeRecipients={updateRecipients} />
-            </TabsContent>
-          </Tabs>
-          <div className="flex justify-end space-x-2 pt-4">
-            {onCancel && (
-              <Button variant="outline" type="button" onClick={onCancel}>
-                {t.buttons.cancel}
+              <TabsContent value="recipients" className="mt-4">
+                {/* Pass form control/register if recipients are part of the main form */}
+                <RecipientsSettings recipients={recipients} handleChangeRecipients={updateRecipients} />
+              </TabsContent>
+            </Tabs>
+            <div className="flex justify-end space-x-2 pt-4">
+              {onCancel && (
+                <Button variant="outline" type="button" onClick={onCancel}>
+                  {t.buttons.cancel}
+                </Button>
+              )}
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? submitLoadingLabel : submitLabel}
               </Button>
-            )}
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? submitLoadingLabel : submitLabel}
-            </Button>
-          </div>
-        </form>
-      </Form>
+            </div>
+          </form>
+        </Form>
+      }
     </div>
   );
 }

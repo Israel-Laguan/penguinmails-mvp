@@ -1,55 +1,63 @@
-import CampaignsContent from "./content";
-import { mockCampaigns } from "@/components/campaigns/mock-data";
-// import { prisma } from "@/lib/prisma";
-// import { notFound } from "next/navigation";
-// import { EmailEventType } from "@/app/api/generated/prisma";
+import TableSkeleton from "@/components/TableSkeleton";
+import CampaignsFilter from "@/components/campaigns/CampaignsFilter";
+import CampaignsTable, {
+  campaignColumns,
+} from "@/components/campaigns/CampaignsTable";
+import StatsCardSkeleton from "@/components/dashboard/StatsCardSkeleton";
+import StatsCards from "@/components/dashboard/campaigns/StatsCards";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import Link from "next/link";
+import { Suspense } from "react";
 
-const mockData = {
-  summary: {
-    totalCampaigns: mockCampaigns.length,
-    activeCampaigns: mockCampaigns.filter(c => c.status === 'ACTIVE').length,
-    emailsSent: mockCampaigns.reduce((acc, c) => 
-      acc + c.emailEvents.filter(e => e.type === 'SENT').length, 0),
-    totalReplies: mockCampaigns.reduce((acc, c) => 
-      acc + c.emailEvents.filter(e => e.type === 'REPLIED').length, 0),
-  },
-  campaigns: mockCampaigns
-};
+const companyId = 1;
+interface CampaignsPageProps {
+  searchParams: Promise<{
+    page?: string;
+    pageSize?: string;
+  }>;
+}
 
-// async function getCampaignsData() {
-//   const campaigns = await prisma.campaign.findMany({
-//     include: {
-//       clients: true,
-//       emailEvents: {
-//         select: {
-//           type: true,
-//           timestamp: true
-//         }
-//       }
-//     }
-//   });
+export default async function CampaignsPage({
+  searchParams,
+}: CampaignsPageProps) {
+  return (
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Campaigns</h1>
+          <p className="text-gray-600 mt-1">
+            Manage your email outreach campaigns like a pro
+          </p>
+        </div>
+        <Button asChild>
+          <Link href="campaigns/create">
+            <Plus className="w-5 h-5" />
+            <span className="font-semibold">New Campaign</span>
+          </Link>
+        </Button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
+        <Suspense
+          fallback={Array.from({ length: 5 }).map((_, index) => (
+            <StatsCardSkeleton
+              key={index}
+              className="flex-row-reverse justify-end gap-2 "
+            />
+          ))}
+        >
+          <StatsCards />
+        </Suspense>
+      </div>
+      <CampaignsFilter />
 
-//   if (!campaigns) {
-//     notFound();
-//   }
-
-//   // Calculate summary statistics
-//   const summary = {
-//     totalCampaigns: campaigns.length,
-//     activeCampaigns: campaigns.filter(c => c.status === 'ACTIVE').length,
-//     emailsSent: campaigns.reduce((acc, c) => 
-//       acc + c.emailEvents.filter(e => e.type === EmailEventType.SENT).length, 0),
-//     totalReplies: campaigns.reduce((acc, c) => 
-//       acc + c.emailEvents.filter(e => e.type === EmailEventType.REPLIED).length, 0),
-//   };
-
-//   return {
-//     summary,
-//     campaigns
-//   };
-// }
-
-export default function CampaignsPage() {
-  // const data = await getCampaignsData();
-  return <CampaignsContent campaignsData={mockData} />;
+      <Suspense
+        fallback={
+          <TableSkeleton title="Campaigns Table" columns={campaignColumns} />
+        }
+      >
+        <CampaignsTable />
+      </Suspense>
+    </div>
+  );
 }

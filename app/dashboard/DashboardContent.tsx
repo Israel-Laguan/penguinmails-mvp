@@ -1,62 +1,65 @@
-'use client';
+import KpiCards from "@/components/dashboard/KpiCards";
+import QuickActions from "@/components/dashboard/QuickActions";
+import RecentRepliesList from "@/components/dashboard/RecentReply/RecentReplyList";
+import RecentReplySkeleton from "@/components/dashboard/RecentReply/RecentReplySkeleton";
+import StatsCardSkeleton from "@/components/dashboard/StatsCardSkeleton";
+import WarmupSummary from "@/components/dashboard/WarmupSummary";
+import WarmupSummarySkeleton from "@/components/dashboard/WarmupSummarySkeleton";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Suspense } from "react";
 
-import KpiCard from "@/components/KpiCard";
-import CampaignPerformanceChart from "@/components/CampaignPerformanceChart";
-import EmailStatusPieChart from "@/components/EmailStatusPieChart";
-import RecentCampaignsList from "@/components/RecentCampaignsList";
-import UpcomingTasksList from "@/components/UpcomingTasksList";
-
-interface DashboardContentProps {
-  dashboardData: any; // You should define a proper type for this
-}
-
-export default function DashboardContent({ dashboardData }: DashboardContentProps) {
+export default function DashboardContent() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <h1 className="text-2xl font-semibold text-gray-900 mb-6">Dashboard</h1>
-      
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-6">
-        <KpiCard 
-          title="Open Rate" 
-          value={dashboardData.kpi.openRate.value} 
-          change={dashboardData.kpi.openRate.change} 
-          changeType={dashboardData.kpi.openRate.changeType}
-        />
-        <KpiCard 
-          title="Click Rate" 
-          value={dashboardData.kpi.clickRate.value} 
-          change={dashboardData.kpi.clickRate.change} 
-          changeType={dashboardData.kpi.clickRate.changeType}
-        />
-        <KpiCard 
-          title="Reply Rate" 
-          value={dashboardData.kpi.replyRate.value} 
-          change={dashboardData.kpi.replyRate.change} 
-          changeType={dashboardData.kpi.replyRate.changeType}
-        />
-        <KpiCard 
-          title="Bounce Rate" 
-          value={dashboardData.kpi.bounceRate.value} 
-          change={dashboardData.kpi.bounceRate.change} 
-          changeType={dashboardData.kpi.bounceRate.changeType}
-        />
+    <div className=" mx-auto  space-y-8">
+      <div className="space-y-2">
+        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+        <p className="text-gray-500">
+          Welcome back! Here's what's happening with your campaigns.
+        </p>
       </div>
-
+      <Suspense
+        fallback={
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <StatsCardSkeleton key={index} />
+            ))}
+          </div>
+        }
+      >
+        <KpiCards />
+      </Suspense>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
-          <CampaignPerformanceChart data={dashboardData.campaignPerformance} />
+          <Card className="bg-white rounded-xl shadow-sm border border-gray-200 p-0 gap-0">
+            <CardHeader className="p-6 border-b border-gray-200">
+              <h2 className="text-lg font-semibold text-gray-900">
+                Recent Replies
+              </h2>
+            </CardHeader>
+            <CardContent className="divide-y divide-gray-200 p-0">
+              <Suspense
+                fallback={
+                  <div className="space-y-0">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <RecentReplySkeleton key={index} />
+                    ))}
+                  </div>
+                }
+              >
+                <RecentRepliesList />
+              </Suspense>
+            </CardContent>
+          </Card>
         </div>
-        
-        <div>
-          <EmailStatusPieChart data={dashboardData.emailStatus} />
-        </div>
-        
-        <div className="lg:col-span-2">
-          <RecentCampaignsList campaigns={dashboardData.recentCampaigns} />
-        </div>
-        
-        <div>
-          <UpcomingTasksList tasks={dashboardData.upcomingTasks} />
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Warmup Summary */}
+          <Suspense fallback={<WarmupSummarySkeleton />}>
+            <WarmupSummary />
+          </Suspense>
+
+          {/* Quick Actions */}
+          <QuickActions />
         </div>
       </div>
     </div>

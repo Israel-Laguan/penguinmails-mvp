@@ -1,82 +1,50 @@
-"client";
+import ConversationHeader from "@/components/inbox/conversation/conversation-header";
+import ConversationMessages from "@/components/inbox/conversation/conversation-messages";
+import ConversationReplay from "@/components/inbox/conversation/conversation-replay";
+import ConversationSkeleton from "@/components/inbox/conversation/conversation-skeleton";
+import NotesPanel from "@/components/inbox/conversation/notes-panel";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
+import { ConversationProvider } from "@/context/ConversationContext";
+import { conversations } from "@/lib/data/Inbox.mock";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import Image from "next/image";
+import { Suspense } from "react";
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
-export default async function EmailDetailPage({ params }: Props) {
-  const { id } = params;
-  const email = await fetchEmailById(id);
-
-  if (!email) {
+async function page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  if (!id) {
     return notFound();
   }
-
   return (
-    <div className="p-6 space-y-6 bg-white rounded-xl shadow-md border">
-      <div>
-        <Link
-          href="/dashboard/inbox"
-          className="text-lg text-blue-600 bg-gray-100 rounded-md"
-        >
-          <ArrowLeft />
-        </Link>
-      </div>
-
-      <div className="text-gray-800 text-sm border-b pb-4">
-        <div className="flex justify-between items-center">
-          <span>
-            <strong>{email.from}</strong> &lt;{email.email}&gt;
-          </span>
-          <span>{email.date}</span>
-        </div>
-      </div>
-
-      <div className="text-gray-800 text-sm border-b pb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Image
-              src="/logo.svg"
-              alt="Avatar"
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
-            <span>
-              {email.from} &lt;{email.email}&gt;
-            </span>
-          </div>
-          <span>{email.date}</span>
-        </div>
-      </div>
-      <h1 className="text-2xl font-semibold text-gray-900">{email.subject}</h1>
-      <div className="border-t pt-4 prose prose-sm max-w-none">
-        <div dangerouslySetInnerHTML={{ __html: email.htmlContent }} />
-      </div>
-    </div>
+    <Suspense fallback={<ConversationSkeleton />}>
+      <Conversation id={id} />
+    </Suspense>
   );
 }
-
-async function fetchEmailById(id: string) {
-  return {
-    id,
-    subject: "Ejemplo de asunto",
-    from: "Eric Johnson",
-    email: "news@notice.alibaba.com",
-    date: "3:45 (hace 11 horas)",
-    htmlContent: `
-      <p>Hola <strong>Eric</strong>,</p>
-      <p>
-        Este es el contenido completo del <em>mensaje</em>. Podés revisarlo y 
-        <a href="#">responder</a> cuando quieras.
-      </p>
-      <p>Saludos,<br />El equipo.</p>
-    `,
-  };
+export default page;
+async function Conversation({ id }: { id: string }) {
+  const conversation = conversations.find((conv) => conv.id.toString() === id);
+  if (!conversation) {
+    return notFound();
+  }
+  return (
+    <ConversationProvider conversation={conversation}>
+      <Card className="shadow-none border-0 rounded-none gap-0 p-0">
+        <CardHeader className="p-0">
+          <ConversationHeader />
+          <NotesPanel />
+        </CardHeader>
+        <CardContent className="p-0">
+          <ConversationMessages />
+        </CardContent>
+        <CardFooter className="p-0">
+          <ConversationReplay />
+        </CardFooter>
+      </Card>
+    </ConversationProvider>
+  );
 }

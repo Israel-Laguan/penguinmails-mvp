@@ -6,6 +6,9 @@ import { type CampaignResponse } from "@/types/campaign";
 
 type CampaignsContentProps = {
   campaignsData: {
+    totalCampaigns: number;
+    page: number;
+    pageSize: number;
     summary: {
       totalCampaigns: number;
       activeCampaigns: number;
@@ -17,7 +20,7 @@ type CampaignsContentProps = {
 };
 
 export default function CampaignsContent({ campaignsData }: CampaignsContentProps) {
-  const { summary, campaigns } = campaignsData;
+  const { summary, campaigns, page, pageSize, totalCampaigns } = campaignsData;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -31,7 +34,7 @@ export default function CampaignsContent({ campaignsData }: CampaignsContentProp
       </div>
 
       <div className="rounded-md border bg-white">
-        <CampaignsDataTable data={campaigns} />
+        <CampaignsDataTable data={campaigns} page={page} pageSize={pageSize} totalCount={totalCampaigns} />
       </div>
     </div>
   );

@@ -1,33 +1,34 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { CampaignForm } from "@/components/campaigns/CampaignForm";
-import { copyText as t } from "@/components/campaigns/copy";
-import { CampaignFormValues } from "@/components/campaigns/types";
-import { createCampaignMockAction } from "@/lib/actions/campaignActions";
-
-export default function CampaignCreatePage() {
-  const router = useRouter();
-
-  const handleSubmit = async (data: CampaignFormValues) => {
-    console.log("Form Submitted:", data);
-    // TODO: Implement campaign creation
-    await createCampaignMockAction(data);
-  };
-
-  const handleCancel = () => {
-    router.back();
-  };
-
+import AddCampaignForm from "@/components/campaigns/steps/AddCampaignForm";
+import AddCampaignHeader from "@/components/campaigns/steps/AddCampaignHeader";
+import AddCampaignSteps from "@/components/campaigns/steps/AddCampaignSteps";
+import NavigationButtons from "@/components/campaigns/steps/NavigationButtons";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { AddCampaignProvider } from "@/context/AddCampaignContext";
+function CampaignCreatePage() {
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">{t.pageTitle}</h1>
-      </div>
-      <CampaignForm
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-      />
-    </div>
+    <AddCampaignProvider>
+      <Card className="border-none shadow-none">
+        <CardHeader>
+          <AddCampaignHeader>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Create New Campaign
+            </h1>
+          </AddCampaignHeader>
+        </CardHeader>
+        <CardContent className="space-y-8 ">
+          <AddCampaignSteps />
+          <AddCampaignForm />
+        </CardContent>
+        <CardFooter>
+          <NavigationButtons />
+        </CardFooter>
+      </Card>
+    </AddCampaignProvider>
   );
 }
+export default CampaignCreatePage;

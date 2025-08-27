@@ -34,3 +34,26 @@ export type CampaignResponse = {
   }[]
   updatedAt: Date
 }
+export enum statusCampaign {
+  active = "active",
+  paused = "paused",
+  completed = "completed",
+}
+
+
+export interface ChartData {
+  date: string;
+  sent: number;
+  opened: number;
+  replied: number;
+  bounced: number;
+  clicked: number;
+  formattedDate: string;
+}
+
+export interface MetricToggle {
+  key: keyof ChartData;
+  label: string;
+  color: string;
+  visible: boolean;
+}

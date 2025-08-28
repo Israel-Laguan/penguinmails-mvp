@@ -36,7 +36,7 @@ services:
       - default
     volumes:
       - "mailu-certs:/certs"
-      - "/mailu/overrides/nginx:/overrides:ro"   # host mount kept for overrides
+      - "/opt/mailu/overrides/nginx:/overrides:ro"
     depends_on:
       - resolver
     dns:
@@ -81,7 +81,7 @@ services:
         tag: mailu-imap
     volumes:
       - "mailu-mail:/mail"
-      - "/opt/mailu/overrides/nginx:/overrides:ro"
+      - "/opt/mailu/overrides/dovecot:/overrides:ro"
     networks:
       - default
     depends_on:
@@ -100,7 +100,7 @@ services:
         tag: mailu-smtp
     volumes:
       - "mailu-mailqueue:/queue"
-      - "/mailu/overrides/postfix:/overrides:ro"
+      - "/opt/mailu/overrides/postfix:/overrides:ro"
     depends_on:
       - front
       - resolver
@@ -136,7 +136,7 @@ services:
       - oletools
     volumes:
       - "mailu-filter:/var/lib/rspamd"
-      - "/mailu/overrides/rspamd:/overrides:ro"
+      - "/opt/mailu/overrides/rspamd:/overrides:ro"
     depends_on:
       - front
       - redis

@@ -2,7 +2,7 @@ services:
 
   # External dependencies
   redis:
-    image: 7.4.5-alpine
+    image: redis:7.4.5-alpine
     restart: always
     volumes:
       - "mailu-redis:/data"

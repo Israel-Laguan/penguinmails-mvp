@@ -26,10 +26,10 @@ resource "terracurl_request" "add_instance" {
 
 resource "local_file" "add_instance_response" {
   filename = "output/${var.server_name}_create_instance.json"
-  sensitive_content  = terracurl_request.add_instance.response # change this sensitive_content to this content
+  sensitive_content  = terracurl_request.add_instance.response
 }
 
 output "instance_message" {
   value = try(jsondecode(terracurl_request.add_instance.response).message, null)
-  
+  sensitive = true
 }

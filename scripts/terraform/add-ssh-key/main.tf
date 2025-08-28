@@ -26,10 +26,10 @@ resource "terracurl_request" "ssh_key_add" {
 
 resource "local_file" "ssh_key_response" {
   filename = "output/${var.ssh_key_name}_add_ssh_key.json"
-  sensitive_content  = terracurl_request.ssh_key_add.response # change this sensitive_content to this content
+  sensitive_content  = terracurl_request.ssh_key_add.response
 }
 
 output "ssh_key_message" {
   value = try(jsondecode(terracurl_request.ssh_key_add.response).message, null)
-  sensitive = true # if you run the code then remove this line
+  sensitive = true
 }

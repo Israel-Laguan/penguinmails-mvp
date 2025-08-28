@@ -5,13 +5,13 @@ import { FolderIcon } from "lucide-react";
 function TemplateFolders() {
   const folders = initialFolders.filter(
     (folder) => folder.type === "quick-reply"
-  );
+  ) as TemplateFolder[];
   const files = folders.flatMap((folder) => folder.children);
   if (files.length === 0 && folders.length === 0) {
     return null;
   }
   return (
-    <>
+    <div className="bg-gray-50 p-2 px-4 border-r border-gray-200 w-72 space-y-5">
       <h1 className="text-md font-semibold">Folders</h1>
       <div className="flex flex-col space-y-3">
         <div className="flex items-center space-x-3 p-3 bg-blue-50 text-blue-700 rounded-lg">
@@ -23,7 +23,7 @@ function TemplateFolders() {
         </div>
         <Folders folders={folders} />
       </div>
-    </>
+    </div>
   );
 }
 export default TemplateFolders;

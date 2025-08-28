@@ -1,9 +1,8 @@
 import NavLink from "@/components/NavLink";
 import CreateNewFolderButton from "@/components/templates/create-new-folder-button";
-import { Button } from "@/components/ui/button";
+import ConditionalNewTemplateButton from "@/components/templates/ConditionalNewTemplateButton";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { tabs } from "@/lib/data/template.mock";
-import Link from "next/link";
 function layout({
   templateFolders,
   children,
@@ -24,9 +23,7 @@ function layout({
         </div>
         <div className="flex gap-2">
           <CreateNewFolderButton />
-          <Button asChild>
-            <Link href="/dashboard/templates/new">Create New Template</Link>
-          </Button>
+          <ConditionalNewTemplateButton />
         </div>
       </div>
 

@@ -29,10 +29,8 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
     openRate,
     content,
     lastUsed,
-    folderId,
     isStarred,
     subject,
-    type,
     usage,
   } = currentTemplate;
 

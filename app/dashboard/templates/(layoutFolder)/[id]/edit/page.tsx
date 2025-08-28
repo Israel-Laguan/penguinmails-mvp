@@ -22,19 +22,7 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
   if (!currentTemplate) {
     notFound();
   }
-  const {
-    name,
-    category,
-    replyRate,
-    openRate,
-    content,
-    lastUsed,
-    folderId,
-    isStarred,
-    subject,
-    type,
-    usage,
-  } = currentTemplate;
+  const { name, category, content, subject } = currentTemplate;
 
   return (
     <div className="p-3">

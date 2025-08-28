@@ -2,7 +2,7 @@ services:
 
   # External dependencies
   redis:
-    image: redis:7.4.5-alpine
+    image: redis:7.2.5-alpine
     restart: always
     volumes:
       - "mailu-redis:/data"
@@ -81,7 +81,7 @@ services:
         tag: mailu-imap
     volumes:
       - "mailu-mail:/mail"
-      - "/mailu/overrides/dovecot:/overrides:ro"  # overrides stay host-mounted
+      - "/opt/mailu/overrides/nginx:/overrides:ro"
     networks:
       - default
     depends_on:

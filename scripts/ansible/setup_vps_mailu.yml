@@ -14,6 +14,7 @@
       - mailqueue
       - filter
       - overrides
+      - overrides/nginx
 
   tasks:
     - name: Update and upgrade apt packages
@@ -59,7 +60,6 @@
           - docker-buildx-plugin
           - docker-compose-plugin
         state: present
-        update_cache: yes
 
     - name: Enable and start Docker
       systemd:
@@ -101,7 +101,6 @@
         mode: '0600'
 
     - name: Ensure Mailu stack is up
-      community.docker.docker_compose:
+      community.docker.docker_compose_v2:
         project_src: "{{ mailu_install_dir }}"
-        state: present
-        restarted: yes
+        state: restarted

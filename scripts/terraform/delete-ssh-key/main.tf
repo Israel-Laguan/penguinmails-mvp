@@ -11,9 +11,9 @@ provider "terracurl" {}
 
 # Create SSH Key in Hostwinds
 resource "terracurl_request" "ssh_key_delete" {
-  name    = "delete-ssh-key"
-  url     = "https://clients.hostwinds.com/cloud/api.php"
-  method  = "POST"
+  name   = "delete-ssh-key"
+  url    = "https://clients.hostwinds.com/cloud/api.php"
+  method = "POST"
 
   headers = {
     "Content-Type" = "application/x-www-form-urlencoded"
@@ -25,11 +25,11 @@ resource "terracurl_request" "ssh_key_delete" {
 }
 
 resource "local_file" "ssh_key_response" {
-  filename = "output/${var.ssh_key_name}_delete_ssh_key.json"
-  sensitive_content  = terracurl_request.ssh_key_delete.response
+  filename          = "output/${var.ssh_key_name}_delete_ssh_key.json"
+  sensitive_content = terracurl_request.ssh_key_delete.response
 }
 
 output "ssh_key_message" {
-  value = try(jsondecode(terracurl_request.ssh_key_delete.response).message, null)
+  value     = try(jsondecode(terracurl_request.ssh_key_delete.response).message, null)
   sensitive = true
 }

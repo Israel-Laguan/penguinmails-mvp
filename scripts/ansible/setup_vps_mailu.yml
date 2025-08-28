@@ -46,6 +46,7 @@
         url: https://download.docker.com/linux/ubuntu/gpg
         dest: /etc/apt/keyrings/docker.asc
         mode: '0644'
+        checksum: sha256:e5ce7592b49b32b349335f213e46c72b80454395e9b3501493526955b235431a
 
     - name: Add Docker repository
       apt_repository:

@@ -13,7 +13,7 @@ services:
     depends_on:
       - resolver
     dns:
-      - 192.168.203.254
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
 
   # Core services
   front:
@@ -44,7 +44,7 @@ services:
     depends_on:
       - resolver
     dns:
-      - 192.168.203.254
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
 
   resolver:
     image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}unbound:${MAILU_VERSION:-2024.06}
@@ -73,7 +73,7 @@ services:
       - redis
       - resolver
     dns:
-      - 192.168.203.254
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
 
   imap:
     image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}dovecot:${MAILU_VERSION:-2024.06}
@@ -92,7 +92,7 @@ services:
       - front
       - resolver
     dns:
-      - 192.168.203.254
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
 
   smtp:
     image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}postfix:${MAILU_VERSION:-2024.06}
@@ -109,7 +109,7 @@ services:
       - front
       - resolver
     dns:
-      - 192.168.203.254
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
 
   oletools:
     image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}oletools:${MAILU_VERSION:-2024.06}
@@ -124,7 +124,7 @@ services:
     depends_on:
       - resolver
     dns:
-      - 192.168.203.254
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
 
 
   antispam:
@@ -148,7 +148,7 @@ services:
       - oletools
       - resolver
     dns:
-      - 192.168.203.254
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
 
   # Optional services
 
@@ -162,7 +162,7 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 192.168.203.0/24
+        - subnet: ${SUBNET:-192.168.203.0/24}
   oletools:
     driver: bridge
     internal: true

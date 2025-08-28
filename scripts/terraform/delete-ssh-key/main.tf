@@ -19,7 +19,7 @@ resource "terracurl_request" "ssh_key_delete" {
     "Content-Type" = "application/x-www-form-urlencoded"
   }
 
-  request_body = "action=delete_ssh_key&name=${urlencode(var.ssh_key_name)}&API=${var.API}"
+  request_body = "action=delete_ssh_key&name=${urlencode(var.ssh_key_name)}&API=${urlencode(var.API)}"
 
   response_codes = [200]
 }

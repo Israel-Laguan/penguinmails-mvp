@@ -82,13 +82,21 @@
         mode: '0755'
       loop: "{{ mailu_dirs }}"
 
-    - name: Copy Mailu directory (docker-compose.yml + .env)
+    - name: Copy Mailu docker-compose.yml
       copy:
-        src: ./mailu/
-        dest: /opt/mailu/
+        src: ./mailu/docker-compose.yml
+        dest: /opt/mailu/docker-compose.yml
         owner: root
         group: root
         mode: '0644'
+
+    - name: Copy Mailu environment file
+      copy:
+        src: ./mailu/mailu.env
+        dest: /opt/mailu/mailu.env
+        owner: root
+        group: root
+        mode: '0600'
 
     - name: Ensure Mailu stack is up
       community.docker.docker_compose:

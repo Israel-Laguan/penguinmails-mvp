@@ -38,4 +38,15 @@ yarn-error.log*
 
 # prisma
 app/api/generated/prisma
-public/example-leads.csv
+
+# Ignore ALL Terraform working directories & files in any subfolder
+**/.terraform/
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/.terraform.lock.hcl
+**/output/
+*.tfvars
+!*.tfvars.example
+
+# Ignore ALL Mailu env
+**/mailu.env

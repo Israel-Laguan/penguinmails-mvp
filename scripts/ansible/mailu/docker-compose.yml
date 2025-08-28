@@ -1,0 +1,168 @@
+services:
+
+  # External dependencies
+  redis:
+    image: redis:7.2.5-alpine
+    restart: always
+    volumes:
+      - "mailu-redis:/data"
+    depends_on:
+      - resolver
+    dns:
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
+
+  # Core services
+  front:
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}nginx:${MAILU_VERSION:-2024.06}
+    restart: always
+    env_file: mailu.env
+    logging:
+      driver: journald
+      options:
+        tag: mailu-front
+    ports:
+      - "80:80"
+      - "443:443"
+      - "25:25"
+      - "465:465"
+      - "587:587"
+      - "110:110"
+      - "995:995"
+      - "143:143"
+      - "993:993"
+      - "4190:4190"
+
+    networks:
+      - default
+    volumes:
+      - "mailu-certs:/certs"
+      - "/opt/mailu/overrides/nginx:/overrides:ro"
+    depends_on:
+      - resolver
+    dns:
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
+
+  resolver:
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}unbound:${MAILU_VERSION:-2024.06}
+    env_file: mailu.env
+    logging:
+      driver: journald
+      options:
+        tag: mailu-resolver
+    restart: always
+    networks:
+      default:
+        ipv4_address: ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
+
+  admin:
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}admin:${MAILU_VERSION:-2024.06}
+    restart: always
+    env_file: mailu.env
+    logging:
+      driver: journald
+      options:
+        tag: mailu-admin
+    volumes:
+      - "mailu-data:/data"
+      - "mailu-dkim:/dkim"
+    depends_on:
+      - redis
+      - resolver
+    dns:
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
+
+  imap:
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}dovecot:${MAILU_VERSION:-2024.06}
+    restart: always
+    env_file: mailu.env
+    logging:
+      driver: journald
+      options:
+        tag: mailu-imap
+    volumes:
+      - "mailu-mail:/mail"
+      - "/opt/mailu/overrides/dovecot:/overrides:ro"
+    networks:
+      - default
+    depends_on:
+      - front
+      - resolver
+    dns:
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
+
+  smtp:
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}postfix:${MAILU_VERSION:-2024.06}
+    restart: always
+    env_file: mailu.env
+    logging:
+      driver: journald
+      options:
+        tag: mailu-smtp
+    volumes:
+      - "mailu-mailqueue:/queue"
+      - "/opt/mailu/overrides/postfix:/overrides:ro"
+    depends_on:
+      - front
+      - resolver
+    dns:
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
+
+  oletools:
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}oletools:${MAILU_VERSION:-2024.06}
+    hostname: oletools
+    logging:
+      driver: journald
+      options:
+        tag: mailu-oletools
+    restart: always
+    networks:
+      - oletools
+    depends_on:
+      - resolver
+    dns:
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
+
+  antispam:
+    image: ${DOCKER_ORG:-ghcr.io/mailu}/${DOCKER_PREFIX:-}rspamd:${MAILU_VERSION:-2024.06}
+    hostname: antispam
+    restart: always
+    env_file: mailu.env
+    logging:
+      driver: journald
+      options:
+        tag: mailu-antispam
+    networks:
+      - default
+      - oletools
+    volumes:
+      - "mailu-filter:/var/lib/rspamd"
+      - "/opt/mailu/overrides/rspamd:/overrides:ro"
+    depends_on:
+      - front
+      - redis
+      - oletools
+      - resolver
+    dns:
+      - ${RESOLVER_IPV4_ADDRESS:-192.168.203.254}
+
+# Networks
+networks:
+  default:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: ${SUBNET:-192.168.203.0/24}
+  oletools:
+    driver: bridge
+    internal: true
+
+# Volumes
+volumes:
+  mailu-redis:
+  mailu-certs:
+  mailu-data:
+  mailu-dkim:
+  mailu-mail:
+  mailu-mailqueue:
+  mailu-filter:

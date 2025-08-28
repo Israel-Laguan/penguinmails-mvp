@@ -1,0 +1,7 @@
+API           = "YOUR_HOSTWINDS_API_KEY"
+ssh_key_name  = "example-ssh-key"
+template      = "TEMPLATE_UUID_HERE"   # e.g. b1e32484-ea0d-4875-921f-2d01fd7b4341
+rid           = 0                      # Region/Resource ID (integer, e.g. 52 for Dallas)
+location_id   = 0                      # Location ID (integer, e.g. 12 for Seattle)
+server_name   = "example-server"
+billingcycle  = "monthly"              # Allowed: hourly, monthly

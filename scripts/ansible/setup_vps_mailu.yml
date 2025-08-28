@@ -97,7 +97,7 @@
 
     - name: Copy Mailu environment file
       copy:
-        src: "{{ playbook_dir }}/mailu/.env.example"
+        src: "{{ playbook_dir }}/mailu/.env.j2"
         dest: "{{ mailu_install_dir }}/.env"
         owner: root
         group: root

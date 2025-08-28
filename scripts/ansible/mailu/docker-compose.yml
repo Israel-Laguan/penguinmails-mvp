@@ -6,7 +6,6 @@ services:
     restart: always
     volumes:
       - "mailu-redis:/data"
-    command: redis-server --requirepass ${REDIS_PW}
     depends_on:
       - resolver
     dns:

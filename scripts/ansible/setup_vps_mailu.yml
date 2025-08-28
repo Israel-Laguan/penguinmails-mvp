@@ -96,9 +96,9 @@
         mode: '0644'
 
     - name: Copy Mailu environment file
-      template:
-        src: "{{ playbook_dir }}/mailu/.env.j2"
-        dest: "{{ mailu_install_dir }}/.env"
+      copy:
+        src: "{{ playbook_dir }}/mailu/mailu.env.example"
+        dest: "{{ mailu_install_dir }}/mailu.env"
         owner: root
         group: root
         mode: '0600'

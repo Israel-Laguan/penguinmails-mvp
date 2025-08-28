@@ -34,4 +34,9 @@ variable "billingcycle" {
   description = "Billing cycle"
   type        = string
   default     = "monthly"
+
+  validation {
+    condition     = contains(["hourly", "monthly"], var.billingcycle)
+    error_message = "Allowed values for billingcycle are \"hourly\" or \"monthly\"."
+  }
 }

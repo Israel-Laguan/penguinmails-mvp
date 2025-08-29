@@ -52,7 +52,7 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
               )}
             </div>
             <div>
-              <TemplateActions numberOfShowen={5} templateId={id} />
+              <TemplateActions numberOfShowen={5} templateId={id} type="template" />
             </div>
           </div>
         </CardHeader>

@@ -22,7 +22,13 @@ import {
 import { useState } from "react";
 import File from "./File";
 
-function Folder({ folder }: { folder: TemplateFolder }) {
+function Folder({
+  folder,
+  showFiles = true,
+}: {
+  folder: TemplateFolder;
+  showFiles?: boolean;
+}) {
   const [isRenaming, setIsRenaming] = useState(false);
 
   function handleRenameButton() {
@@ -53,9 +59,11 @@ function Folder({ folder }: { folder: TemplateFolder }) {
                 <div className="flex items-center justify-start space-x-3 flex-1">
                   <FolderIcon className="w-4 h-4" />
                   <span className="font-medium">{folder.name}</span>
-                  <span className="ml-auto text-xs bg-blue-100 px-2 py-1 rounded-full">
-                    {folder.children.length}
-                  </span>
+                  {showFiles && (
+                    <span className="ml-auto text-xs bg-blue-100 px-2 py-1 rounded-full">
+                      {folder.children.length}
+                    </span>
+                  )}
                 </div>
               )}
             </AccordionTrigger>
@@ -66,7 +74,7 @@ function Folder({ folder }: { folder: TemplateFolder }) {
               "children" in child ? (
                 <Folder key={child.id} folder={child as TemplateFolder} />
               ) : (
-                <File key={child.id} file={child as Template} />
+                showFiles && <File key={child.id} file={child as Template} />
               )
             )}
           </AccordionContent>

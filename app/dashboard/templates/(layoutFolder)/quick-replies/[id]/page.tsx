@@ -37,7 +37,11 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
             </div>
           </div>
           <div>
-            <TemplateActions />
+            <TemplateActions
+              templateId={id}
+              numberOfShowen={5}
+              type="quick-reply"
+            />
           </div>
         </CardHeader>
         <Separator />

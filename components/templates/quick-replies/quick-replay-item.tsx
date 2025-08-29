@@ -13,7 +13,11 @@ function QuickReplyItem({ template }: { template: Template }) {
           </div>
         </Link>
         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex space-x-1  text-gray-500">
-          <TemplateActions />
+          <TemplateActions
+            templateId={template.id.toString()}
+            numberOfShowen={3}
+            type="quick-reply"
+          />
         </div>
       </CardContent>
     </Card>

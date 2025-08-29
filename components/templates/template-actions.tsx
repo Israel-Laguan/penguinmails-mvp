@@ -25,13 +25,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { initialFolders } from "@/lib/data/template.mock";
 import { cn } from "@/lib/utils";
 import { Copy, Edit, FolderX, MoreHorizontal, Star, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
+import Folders from "./Folder-Structure/Folders";
 
 interface TemplateActionsProps {
   templateId: string;
+  type: "quick-reply" | "template";
   numberOfShowen?: number;
   hidden?: boolean;
 }
@@ -78,12 +81,15 @@ const ACTIONS: ActionItem[] = [
 
 function TemplateActions({
   templateId,
+  type,
   numberOfShowen = 3,
   hidden = true,
 }: TemplateActionsProps) {
   const router = useRouter();
   const [showMoveDialog, setShowMoveDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const folders = initialFolders.filter((folder) => folder.type === type);
 
   // Action handlers
   const handleStar = useCallback(() => {
@@ -194,10 +200,8 @@ function TemplateActions({
               Select a folder to move this template to.
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <p className="text-sm text-muted-foreground">
-              Folder selection will be implemented here
-            </p>
+          <div>
+            <Folders folders={folders as TemplateFolder[]} showFiles={false} />
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowMoveDialog(false)}>

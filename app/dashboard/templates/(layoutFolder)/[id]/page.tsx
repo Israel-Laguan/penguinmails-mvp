@@ -9,8 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { initialTemplates } from "@/lib/data/template.mock";
-import { cn } from "@/lib/utils";
-import { ArrowLeft, Eye, Mail, Star, TrendingUp } from "lucide-react";
+import { ArrowLeft, Star } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -22,17 +21,7 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
   if (!currentTemplate) {
     notFound();
   }
-  const {
-    name,
-    category,
-    replyRate,
-    openRate,
-    content,
-    lastUsed,
-    isStarred,
-    subject,
-    usage,
-  } = currentTemplate;
+  const { name, category, content, isStarred, subject } = currentTemplate;
 
   return (
     <div className="p-3">
@@ -63,42 +52,7 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
               )}
             </div>
             <div>
-              <TemplateActions />
-            </div>
-          </div>
-          <div className="flex gap-5 text-sm">
-            {[
-              {
-                id: 1,
-                icon: Mail,
-                label: `${usage} uses`,
-                color: "text-gray-500",
-              },
-              {
-                id: 2,
-                icon: Eye,
-                label: `${openRate}% open rate`,
-                color: "text-primary",
-              },
-              {
-                id: 3,
-                icon: TrendingUp,
-                label: `${replyRate}% reply rate`,
-                color: "text-green-500",
-              },
-            ].map((item) => (
-              <div
-                key={item.id}
-                className={cn(item.color, "flex items-center gap-1")}
-              >
-                <item.icon className="w-4 h-4" />
-                <span className="font-extralight">{item.label}</span>
-              </div>
-            ))}
-            <div>
-              <span className="font-extralight text-sm text-gray-400">
-                Last used {lastUsed}
-              </span>
+              <TemplateActions numberOfShowen={5} templateId={id} />
             </div>
           </div>
         </CardHeader>

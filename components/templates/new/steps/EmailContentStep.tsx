@@ -93,7 +93,7 @@ function EmailContentStep() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              ✍️ Email Content
+               Email Content
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -169,7 +169,7 @@ function EmailContentStep() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              ✅ Preview
+               Preview
               <Button
                 variant="outline"
                 size="sm"

@@ -65,7 +65,7 @@ function TemplateBasicsStep() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            🧾 Template Basics
+            Template Basics
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -203,7 +203,7 @@ function TemplateBasicsStep() {
                 form.setValue("isFavorite", checked)
               }
             />
-            <Label htmlFor="favorite">⭐ Mark as favorite</Label>
+            <Label htmlFor="favorite">Mark as favorite</Label>
           </div>
 
           {/* Action Buttons */}

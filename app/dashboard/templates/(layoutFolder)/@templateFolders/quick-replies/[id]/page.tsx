@@ -10,9 +10,9 @@ import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-async function page({ params }: { params: Promise<{ id: string }> }) {
+function page({ params }: { params: { id: string } }) {
   const quickReplies = initialQuickReplies;
-  const id = (await params).id;
+  const { id } = params;
   return (
     <div className="bg-gray-50 p-2 px-4 border-r border-gray-200 w-72 space-y-5">
       <div className="flex items-center justify-between">
@@ -25,7 +25,7 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
       </div>
       <div className="space-y-3">
         {quickReplies.map((template) => (
-          <QuickReplaySmallItem
+          <QuickReplySmallItem
             key={template.id}
             template={template as Template}
             active={parseInt(id) === template.id}
@@ -35,7 +35,7 @@ async function page({ params }: { params: Promise<{ id: string }> }) {
     </div>
   );
 }
-function QuickReplaySmallItem({
+function QuickReplySmallItem({
   template,
   active,
 }: {

@@ -14,8 +14,8 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-async function page({ params }: { params: Promise<{ id: string }> }) {
-  const id = (await params).id;
+function page({ params }: { params: { id: string } }) {
+  const { id } = params;
   const currentTemplate = initialTemplates.find(
     (template) => template.id === parseInt(id)
   );

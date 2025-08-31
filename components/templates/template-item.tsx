@@ -34,10 +34,7 @@ function TemplateItem({ template }: { template: Template }) {
       <Link href={`/dashboard/templates/${template.id}`}>
         <CardContent>
           <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
-            Subject :{" "}
-            {template.content.length > 100
-              ? `${template.content.substring(0, 100)}...`
-              : template.content}
+            Subject : {template.subject}
           </p>
         </CardContent>
         <CardFooter className="flex items-center justify-between text-xs text-muted-foreground">

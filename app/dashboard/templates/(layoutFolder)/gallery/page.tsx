@@ -2,7 +2,7 @@ import { Star } from "lucide-react";
 
 function page() {
   const gallery = [];
-  if (gallery.length == 0) {
+  if (gallery.length === 0) {
     return (
       <div className="p-8 w-full h-full flex justify-center items-center">
         <div className="text-center">
@@ -19,5 +19,6 @@ function page() {
       </div>
     );
   }
+  return null;
 }
 export default page;

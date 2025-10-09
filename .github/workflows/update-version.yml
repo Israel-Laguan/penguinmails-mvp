@@ -24,8 +24,12 @@ jobs:
       - name: Get current version
         id: get_version
         run: |
-          version=$(< version.txt tr -d '\n')
-          echo "Versión actual: $version"
+          if [ ! -f version.txt ]; then
+            echo "Error: version.txt not found"
+            exit 1
+          fi
+          version=$(< version.txt tr -d '\n' | tr -d '\r')
+          echo "Current version: $version"
           echo "current_version=$version" >> $GITHUB_OUTPUT
 
       - name: Make bump script executable
@@ -44,15 +48,22 @@ jobs:
           HEAD=${HEAD_REF}
           NEW=$CURRENT
 
+          echo "Computing new version: BASE=$BASE, HEAD=$HEAD, CURRENT=$CURRENT"
+
           if [[ "$BASE" == "main" ]]; then
             # Major++
             NEW=$(echo $CURRENT | awk -F. '{ $1++; $2=0; $3=0; print }' OFS=".")
+            echo "Bumping major version to $NEW"
           elif [[ "$BASE" == "dev" && "$HEAD" =~ ^feat/ ]]; then
             # Minor++
             NEW=$(echo $CURRENT | awk -F. '{ $2++; $3=0; print }' OFS=".")
+            echo "Bumping minor version to $NEW"
           elif [[ "$BASE" == "dev" && "$HEAD" =~ ^hotfix/ ]]; then
             # Patch++
             NEW=$(echo $CURRENT | awk -F. '{ $3++; print }' OFS=".")
+            echo "Bumping patch version to $NEW"
+          else
+            echo "No version bump needed for branch $HEAD targeting $BASE"
           fi
 
           echo "new_version=$NEW" >> $GITHUB_OUTPUT
@@ -67,12 +78,23 @@ jobs:
 
           if [[ "$NEW" != "$CURRENT" ]]; then
             echo "🔄 Bumping version: $CURRENT → $NEW on $TARGET_BRANCH"
-            ./scripts/update_version.sh "$NEW"
+            if ! ./scripts/update_version.sh "$NEW"; then
+              echo "Failed to update version.txt"
+              exit 1
+            fi
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add version.txt
+            if git diff-index --quiet HEAD version.txt; then
+              echo "No changes to version.txt after update"
+              exit 1
+            fi
             git commit -m "🚀 Bump version to $NEW [skip ci]"
-            git push origin "$TARGET_BRANCH"
+            if ! git push origin "$TARGET_BRANCH"; then
+              echo "Failed to push changes to $TARGET_BRANCH"
+              exit 1
+            fi
+            echo "Version bumped successfully"
           else
             echo "⏩ No version bump needed for $TARGET_BRANCH"
           fi

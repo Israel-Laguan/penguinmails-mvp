@@ -24,7 +24,7 @@ def main():
             content = ""
 
         # (Optional) Check if the PR author is already in readme.md
-        if pr_author and pr_author in content:
+        if pr_author and f'">{pr_author}</a>' in content:
             print(f"User {pr_author} is already in README.md. No changes made.")
             sys.exit(0)
 
@@ -38,10 +38,11 @@ def main():
             "  <tbody>"
         ]
 
-        repo_name = os.getenv("GITHUB_REPOSITORY", "owner/repo")
+        repo_name = os.getenv("GITHUB_REPOSITORY")
+
+        bots_to_exclude = {"actions-user", "github-actions[bot]", "GitHub Action"}
 
         for contributor in contributors:
-            bots_to_exclude = ["actions-user", "github-actions[bot]", "GitHub Action"]
 
             if contributor["login"] in bots_to_exclude:
                 continue
@@ -76,8 +77,17 @@ def main():
 
         print("README.md successfully updated with the contributors list.")
 
+    except json.JSONDecodeError as e:
+        print(f"Error parsing contributors.json: {e}", file=sys.stderr)
+        sys.exit(1)
+    except FileNotFoundError as e:
+        print(f"File not found: {e}", file=sys.stderr)
+        sys.exit(1)
+    except OSError as e:
+        print(f"I/O error: {e}", file=sys.stderr)
+        sys.exit(1)
     except Exception as e:
-        print(f"Error updating README.md: {e}", file=sys.stderr)
+        print(f"Unexpected error updating README.md: {e}", file=sys.stderr)
         sys.exit(1)
 
 if __name__ == "__main__":

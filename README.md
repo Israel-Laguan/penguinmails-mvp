@@ -6,7 +6,6 @@ This is an MVP (Minimum Viable Product) of an email outreach web application bui
 
 This project is a platform for managing and automating email campaigns and outreach. It helps users create, send, and track the performance of their email campaigns. The platform also provides tools for managing clients, domains, and email accounts, as well as features for analyzing campaign statistics and managing templates. It aims to streamline the process of reaching out to clients and prospects through email.
 
-
 ## Features
 
 - **User Authentication:** Email/password signup and login with session management
@@ -14,8 +13,8 @@ This project is a platform for managing and automating email campaigns and outre
 - **Client Management:** Add and view clients (Placeholder)
 - **Template Management:** Create and manage email templates (Placeholder)
 - **Campaign Management:**
-    - **Detailed Campaign Creation:** Create multi-step sequential email campaigns with delays, conditions, scheduling, and recipient management using a rich UI.
-    - **Campaign List:** View a detailed list of campaigns with summary metrics, status indicators, progress bars, and performance data.
+  - **Detailed Campaign Creation:** Create multi-step sequential email campaigns with delays, conditions, scheduling, and recipient management using a rich UI.
+  - **Campaign List:** View a detailed list of campaigns with summary metrics, status indicators, progress bars, and performance data.
 - **Dashboard:** Visual overview of key metrics, campaign performance, email status, recent campaigns, and upcoming tasks.
 - **Detailed Analytics:** Track email events (sent, opened, clicked, bounced, unsubscribed) (Placeholder)
 - **Avatar Selection:** Choose from default avatars or use custom URLs for profile pictures
@@ -71,16 +70,16 @@ This project uses SQLite for development purposes. For production deployment, it
 ## Project Structure
 
 - `/src/app` - Next.js app router pages and API routes
-    - `/dashboard/campaigns/create` - New detailed campaign creation page
+  - `/dashboard/campaigns/create` - New detailed campaign creation page
 - `/src/components` - Reusable React components
-    - `/ui` - Core shadcn/ui components
-    - `/layout` - Dashboard layout components (Sidebar, Header)
-    - `/campaigns` - Components specific to campaign creation and management
-    - `/email` - Email related components (e.g., PersonalizationTags)
+  - `/ui` - Core shadcn/ui components
+  - `/layout` - Dashboard layout components (Sidebar, Header)
+  - `/campaigns` - Components specific to campaign creation and management
+  - `/email` - Email related components (e.g., PersonalizationTags)
 - `/src/lib` - Server actions and utility functions
 - `/prisma` - Prisma schema and migrations
 - `/public` - Static assets
-    - `/avatars` - Default avatar images for user profiles
+  - `/avatars` - Default avatar images for user profiles
 
 ## API Routes & Server Actions
 
@@ -97,6 +96,7 @@ This project uses SQLite for development purposes. For production deployment, it
 ### Dashboard
 
 Located at `/dashboard`, the dashboard provides a visual overview of application activity:
+
 - **KPI Cards:** Key metrics like Open Rate, Click Rate, Reply Rate, Bounce Rate.
 - **Campaign Performance Chart:** Line chart showing opens, clicks, replies over time.
 - **Email Status Chart:** Pie chart visualizing email delivery and engagement status.
@@ -108,6 +108,7 @@ See `DASHBOARD_COMPONENTS.md` for detailed documentation on dashboard components
 ### Campaigns Page (`/dashboard/campaigns`)
 
 This page provides a detailed view of all campaigns:
+
 - **Summary Cards:** Metrics for Total Campaigns, Active Campaigns, Emails Sent, and Total Replies.
 - **Campaigns Table:** A detailed table listing campaigns with status, progress, performance metrics, and last activity.
 
@@ -116,11 +117,12 @@ Data is fetched using the `getCampaignsDataAction` server action.
 ### Campaign Creation Page (`/dashboard/campaigns/create`)
 
 This new page provides a comprehensive interface for creating multi-step email campaigns:
+
 - **Structure:** Uses a tabbed interface for Sequence, Schedule, and Recipients.
 - **Campaign Details:** Form section for basic campaign info (Name, From Name, From Email) using `CampaignDetailsForm`.
 - **Sequence Builder:** Allows adding, removing, reordering, and editing Email and Delay steps (`SequenceStep`, `EmailStep`, `DelayStep`).
-    - **Email Steps:** Include subject, body (with template import and personalization tag insertion), using `TemplateSelector` and `PersonalizationTags`.
-    - **Delay Steps:** Configure wait times (days/hours) and conditions (e.g., send only if previous email not opened/clicked/replied).
+  - **Email Steps:** Include subject, body (with template import and personalization tag insertion), using `TemplateSelector` and `PersonalizationTags`.
+  - **Delay Steps:** Configure wait times (days/hours) and conditions (e.g., send only if previous email not opened/clicked/replied).
 - **Scheduling:** Configure sending days, time windows, and timezone using `ScheduleSettings`.
 - **Recipients:** Add recipients via CSV upload or manual entry using `RecipientsSettings` (upload/parsing logic not yet implemented).
 - **Validation:** Uses React Hook Form and Zod for robust form validation.
@@ -130,6 +132,7 @@ This new page provides a comprehensive interface for creating multi-step email c
 The application provides a set of default avatars for users to choose from, including options for different genders, ethnicities, and even animal avatars. Users can also provide custom URLs for their avatars.
 
 To use the avatar selection:
+
 1. Navigate to Dashboard > Settings > Profile
 2. Click on any of the default avatars or select "Use custom avatar URL"
 3. If using a custom URL, enter the URL and click "Apply"
@@ -159,9 +162,11 @@ The Dashboard > Analytics page provides visualizations and metrics for campaign 
 - Integrate with third-party services like Stripe for payments.
 
 ## Firebase Configuration
+
 PenguinMails uses Firebase to manage user authentication and may use other services in the future. There are two types of Firebase configurations you need to add to your .env file: one for the client (frontend) and one for the server (backend/admin SDK).
 
 ### 🔐 Client-Side Firebase Config
+
 These variables are exposed to the browser and used to initialize Firebase on the client (e.g., Firebase Auth for sign-in):
 
 ```
@@ -174,6 +179,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID="YOUR_NEXT_PUBLIC_FIREBASE_MESSAGING_SE
 NEXT_PUBLIC_FIREBASE_APP_ID="YOUR_NEXT_PUBLIC_FIREBASE_APP_ID"
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="YOUR_NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID"
 ```
+
 ### 🔎 How to get these values:
 
 1. Go to `https://console.firebase.google.com/`.
@@ -187,9 +193,11 @@ NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID="YOUR_NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID"
 5. Copy the Firebase config object values provided.
 
 ### 🛡️ Server-Side Firebase Admin Config
+
 These variables are used to initialize the Firebase Admin SDK on the server and must remain private. They are used for secure operations like token verification, access to Firestore, etc.
 
 # SERVER FIREBASE KEYS
+
 ```
 # SERVER FIREBASE KEYS
 FIREBASE_SERVICE_ACCOUNT="YOUR_FIREBASE_SERVICE_ACCOUNT"

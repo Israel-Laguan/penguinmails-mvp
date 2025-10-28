@@ -1,42 +1,58 @@
 "use client";
 
-import React from "react";
+import React, { FormEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar, CreditCard, DollarSign } from "lucide-react";
+import { Alert, AlertDescription } from "../ui/alert";
+import purchaseAction from "@/lib/actions/purchase";
+import { getStripe } from "@/lib/stripe-client";
+import { useAuth } from "@/context/AuthContext";
+import { BillingSettingsProps } from "./types";
+import { toast } from "sonner";
+import PlanDialog from "./PlanDialog";
 
-interface BillingData {
-  renewalDate: string;
-  emailAccountsUsed: number;
-  campaignsUsed: number;
-  emailsPerMonthUsed: number;
-  planDetails: { 
-    id: string; 
-    name: string; 
-    isMonthly: boolean;
-    price: number;
-    description: string;
-    maxEmailAccounts: number;  // 0 for "Unlimited" or a number
-    maxCampaigns: number;
-    maxEmailsPerMonth: number;
-  };
-  paymentMethod: {
-    lastFour: string;
-    expiry: string;
-    brand: string; // e.g., "Visa"
-  };
-  billingHistory: Array<{
-    date: string;
-    description: string;
-    amount: string;
-    method: string; // e.g., "Visa •••• 4242"
-  }>;
+function convertDateToLong(dateString: string) {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-interface BillingSettingsProps {
-  billing: BillingData;
-}
+const BillingSettings: React.FC<BillingSettingsProps> = ({ billing, pricingPlans, currentPlan, onChangeUserPlan }) => {
+  const { user } = useAuth();
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
+  const handlePlanChange = async (planParam: string) => {
+    await onChangeUserPlan(planParam);
+    setIsModalOpen(false);
+  };
+
+  const handlePayNow = async (event: FormEvent) => {
+    event.preventDefault();
+
+    if (billing.planDetails.name === 'FREE')
+      return toast.info('Free Suscription', {
+        description: 'Payment it´s not needed to pay Free subscription.',
+      });
+
+    setIsProcessingPayment(true);
+    const res = await purchaseAction(Number(user?.claims.companyId), billing.planDetails);
+
+    if (!res.checkoutSessionId) {
+      console.error("Failed to create stripe checkout session.");
+      setIsProcessingPayment(false);
+      return;
+    }
+
+    const stripe = await getStripe();
+
+    await stripe?.redirectToCheckout({
+      sessionId: res.checkoutSessionId,
+    });
+
+    setIsProcessingPayment(false);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -51,10 +67,17 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
             <div>
               <h3 className="text-lg font-medium">{billing.planDetails.name}</h3>
               <p className="text-sm text-muted-foreground">
-                {billing.planDetails.price} / month • Renews on {billing.renewalDate}{" "}
+                {
+                  billing.planDetails.name !== 'FREE' &&
+                  <>
+                    ${billing.planDetails.price} / month • Renews on {new Date(billing.renewalDate).toLocaleDateString()}{" "}
+                  </>
+                }
               </p>
             </div>
-            <Button variant="outline">Change Plan</Button>
+            <Button className="cursor-pointer" variant="outline" onClick={() => setIsModalOpen(true)}>
+              Change Plan
+            </Button>
           </div>
 
           <div className="mt-4 space-y-1">
@@ -70,8 +93,49 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
             </div>
             <div className="flex justify-between text-sm">
               <span>Emails per month</span>
-              <span>{billing.emailsPerMonthUsed.toLocaleString()}</span>
+              <span>{billing.planDetails.maxEmailsPerMonth.toLocaleString()}</span>
             </div>
+          </div>
+        </div>
+
+        <div className="space-y-4 rounded-md border p-4">
+          <div>
+            <h3 className="text-lg font-medium flex items-center gap-2">
+              <DollarSign className="w-5 h-5" />
+              Payment Management
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Make payments for your subscription and manage your billing.
+            </p>
+          </div>
+          <div className="space-y-4 flex flex-col">
+            <Alert>
+              {
+                billing.planDetails.name.toLowerCase() !== 'free'
+                && <Calendar className="h-4 w-4" />
+              }
+              <AlertDescription>
+                {billing.planDetails.name.toLowerCase() !== 'free' ?
+                  <>
+                    Your next payment of ${billing.planDetails.price} is due on {convertDateToLong(billing.renewalDate)}
+                  </> :
+                  <>
+                    In order to make the best use of the platform, you should start using paid plans.
+
+                  </>
+                }
+
+              </AlertDescription>
+            </Alert>
+            {
+              billing.planDetails.name.toLowerCase() !== 'free' &&
+              <div className="">
+                <Button onClick={handlePayNow} disabled={isProcessingPayment} className="flex items-center gap-2 cursor-pointer">
+                  <CreditCard className="w-4 h-4" />
+                  {isProcessingPayment ? "Processing..." : "Pay Now"}
+                </Button>
+              </div>
+            }
           </div>
         </div>
 
@@ -104,7 +168,7 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
                 </p>
               </div>
             </div>
-            <Button variant="ghost" size="sm">
+            <Button className="cursor-pointer" variant="ghost" size="sm">
               Change
             </Button>
           </div>
@@ -117,9 +181,8 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
               <div key={index} className={`p-4 flex items-center justify-between text-sm ${index > 0 ? 'border-t' : ''}`}>
                 <div
                   key={index}
-                  className={`p-4 flex items-center justify-between text-sm ${
-                    index > 0 ? "border-t" : ""
-                  }`}
+                  className={`p-4 flex items-center justify-between text-sm ${index > 0 ? "border-t" : ""
+                    }`}
                 >
                   <p className="font-medium">{item.date}</p>
                   <p className="text-xs text-muted-foreground">{item.description}</p>
@@ -138,6 +201,8 @@ const BillingSettings: React.FC<BillingSettingsProps> = ({ billing }) => {
           </div>
         </div>
       </CardContent>
+
+      <PlanDialog planDetailId={billing.planDetails.id} isModalOpen={isModalOpen} currentPlan={currentPlan} setIsModalOpen={setIsModalOpen} handlePlanChange={handlePlanChange} pricingPlans={pricingPlans} />
     </Card>
   );
 };

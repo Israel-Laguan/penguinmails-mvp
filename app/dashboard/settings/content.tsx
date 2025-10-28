@@ -1,12 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AccountSettings from "@/components/settings/AccountSettings";
 import AppearanceSettings from "@/components/settings/AppearanceSettings";
 import NotificationSettings from "@/components/settings/NotificationSettings";
 import { ComplianceSettings } from "@/components/settings/ComplianceSettings";
 import BillingSettings from "@/components/settings/BillingSettings";
+import { getSubscriptionPlanAction } from "@/actions/suscription/userSubscription";
+import { useAuth } from "@/context/AuthContext";
+import { PlanDetails } from "@/components/settings/types";
+import { getPricingPlansDetailedsAction } from "@/actions/planDetailed/allPlans";
+import CheckoutDialog from "@/components/settings/CheckoutDialog";
 
 interface UserProfileData {
   name: string;
@@ -53,16 +60,7 @@ interface BillingData {
   emailAccountsUsed: number;
   campaignsUsed: number;
   emailsPerMonthUsed: number;
-  planDetails: {
-    id: string;
-    name: string;
-    isMonthly: boolean;
-    price: number;
-    description: string;
-    maxEmailAccounts: number;
-    maxCampaigns: number;
-    maxEmailsPerMonth: number;
-  };
+  planDetails: PlanDetails;
   paymentMethod: {
     lastFour: string;
     expiry: string;
@@ -90,14 +88,65 @@ interface SettingsContentProps {
 }
 
 export function SettingsContent({ settingsData }: SettingsContentProps) {
-  const [currentTab, setCurrentTab] = useState("account");
-
   // Use the mock data passed as props
   const { userProfile, appearance, notifications, compliance, billing } =
     settingsData;
 
-  // You can add state or effects here if needed for client-side interactions
-  // For now, we just use the data passed down.
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user, loading } = useAuth();
+  const checkout = searchParams.get("checkout");
+  const [currentTab, setCurrentTab] = useState("account");
+  const [billingData, setBillingData] = useState<BillingData>(billing);
+  const [pricingPlans, setPricingPlans] = useState<PlanDetails[]>([]);
+  const [currentPlan, setCurrentPlan] = useState<string>(billing.planDetails.id);
+
+  const getUserPlan = async () => {
+    if (loading || !user) return;
+
+    const response = await getSubscriptionPlanAction(Number(user.claims.companyId));
+    if (!response.suscription?.planDetail) return;
+
+    const userPlanDetail: PlanDetails = response.suscription.planDetail;
+    const renovateBeforeDate = response.suscription.renovateBefore?.toString() || new Date().toString()
+    setBillingData((prevBilling) => ({ ...prevBilling, renewalDate: renovateBeforeDate, planDetails: userPlanDetail }));
+    setCurrentPlan(userPlanDetail.id);
+  };
+
+  const handleChangeUserPlan = async (selectedPlan: string) => {
+    if (new Date().getTime() < new Date(billingData.renewalDate).getTime())
+      return toast.warning('Active paid subscription', {
+        description: 'It is not possible to change, the user currently has an active paid subscription.',
+      });
+
+    const selectedPlanDetails = pricingPlans.find((pricingPlan) => pricingPlan.id === selectedPlan)
+
+    if (!selectedPlanDetails) return;
+
+    setBillingData((prevBilling) => ({ ...prevBilling, planDetails: selectedPlanDetails, renewalDate: new Date().toString() }));
+  };
+
+  useEffect(() => {
+    if (typeof checkout === 'string')
+      setTimeout(() => {
+        router.push(pathname);
+      }, 2000)
+  }, [checkout]);
+
+  useEffect(() => {
+    getUserPlan();
+  }, [user]);
+
+  useEffect(() => {
+    const getAllPricingPlans = async () => {
+      const response = await getPricingPlansDetailedsAction();
+      const plansData = response.plans;
+      setPricingPlans(plansData);
+    };
+
+    getAllPricingPlans();
+  }, []);
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -155,9 +204,10 @@ export function SettingsContent({ settingsData }: SettingsContentProps) {
         </TabsContent>
         <TabsContent value="billing" className="pt-4">
           {/* Pass relevant mock data to BillingPage */}
-          <BillingSettings billing={billing} />
+          <BillingSettings billing={billingData} pricingPlans={pricingPlans} currentPlan={currentPlan} onChangeUserPlan={(newPlan) => handleChangeUserPlan(newPlan)} />
         </TabsContent>
       </Tabs>
+      <CheckoutDialog isModalOpen={typeof checkout === 'string'} checkout={checkout} setIsModalOpen={() => router.push(pathname)} />
     </div>
   );
 }

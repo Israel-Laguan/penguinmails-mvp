@@ -13,14 +13,66 @@ async function findOrCreate(model: any, where: object, data: object) {
 }
 
 async function main() {
+  const freePlan = await findOrCreate(
+    prisma.planDetail,
+    { name: "FREE" },
+    {
+      name: "FREE",
+      isMonthly: true,
+      price: 0,
+      maxCampaigns: 0,
+      maxEmailAccounts: 0,
+      maxEmailsPerMonth: 0,
+      description: 'Free plan',
+    },
+  );
+
+  await findOrCreate(
+    prisma.planDetail,
+    {
+      name: "STARTER",
+    },
+    {
+      name: "STARTER",
+      isMonthly: true,
+      maxCampaigns: 5,
+      maxEmailAccounts: 10,
+      maxEmailsPerMonth: 10000,
+      price: 29.99,
+      description: 'Starter plan',
+    },
+  );
+
+  await findOrCreate(
+    prisma.planDetail,
+    { name: "PRO" },
+    {
+      name: "PRO",
+      isMonthly: true,
+      maxCampaigns: 50,
+      maxEmailAccounts: 20,
+      maxEmailsPerMonth: 50000,
+      price: 59.99,
+      description: 'Pro plan',
+    },
+  );
+
   const company = await findOrCreate(
     prisma.company,
     { name: "Acme Inc." },
     {
       name: "Acme Inc.",
-      planType: "FREE",
     }
   );
+
+  await prisma.subscription.create({
+    data: {
+      planDetailId: freePlan.id,
+      companyId: company.id,
+      paidOn: null,
+      renovateBefore: null,
+    }
+  });
 
   const user1 = await findOrCreate(
     prisma.user,

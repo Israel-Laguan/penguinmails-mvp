@@ -19,7 +19,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal, UserPlus, Building, KeyRound } from "lucide-react"; // Icons
 import { LandingLayout } from "@/components/layout/landing";
 import { signupContent } from "./content";
-import { PlanType } from "../api/generated/prisma";
 import { registerUserAction } from "@/actions/auth/signup";
 import { PlanSelect } from "./PlanSelect";
 
@@ -94,9 +93,6 @@ function SignUpForm({
       return;
     }
 
-    alert(
-      "Stripe integration is not implemented yet. Please proceed with the signup."
-    );
     try {
       const response = await registerUserAction({
         email,
@@ -339,8 +335,8 @@ function SignUpForm({
             {isLoading
               ? signupContent.buttons.signingUp
               : signupType === "new"
-              ? signupContent.buttons.createAccount
-              : signupContent.buttons.joinBusiness}
+                ? signupContent.buttons.createAccount
+                : signupContent.buttons.joinBusiness}
           </Button>
         </form>
       </CardContent>

@@ -218,6 +218,36 @@ Make sure this value is never exposed to the client or included in any public bu
 
 3. Save the .json file and convert its contents into a string for use in the FIREBASE_SERVICE_ACCOUNT variable.
 
+## Stripe integration
+
+### Get Your Stripe API Keys
+Your API keys are found in your Stripe Dashboard. These differentiate between your test environment (for development) and your live environment (for production).
+
+1. Log in to your Stripe [Dashboard](https://dashboard.stripe.com/).
+2. Navigate to Developers > API Keys in the left-hand sidebar.
+3. You'll see two main keys:
+  - Publishable key (starts with `pk_test_`... or `pk_live_`...): This key is safe to expose in your frontend code. Copy its value.
+  - Secret key (starts with `sk_test_`... or `sk_live_`...): This key must be kept absolutely confidential and never exposed in your frontend code. Copy its value.
+
+### Get Your Stripe Webhook Signing Secret
+The Webhook Signing Secret is crucial for verifying that incoming webhooks are genuinely from Stripe and haven't been tampered with.
+
+1. In your Stripe [Dashboard](https://dashboard.stripe.com/), navigate to Developers > Webhooks in the left-hand sidebar.
+
+2. Click on Add an endpoint (or select an existing one if you've already configured your webhook URL).
+3. When configuring your webhook endpoint (e.g., https://yourdomain.com/api/stripe-webhook), you'll see a section titled `Signing secret`.
+4. Click the "Click to reveal" button next to the signing secret. Copy this value.
+Important: This secret is unique to each webhook endpoint you create. Make sure you copy the secret for the correct endpoint that matches your application's webhook URL.
+
+### Set Up Your .env.local File
+Once you have these keys, create a file named .env.local in the root of your project (if you don't have one already). Add the following variables to it, replacing the placeholder values with the keys you copied:
+
+```
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY='your_publishable_key_here'
+STRIPE_SECRET_KEY='your_secret_key_here'
+STRIPE_WEBHOOK_SIGNING_SECRET='your_webhook_signing_secret_here'
+```
+
 <!-- CONTRIBUTORS START -->
 <h2>Contributors</h2>
 <table border='1' cellspacing='0' cellpadding='5'>

@@ -82,7 +82,6 @@ model Company {
   id                  Int                  @id @default(autoincrement())
   name                String
   stripeCustomerId    String?              @unique
-  planType            PlanType             @default(FREE)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   campaigns           Campaign[]
@@ -92,6 +91,7 @@ model Company {
   users               User[]
   emailAccounts       EmailAccount[]
   domains             Domain[]
+  subscriptions       Subscription[]
 
   @@index([stripeCustomerId])
 }
@@ -352,15 +352,43 @@ model EmailMessage {
   @@index([deletedById])
 }
 
+model Subscription {
+  id                   String        @id @default(cuid())
+  companyId            Int
+  planDetailId         String
+  status               SubscriptionStatus @default(ACTIVE)
+  renovateBefore       DateTime?
+  paidOn               DateTime?
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+
+  company              Company       @relation(fields: [companyId], references: [id])
+  planDetail           PlanDetail    @relation(fields: [planDetailId], references: [id])
+
+  @@index([companyId])
+  @@index([planDetailId])
+}
+
+model PlanDetail {
+  id                  String          @id @default(cuid())
+  name                String          @unique
+  isMonthly           Boolean
+  price               Float
+  description         String?
+  maxEmailAccounts    Int
+  maxCampaigns        Int
+  maxEmailsPerMonth   Int
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  subscriptions       Subscription[]
+}
+
 enum UserRole {
   ADMIN
   MEMBER
-}
-
-enum PlanType {
-  FREE
-  STARTER
-  PRO
 }
 
 enum CampaignStatus {
@@ -460,4 +488,13 @@ enum EmailStatus {
   DRAFT
   SENT
   TRASHED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  EXPIRED
+  PENDING
+  ON_HOLD
+  FREE_DOWNGRADED
 }
